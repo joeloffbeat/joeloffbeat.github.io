@@ -9,7 +9,7 @@ const textureLoader = new THREE.TextureLoader();
  */
 export function createCar() {
     const tex = textureLoader.load(
-        new URL(ASSETS.CAR_SPRITE, import.meta.url).href,
+        ASSETS.CAR_SPRITE,
         (t) => {
             t.magFilter = THREE.NearestFilter;
             t.minFilter = THREE.NearestFilter;

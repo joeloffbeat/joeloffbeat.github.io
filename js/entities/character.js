@@ -16,7 +16,7 @@ const FRAME_HEIGHT = 1 / ROWS;
  */
 export function createCharacter() {
     characterTexture = textureLoader.load(
-        new URL(ASSETS.CHARACTER_SPRITE, import.meta.url).href,
+        ASSETS.CHARACTER_SPRITE,
         (tex) => {
             tex.magFilter = THREE.NearestFilter;
         },

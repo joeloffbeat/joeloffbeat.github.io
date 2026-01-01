@@ -9,7 +9,7 @@ const textureLoader = new THREE.TextureLoader();
  */
 export function createGround() {
     let grassTexture = textureLoader.load(
-            new URL(ASSETS.GRASS_TEXTURE, import.meta.url).href,
+            ASSETS.GRASS_TEXTURE,
             (tex) => {
                 tex.magFilter = THREE.NearestFilter;
             },

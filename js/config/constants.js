@@ -71,9 +71,10 @@ export const CONTROLS = {
 };
 
 export const ASSETS = {
-    GRASS_TEXTURE: '../assets/grass.png',
-    CHARACTER_SPRITE: '../assets/character.png',
-    CAR_SPRITE: '../assets/car.png'
+    // Point to the local `js/assets/` files so Vite can resolve and copy them during dev/build
+    GRASS_TEXTURE: new URL('../assets/grass.png', import.meta.url).href,
+    CHARACTER_SPRITE: new URL('../assets/character.png', import.meta.url).href,
+    CAR_SPRITE: new URL('../assets/car.png', import.meta.url).href
 };
 
 
