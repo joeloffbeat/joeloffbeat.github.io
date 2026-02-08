@@ -1,6 +1,10 @@
 {
+  "name": "joeloffbeat-mindscape",
+  "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "start": "vite",
+    "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "predeploy": "npm run build",

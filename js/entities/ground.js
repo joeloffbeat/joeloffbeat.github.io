@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+import * as THREE from 'three';
 import { GROUND, ASSETS } from '../config/constants.js';
 
 const textureLoader = new THREE.TextureLoader();
@@ -29,7 +29,10 @@ export function createGround() {
 
     const groundGeometry = new THREE.PlaneGeometry(groundWidth, groundHeight);
     const groundMaterial = new THREE.MeshStandardMaterial({ 
-        map: grassTexture
+        map: grassTexture,
+        transparent: true,
+        alphaTest: 0.5,
+        color: 0xEEEEEE // Darken to match scene lighting (removes white cast)
     });
 
     const groundMesh = new THREE.Mesh(groundGeometry, groundMaterial);

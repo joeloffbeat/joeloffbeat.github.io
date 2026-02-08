@@ -1,11 +1,13 @@
-import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
-import { OrbitControls } from 'https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 import { setupScene } from '../systems/scene.js';
 import { createCamera } from '../systems/camera.js';
-import { createCar } from '../entities/car.js';
 import { createCharacter, updateCharacterPosition } from '../entities/character.js';
 import { createGround } from '../entities/ground.js';
+import { createCar } from '../entities/car.js';
+import { createCoin, generateHeartPositions, updateCoin } from '../entities/coin.js';
+import { createVictoryImage, triggerVictory } from '../systems/victory.js';
 import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
 
@@ -32,10 +34,18 @@ export class App {
         this.character = null;
         this.ground = null;
         this.car = null;
-        
+
+        this.coins = [];
+        this.victoryImage = null;
+        this.gameState = {
+            coinsCollected: 0,
+            totalCoins: 0,
+            victoryTriggered: false
+        };
+
         this.ambientLight = null;
         this.directionalLight = null;
-        
+
         this.controlsState = {
             keys: {
                 w: false,
@@ -120,19 +130,42 @@ export class App {
         this.ground = createGround();
         this.scene.add(this.ground);
 
-        // Car (replaces house)
-        // this.car = createCar();
+        // Car - positioned at right end of ground (ground is 100x100, from -50 to +50)
+        this.car = createCar();
+        this.car.position.set(45, 0, 0); // Right end of map, centered on Z-axis
         this.scene.add(this.car);
-        // Compute static colliders from car sprite and store for character collision checks
+
+        // Initialize colliders array for character collision detection
         this.colliders = [];
-        //const carBox = new THREE.Box3().setFromObject(this.car);
-        // carBox.expandByScalar(0.25);
-        //this.colliders.push(carBox);
+        // Create manual bounding box for car (sprites don't work well with setFromObject)
+        // Car is scaled to (22.5, 13.5, 1), create a box on the ground plane
+        const carWidth = 11; // Half of 22.5, adjusted for better collision feel
+        const carDepth = 6; // Reasonable depth for car collision
+        const carBox = new THREE.Box3(
+            new THREE.Vector3(45 - carWidth, 0, 0 - carDepth),
+            new THREE.Vector3(45 + carWidth, 10, 0 + carDepth)
+        );
+        this.colliders.push(carBox);
 
         // Character
         this.character = createCharacter();
         this.scene.add(this.character);
         this.controlsState.targetPosition.copy(this.character.position);
+
+        // Coins in heart shape
+        const coinPositions = generateHeartPositions();
+        this.gameState.totalCoins = coinPositions.length;
+
+        coinPositions.forEach((pos, index) => {
+            const isFinalCoin = (index === coinPositions.length - 1); // Mark last coin as final
+            const coin = createCoin(pos.x, pos.z, isFinalCoin);
+            this.coins.push(coin);
+            this.scene.add(coin);
+        });
+
+        // Victory image (hidden initially)
+        this.victoryImage = createVictoryImage();
+        this.scene.add(this.victoryImage);
     }
 
     /**
@@ -189,7 +222,42 @@ export class App {
         updateCamera();
         updateCharacterPosition(this.character, this.controlsState, this.clock, this.colliders);
 
+        // Update coins
+        this.coins.forEach(coin => updateCoin(coin, this.clock.getElapsedTime()));
+
+        // Check coin collection
+        this.checkCoinCollection();
+
         this.renderer.render(this.scene, this.camera);
+    }
+
+    /**
+     * Check if character collected any coins
+     */
+    checkCoinCollection() {
+        if (this.gameState.victoryTriggered) return;
+
+        const characterPos = this.character.position;
+
+        this.coins.forEach(coin => {
+            if (coin.userData.collected) return;
+
+            // Calculate distance on XZ plane only (ignore Y-axis height difference)
+            const dx = characterPos.x - coin.position.x;
+            const dz = characterPos.z - coin.position.z;
+            const distance = Math.sqrt(dx * dx + dz * dz);
+
+            if (distance < 1.5) {
+                coin.userData.collected = true;
+                this.scene.remove(coin);
+                this.gameState.coinsCollected++;
+
+                if (this.gameState.coinsCollected === this.gameState.totalCoins) {
+                    this.gameState.victoryTriggered = true;
+                    triggerVictory(this.victoryImage);
+                }
+            }
+        });
     }
 }
 

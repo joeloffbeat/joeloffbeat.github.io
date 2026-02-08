@@ -3,8 +3,8 @@
  */
 
 export const LIGHTING = {
-    AMBIENT_INTENSITY: 0.6,
-    DIRECTIONAL_INTENSITY: 0.6,
+    AMBIENT_INTENSITY: 0.2,
+    DIRECTIONAL_INTENSITY: 0.2,
     DIRECTIONAL_POSITION: { x: 20, y: 30, z: 10 },
     SHADOW_MAP_SIZE: 2048,
     SHADOW_CAMERA_BOUNDS: {
@@ -71,10 +71,25 @@ export const CONTROLS = {
 };
 
 export const ASSETS = {
-    // Point to the local `js/assets/` files so Vite can resolve and copy them during dev/build
-    GRASS_TEXTURE: new URL('../assets/grass.png', import.meta.url).href,
-    CHARACTER_SPRITE: new URL('../assets/character.png', import.meta.url).href,
-    CAR_SPRITE: new URL('../assets/car.png', import.meta.url).href
+    GRASS_TEXTURE: '/assets/grass.png',
+    CHARACTER_SPRITE: '/assets/character.png',
+    CAR_SPRITE: '/assets/car.png'
 };
 
+export const COIN = {
+    RADIUS: 0.5,
+    SEGMENTS: 8, // Low poly for pixel look
+    COLOR: 0xFFD700, // Gold
+    COLLECTION_DISTANCE: 1.5,
+    HEART_SIZE: 20, // Scale of heart shape
+    COIN_COUNT: 18, // Number of coins
+    HEIGHT: 0.5, // Height above ground
+    ROTATION_SPEED: 2 // Radians per second
+};
 
+export const VICTORY = {
+    IMAGE_SIZE: { width: 50, height: 50 },
+    IMAGE_PATH: '/assets/valentine.png',
+    TEXT_CONTENT: 'Happy Valentines Day!',
+    DISPLAY_DELAY: 500 // ms
+};

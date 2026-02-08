@@ -1,4 +1,4 @@
-import * as THREE from 'https://cdn.skypack.dev/three@0.132.2';
+import * as THREE from 'three';
 import { CHARACTER, ASSETS, GROUND } from '../config/constants.js';
 
 const textureLoader = new THREE.TextureLoader();
@@ -31,7 +31,9 @@ export function createCharacter() {
 
     const material = new THREE.SpriteMaterial({
         map: characterTexture,
-        transparent: true
+        transparent: true,
+        alphaTest: 0.5,
+        color: 0xCCBBBB // Darken to match scene lighting (removes white cast)
     });
     const character = new THREE.Sprite(material);
     character.castShadow = true;
