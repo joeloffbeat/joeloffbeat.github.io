@@ -216,10 +216,14 @@ export function updateCharacterPosition(character, controlsState, clock, collide
     } else if (controlsState.isMoving) {
         // Click-to-move
         makeWalk(character);
-        const distance = character.position.distanceTo(targetPosition);
+        // Use XZ-plane distance only (Y is controlled by bobbing, so 3D distance never converges)
+        const dx = character.position.x - targetPosition.x;
+        const dz = character.position.z - targetPosition.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
         if (distance > 0.1) {
             const direction = new THREE.Vector3();
             direction.subVectors(targetPosition, character.position);
+            direction.y = 0; // Ignore Y for direction calculation
             direction.normalize();
             direction.multiplyScalar(speed);
             let proposed = character.position.clone().add(direction);

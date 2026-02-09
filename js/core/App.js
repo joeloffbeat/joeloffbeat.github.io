@@ -6,8 +6,11 @@ import { createCamera } from '../systems/camera.js';
 import { createCharacter, updateCharacterPosition } from '../entities/character.js';
 import { createGround } from '../entities/ground.js';
 import { createCar } from '../entities/car.js';
+import { createFlagPole } from '../entities/flagPole.js';
 import { createCoin, generateHeartPositions, updateCoin } from '../entities/coin.js';
+import { createStatue } from '../entities/statue.js';
 import { createVictoryImage, triggerVictory } from '../systems/victory.js';
+import { updateProximityPopup } from '../systems/proximityPopup.js';
 import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
 
@@ -16,7 +19,8 @@ import {
     CAMERA,
     SCENE,
     RENDERER,
-    CONTROLS
+    CONTROLS,
+    STATUES
 } from '../config/constants.js';
 
 /**
@@ -34,6 +38,8 @@ export class App {
         this.character = null;
         this.ground = null;
         this.car = null;
+        this.flagPole = null;
+        this.statues = [];
 
         this.coins = [];
         this.victoryImage = null;
@@ -103,6 +109,8 @@ export class App {
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.shadowMap.enabled = RENDERER.ENABLE_SHADOWS;
         this.renderer.shadowMap.type = THREE[RENDERER.SHADOW_TYPE];
+        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        this.renderer.toneMappingExposure = 1.3;
         document.body.appendChild(this.renderer.domElement);
     }
 
@@ -156,11 +164,23 @@ export class App {
         const coinPositions = generateHeartPositions();
         this.gameState.totalCoins = coinPositions.length;
 
-        coinPositions.forEach((pos, index) => {
-            const isFinalCoin = (index === coinPositions.length - 1); // Mark last coin as final
-            const coin = createCoin(pos.x, pos.z, isFinalCoin);
+        coinPositions.forEach(pos => {
+            const coin = createCoin(pos.x, pos.z);
             this.coins.push(coin);
             this.scene.add(coin);
+        });
+
+        // Flag pole - positioned at left end of ground (opposite to car)
+        this.flagPole = createFlagPole();
+        this.flagPole.position.set(-45, 0, 0);
+        this.scene.add(this.flagPole);
+
+        // Statues - positioned in the bottom area of the map
+        STATUES.forEach(cfg => {
+            const statue = createStatue(cfg.asset, cfg.label);
+            statue.position.set(cfg.x, 0, cfg.z);
+            this.statues.push(statue);
+            this.scene.add(statue);
         });
 
         // Victory image (hidden initially)
@@ -227,6 +247,9 @@ export class App {
 
         // Check coin collection
         this.checkCoinCollection();
+
+        // Check statue proximity popups
+        updateProximityPopup(this.character.position, this.statues);
 
         this.renderer.render(this.scene, this.camera);
     }

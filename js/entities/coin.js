@@ -5,10 +5,9 @@ import { COIN } from '../config/constants.js';
  * Create a single coin
  * @param {number} x - X position
  * @param {number} z - Z position
- * @param {boolean} isFinalCoin - Whether this is the final coin to collect
  * @returns {THREE.Mesh} Coin mesh
  */
-export function createCoin(x, z, isFinalCoin = false) {
+export function createCoin(x, z) {
     const geometry = new THREE.SphereGeometry(
         COIN.RADIUS,
         COIN.SEGMENTS,
@@ -20,7 +19,7 @@ export function createCoin(x, z, isFinalCoin = false) {
         metalness: 0.7,
         roughness: 0.3,
         emissive: 0xFFD700,
-        emissiveIntensity: isFinalCoin ? 0.5 : 0.2  // Final coin glows more
+        emissiveIntensity: 0.2
     });
 
     const coin = new THREE.Mesh(geometry, material);
@@ -28,11 +27,8 @@ export function createCoin(x, z, isFinalCoin = false) {
     coin.castShadow = true;
 
     coin.userData = {
-        initialX: x,
         initialY: COIN.HEIGHT,
-        initialZ: z,
-        collected: false,
-        isFinalCoin: isFinalCoin
+        collected: false
     };
 
     return coin;
@@ -71,16 +67,6 @@ export function generateHeartPositions() {
 export function updateCoin(coin, time) {
     if (coin.userData.collected) return;
 
-    if (coin.userData.isFinalCoin) {
-        // Final coin has special movement: circular horizontal motion + enhanced bobbing
-        const radius = 2; // Circle radius
-        coin.position.x = coin.userData.initialX + Math.cos(time * 2) * radius;
-        coin.position.z = coin.userData.initialZ + Math.sin(time * 2) * radius;
-        coin.position.y = coin.userData.initialY + Math.sin(time * 5) * 0.5; // Higher, faster bob
-        coin.rotation.y += COIN.ROTATION_SPEED * 0.03; // Spin faster
-    } else {
-        // Normal coin animation
-        coin.position.y = coin.userData.initialY + Math.sin(time * 3) * 0.2;
-        coin.rotation.y += COIN.ROTATION_SPEED * 0.016;
-    }
+    coin.position.y = coin.userData.initialY + Math.sin(time * 3) * 0.2;
+    coin.rotation.y += COIN.ROTATION_SPEED * 0.016;
 }

@@ -3,8 +3,8 @@
  */
 
 export const LIGHTING = {
-    AMBIENT_INTENSITY: 0.2,
-    DIRECTIONAL_INTENSITY: 0.2,
+    AMBIENT_INTENSITY: 0,
+    DIRECTIONAL_INTENSITY: 1,
     DIRECTIONAL_POSITION: { x: 20, y: 30, z: 10 },
     SHADOW_MAP_SIZE: 2048,
     SHADOW_CAMERA_BOUNDS: {
@@ -26,8 +26,8 @@ export const CAMERA = {
 };
 
 export const SCENE = {
-    BACKGROUND_COLOR: 0x000000, // black
-    INITIAL_BACKGROUND: 0x5B8B59
+    BACKGROUND_COLOR: 0x111111, // Sky blue
+    INITIAL_BACKGROUND: 0x87CEEB
 };
 
 export const CHARACTER = {
@@ -73,16 +73,31 @@ export const CONTROLS = {
 export const ASSETS = {
     GRASS_TEXTURE: '/assets/grass.png',
     CHARACTER_SPRITE: '/assets/character.png',
-    CAR_SPRITE: '/assets/car.png'
+    CAR_SPRITE: '/assets/car.png',
+    FLAG_SPRITE: '/assets/tvk_flag.png',
+    STATUE_VARKALA: '/assets/varkala_shirley.png',
+    STATUE_HAMPI: '/assets/hampi_shirley.png',
+    STATUE_PONDY: '/assets/pondy_shirley.png'
+};
+
+export const STATUES = [
+    { asset: 'STATUE_VARKALA', label: 'Varkala', x: -20, z: 35 },
+    { asset: 'STATUE_HAMPI',   label: 'Hampi',   x: 0,   z: 40 },
+    { asset: 'STATUE_PONDY',   label: 'Pondy',   x: 20,  z: 35 }
+];
+
+export const STATUE_CONFIG = {
+    SCALE: { x: 6, y: 10, z: 1 },
+    POPUP_DISTANCE: 8 // How close the character needs to be
 };
 
 export const COIN = {
     RADIUS: 0.5,
     SEGMENTS: 8, // Low poly for pixel look
-    COLOR: 0xFFD700, // Gold
+    COLOR: 0xFFEF0F, // Gold
     COLLECTION_DISTANCE: 1.5,
     HEART_SIZE: 20, // Scale of heart shape
-    COIN_COUNT: 18, // Number of coins
+    COIN_COUNT: 40, // Number of coins
     HEIGHT: 0.5, // Height above ground
     ROTATION_SPEED: 2 // Radians per second
 };
@@ -90,6 +105,6 @@ export const COIN = {
 export const VICTORY = {
     IMAGE_SIZE: { width: 50, height: 50 },
     IMAGE_PATH: '/assets/valentine.png',
-    TEXT_CONTENT: 'Happy Valentines Day!',
+    TEXT_CONTENT: 'Will you be my valentine?',
     DISPLAY_DELAY: 500 // ms
 };
