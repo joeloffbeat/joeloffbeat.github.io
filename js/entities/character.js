@@ -1,255 +1,183 @@
 import * as THREE from 'three';
-import { CHARACTER, ASSETS, GROUND } from '../config/constants.js';
+import { CHARACTER, ASSETS, GROUND, OCEAN, WATER } from '../config/constants.js';
 
 const textureLoader = new THREE.TextureLoader();
-let characterTexture;
 
 // Sprite sheet layout
-const ROWS = 3; // frames per direction (vertical)
-const COLS = 8; // directions (horizontal)
+const COLS = 8;
+const ROWS = 3;
 const FRAME_WIDTH = 1 / COLS;
 const FRAME_HEIGHT = 1 / ROWS;
 
-/**
- * Create character sprite
- * @returns {THREE.Sprite} Character sprite
- */
+// Pre-computed bounds (avoids recalculating every frame)
+const HALF_W = GROUND.WIDTH / 2;
+const HALF_H = GROUND.HEIGHT / 2;
+const GRID_COUNT = Math.floor(GROUND.WIDTH / GROUND.TILE_SIZE);
+const OCEAN_WORLD_X = -HALF_W + (OCEAN.START_COL / GRID_COUNT) * GROUND.WIDTH;
+const OCEAN_WORLD_Z = -HALF_H + (OCEAN.START_ROW / GRID_COUNT) * GROUND.HEIGHT;
+
 export function createCharacter() {
-    characterTexture = textureLoader.load(
+    const texture = textureLoader.load(
         ASSETS.CHARACTER_SPRITE,
-        (tex) => {
-            tex.magFilter = THREE.NearestFilter;
-        },
+        (tex) => { tex.magFilter = THREE.NearestFilter; },
         undefined,
-        (error) => console.error('Error loading character texture:', error)
+        (err) => console.error('Error loading character texture:', err)
     );
 
-    // Configure sprite-sheet repeating (cols x rows)
-    characterTexture.wrapS = THREE.RepeatWrapping;
-    characterTexture.wrapT = THREE.RepeatWrapping;
-    characterTexture.repeat.set(FRAME_WIDTH, FRAME_HEIGHT);
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(FRAME_WIDTH, FRAME_HEIGHT);
+    texture.offset.set(0, 1);
 
     const material = new THREE.SpriteMaterial({
-        map: characterTexture,
+        map: texture,
         transparent: true,
-        alphaTest: 0.5,
-        color: 0xCCBBBB // Darken to match scene lighting (removes white cast)
+        alphaTest: 0.5
     });
-    const character = new THREE.Sprite(material);
-    character.castShadow = true;
-    // Make sprite 50% bigger than configured scale
-    character.scale.set(
-        CHARACTER.SCALE.x * 2,
-        CHARACTER.SCALE.y * 2,
-        CHARACTER.SCALE.z * 3
-    );
-    character.position.set(
+
+    const sprite = new THREE.Sprite(material);
+    sprite.castShadow = true;
+    sprite.scale.set(CHARACTER.SCALE.x, CHARACTER.SCALE.y, CHARACTER.SCALE.z);
+    sprite.position.set(
         CHARACTER.INITIAL_POSITION.x,
         CHARACTER.INITIAL_POSITION.y,
         CHARACTER.INITIAL_POSITION.z
     );
 
-    character.userData = {
-        isMoving: false,
-        isIdle: true,
+    sprite.userData = {
         direction: 'right',
         directionIndex: 0,
-        animations: CHARACTER.ANIMATIONS,
         currentAnimation: 'idle',
         frame: 1,
         frameItr: 0
     };
 
-    // Set initial UV repeat & offset for first frame (col 0, row 0)
-    material.map.repeat.set(FRAME_WIDTH, FRAME_HEIGHT);
-    material.map.offset.set(0, 1);
-    
-    return character;
+    return sprite;
 }
 
-function getDirectionIndexFromVector(vec) {
+// -- Direction helpers --------------------------------------------------------
+
+function getDirectionIndex(vec) {
     if (!vec || vec.lengthSq() === 0) return 0;
-    const angle = Math.atan2(vec.z, vec.x); // -PI..PI, 0 -> +X
-    let deg = (angle * 180 / Math.PI + 360) % 360; // 0..360
-    // Map to 8 sectors (45deg each). Sprite indices are arranged clockwise
-    // with index 0 = TOP, index 1 = TOP-RIGHT, index 2 = RIGHT, etc.
-    // atan2 gives 0 at +X (RIGHT). Shift computed index by +2 to make
-    // RIGHT -> 2 and TOP (-Z) -> 0.
-    const computed = Math.round(deg / 45) % 8;
-    const index = (computed + 3) % 8;
-    return index;
+    const deg = (Math.atan2(vec.z, vec.x) * 180 / Math.PI + 360) % 360;
+    return (Math.round(deg / 45) % 8 + 3) % 8;
 }
 
-function makeIdle(character) {
-    if (character.userData.currentAnimation !== 'idle') {
-        character.userData.currentAnimation = 'idle';
-        character.userData.frame = 1;
-        character.userData.frameItr = 0;
-    }
+// -- Animation state ----------------------------------------------------------
+
+function setAnimation(sprite, name) {
+    if (sprite.userData.currentAnimation === name) return;
+    sprite.userData.currentAnimation = name;
+    sprite.userData.frame = name === 'idle' ? 1 : 0;
+    sprite.userData.frameItr = 0;
 }
 
-function makeWalk(character) {
-    if (character.userData.currentAnimation !== 'walk') {
-        character.userData.currentAnimation = 'walk';
-        character.userData.frame = 0;
-        character.userData.frameItr = 0;
-    }
-}
-/**
- * Update character animation
- * @param {THREE.Sprite} character - Character sprite
- * @param {number} delta - Time delta
- */
-function updateCharacterAnimation(character) {
-    const anim = character.userData.animations[character.userData.currentAnimation];
-    character.userData.frameItr += 1;
-        
-    if (character.userData.frameItr > anim.duration && anim.frames > 1) {
-        character.userData.frameItr = 0;
-        let animationIndex = character.userData.frame;
-        character.userData.frame = anim.frameIndices[(animationIndex + 1) % anim.frames];
+function updateAnimation(sprite) {
+    const { currentAnimation, directionIndex } = sprite.userData;
+    const anim = CHARACTER.ANIMATIONS[currentAnimation];
+
+    sprite.userData.frameItr += 1;
+    if (sprite.userData.frameItr > anim.duration && anim.frames > 1) {
+        sprite.userData.frameItr = 0;
+        sprite.userData.frame = anim.frameIndices[
+            (sprite.userData.frame + 1) % anim.frames
+        ];
     }
 
-    // Compute UV offset based on current direction (column) and frame (row)
-    const dirIndex = character.userData.directionIndex || 0; // 0..7
-    const frameIndex = character.userData.frame || 0; // 0..ROWS-1
-
-    // X offset: column * FRAME_WIDTH
-    const offsetX = dirIndex * FRAME_WIDTH;
-    // Y offset: textures are addressed from bottom, so compute top-left corner
-    const offsetY = frameIndex * FRAME_HEIGHT;
-
-    character.material.map.offset.set(offsetX, offsetY);
+    sprite.material.map.offset.set(
+        directionIndex * FRAME_WIDTH,
+        sprite.userData.frame * FRAME_HEIGHT
+    );
 }
 
-/**
- * Update character position based on input
- * @param {THREE.Sprite} character - Character sprite
- * @param {Object} controlsState - Controls state object
- * @param {THREE.Clock} clock - Three.js clock
- */
+// -- Movement helpers ---------------------------------------------------------
+
+function isBlocked(pos, colliders) {
+    const sphere = new THREE.Sphere(pos, CHARACTER.COLLISION_RADIUS);
+    for (let i = 0; i < colliders.length; i++) {
+        if (colliders[i].intersectsSphere(sphere)) return true;
+    }
+    if (WATER.BLOCK_ENTRY && pos.x >= OCEAN_WORLD_X && pos.z >= OCEAN_WORLD_Z) {
+        return true;
+    }
+    return false;
+}
+
+function clampToGround(pos) {
+    const pad = CHARACTER.COLLISION_RADIUS + 0.1;
+    const clamped = pos.clone();
+    clamped.x = Math.max(-HALF_W + pad, Math.min(HALF_W - pad, clamped.x));
+    clamped.z = Math.max(-HALF_H + pad, Math.min(HALF_H - pad, clamped.z));
+    return clamped;
+}
+
+function tryMove(sprite, delta, colliders) {
+    let proposed = sprite.position.clone().add(delta);
+    proposed = clampToGround(proposed);
+    if (!isBlocked(proposed, colliders)) {
+        sprite.position.copy(proposed);
+        return true;
+    }
+    return false;
+}
+
+// -- Public update ------------------------------------------------------------
+
 export function updateCharacterPosition(character, controlsState, clock, colliders = []) {
-    const { keys, isMoving, targetPosition } = controlsState;
-    const speed = CHARACTER.SPEED;
-    const moveDirection = new THREE.Vector3();
+    const { keys, targetPosition } = controlsState;
+    const speed = CHARACTER.SPEED * (keys[' '] ? CHARACTER.DASH_MULTIPLIER : 1);
+    const moveDir = new THREE.Vector3();
     let isKeyPressed = false;
 
-    const COLLISION_RADIUS = CHARACTER.COLLISION_RADIUS || (CHARACTER.SCALE.x * 1.5 * 0.5);
-
-    function intersectsColliders(pos) {
-        if (!colliders || colliders.length === 0) return false;
-        const sphere = new THREE.Sphere(pos, COLLISION_RADIUS);
-        for (let i = 0; i < colliders.length; i++) {
-            if (colliders[i].intersectsSphere(sphere)) return true;
-        }
-        return false;
-    }
-
-    // Clamp a proposed position to the ground bounds so the character cannot leave the ground
-    function clampToGround(pos) {
-        const halfW = (GROUND.SIZE.width || 0) / 2;
-        const halfH = (GROUND.SIZE.height || 0) / 2;
-        const pad = COLLISION_RADIUS + 0.1; // small padding so character doesn't step outside
-        const minX = -halfW + pad;
-        const maxX = halfW - pad;
-        const minZ = -halfH + pad;
-        const maxZ = halfH - pad;
-        const clamped = pos.clone();
-        if (clamped.x < minX) clamped.x = minX;
-        if (clamped.x > maxX) clamped.x = maxX;
-        if (clamped.z < minZ) clamped.z = minZ;
-        if (clamped.z > maxZ) clamped.z = maxZ;
-        return clamped;
-    }
-
-    // Ensure click target stays inside ground
-    if (controlsState.isMoving && controlsState.targetPosition) {
+    // Clamp click target to ground
+    if (controlsState.isMoving) {
         controlsState.targetPosition = clampToGround(controlsState.targetPosition);
     }
 
-    // Isometric movement: camera is at (40, 40, 40) looking at origin
-    // W/Up: move toward camera view (up-left on screen) = -x, -z
-    // S/Down: move away from camera (down-right) = +x, +z
-    // A/Left: move left on screen = -x, +z
-    // D/Right: move right on screen = +x, -z
-    if (keys.w || keys.ArrowUp) {
-        moveDirection.x -= 1;
-        moveDirection.z -= 1;
-        isKeyPressed = true;
-    }
-    if (keys.s || keys.ArrowDown) {
-        moveDirection.x += 1;
-        moveDirection.z += 1;
-        isKeyPressed = true;
-    }
-    if (keys.a || keys.ArrowLeft) {
-        moveDirection.x -= 1;
-        moveDirection.z += 1;
-        character.userData.direction = 'left';
-        isKeyPressed = true;
-    }
-    if (keys.d || keys.ArrowRight) {
-        moveDirection.x += 1;
-        moveDirection.z -= 1;
-        character.userData.direction = 'right';
-        isKeyPressed = true;
-    }
+    // Isometric keyboard mapping
+    if (keys.w || keys.ArrowUp)    { moveDir.x -= 1; moveDir.z -= 1; isKeyPressed = true; }
+    if (keys.s || keys.ArrowDown)  { moveDir.x += 1; moveDir.z += 1; isKeyPressed = true; }
+    if (keys.a || keys.ArrowLeft)  { moveDir.x -= 1; moveDir.z += 1; isKeyPressed = true; }
+    if (keys.d || keys.ArrowRight) { moveDir.x += 1; moveDir.z -= 1; isKeyPressed = true; }
 
-    if (isKeyPressed && moveDirection.lengthSq() > 0) {
-        // Keyboard movement takes priority over click-to-move
+    if (isKeyPressed && moveDir.lengthSq() > 0) {
         controlsState.isMoving = false;
-        // switch animation
-        makeWalk(character);
-        moveDirection.normalize();
-        // update facing direction column (8-way)
-        character.userData.directionIndex = getDirectionIndexFromVector(moveDirection);
-        moveDirection.multiplyScalar(speed);
-        // collision check
-        let proposed = character.position.clone().add(moveDirection);
-        proposed = clampToGround(proposed);
-        if (!intersectsColliders(proposed)) {
-            character.position.copy(proposed);
-        } else {
-            // stop movement when colliding
-            makeIdle(character);
+        setAnimation(character, 'walk');
+        moveDir.normalize();
+        character.userData.directionIndex = getDirectionIndex(moveDir);
+        moveDir.multiplyScalar(speed);
+
+        if (!tryMove(character, moveDir, colliders)) {
+            setAnimation(character, 'idle');
         }
     } else if (controlsState.isMoving) {
-        // Click-to-move
-        makeWalk(character);
-        // Use XZ-plane distance only (Y is controlled by bobbing, so 3D distance never converges)
+        setAnimation(character, 'walk');
+
         const dx = character.position.x - targetPosition.x;
         const dz = character.position.z - targetPosition.z;
-        const distance = Math.sqrt(dx * dx + dz * dz);
-        if (distance > 0.1) {
-            const direction = new THREE.Vector3();
-            direction.subVectors(targetPosition, character.position);
-            direction.y = 0; // Ignore Y for direction calculation
-            direction.normalize();
-            direction.multiplyScalar(speed);
-            let proposed = character.position.clone().add(direction);
-            proposed = clampToGround(proposed);
-            if (!intersectsColliders(proposed)) {
-                character.position.copy(proposed);
-            } else {
-                // collision while moving to target: stop moving
+        if (Math.sqrt(dx * dx + dz * dz) > 0.1) {
+            const dir = new THREE.Vector3().subVectors(targetPosition, character.position);
+            dir.y = 0;
+            dir.normalize();
+            character.userData.directionIndex = getDirectionIndex(dir);
+            character.userData.direction = dir.x > 0 ? 'right' : 'left';
+            dir.multiplyScalar(speed);
+
+            if (!tryMove(character, dir, colliders)) {
                 controlsState.isMoving = false;
-                makeIdle(character);
+                setAnimation(character, 'idle');
             }
-            character.userData.direction = direction.x > 0 ? 'right' : 'left';
-            character.userData.directionIndex = getDirectionIndexFromVector(direction);
         } else {
             controlsState.isMoving = false;
-            makeIdle(character);
+            setAnimation(character, 'idle');
         }
     } else {
-        makeIdle(character);
+        setAnimation(character, 'idle');
     }
 
-    // Bobbing animation
-    const bobbing = CHARACTER.BOBBING;
-    character.position.y = bobbing.BASE_HEIGHT + 
-        Math.sin(clock.getElapsedTime() * bobbing.SPEED) * bobbing.AMOUNT;
+    // Bobbing
+    const { BASE_HEIGHT, SPEED: bSpeed, AMOUNT } = CHARACTER.BOBBING;
+    character.position.y = BASE_HEIGHT + Math.sin(clock.getElapsedTime() * bSpeed) * AMOUNT;
 
-    updateCharacterAnimation(character);
+    updateAnimation(character);
 }
-

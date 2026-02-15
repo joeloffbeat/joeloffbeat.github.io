@@ -5,25 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joel's Mindscape</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
-        #info {
+
+        #title {
             position: absolute;
-            top: 10px;
-            width: 100%;
-            text-align: center;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-shadow: 2px 2px 4px #000000;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 28px;
+            color: #ffffff;
+            background: #000000;
+            padding: 16px 32px;
+            text-shadow: 3px 3px 0px #333333;
+            letter-spacing: 2px;
+            border: 3px solid #444444;
+            image-rendering: pixelated;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #car-popup {
+            position: fixed;
+            bottom: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Press Start 2P', monospace;
+            font-size: 14px;
+            color: #333333;
+            background: rgba(255, 215, 0, 0.95);
+            padding: 12px 24px;
+            border: 3px solid #b8860b;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 10;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
-    <div id="info">
-        <p>Use WASD or Arrow Keys to move. Click to set a destination.</p>
-        <p>Right-click and drag to pan. Scroll to zoom.</p>
-    </div>
+    <div id="title">Joel's Mindscape</div>
+    <div id="car-popup">Joel's Car</div>
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
