@@ -56,6 +56,7 @@ Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/deploy.
 js/
 ├── config/
 │   └── constants.js        # All tunable values
+|   └── debug.js            # All debug configs
 ├── core/
 │   └── App.js              # Main class — init, game loop, trail, popup
 ├── entities/
