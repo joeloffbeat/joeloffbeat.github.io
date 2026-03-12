@@ -23,7 +23,7 @@ export const CAMERA = {
 };
 
 export const SCENE = {
-    BACKGROUND_COLOR: 0x111111
+    BACKGROUND_COLOR: 0x0a0a0f
 };
 
 export const CHARACTER = {
@@ -40,16 +40,18 @@ export const CHARACTER = {
 };
 
 export const GROUND = {
-    WIDTH: 100,
-    HEIGHT: 100,
-    TILE_SIZE: 4,
-    CANVAS_SIZE: 2048
+    WIDTH: 96,
+    HEIGHT: 96,
+    TILE_SIZE: 3,
+    GRID: 32,
+    CANVAS_SIZE: 2048,
+    SIDE_WALL_DEPTH: 8
 };
 
 export const RENDERER = {
     SHADOW_TYPE: 'PCFSoftShadowMap',
     ENABLE_SHADOWS: true,
-    TONE_MAPPING_EXPOSURE: 0.3
+    TONE_MAPPING_EXPOSURE: 0.7
 };
 
 export const CONTROLS = {
@@ -61,37 +63,16 @@ export const CONTROLS = {
 };
 
 export const ASSETS = {
-    CHARACTER_SPRITE: '/assets/character.png',
-    CAR_SPRITE: '/assets/car.png',
-    GRASS_SPRITES: [
-        '/assets/grass_sprites/grass_0.png',
-        '/assets/grass_sprites/grass_1.png',
-        '/assets/grass_sprites/grass_2.png'
-    ],
-    WATER_SPRITES: [
-        '/assets/water_sprites/water_0.png'
-    ],
-    TILE_SPRITES: [
-        '/assets/tile_sprites/tile_0.png',
-        '/assets/tile_sprites/tile_1.png',
-        '/assets/tile_sprites/tile_2.png'
-    ]
+    CHARACTER_SPRITE: '/assets/character.png'
 };
 
-export const CAR = {
-    POSITION: { x: 50, y: 0, z: 0 },
-    SCALE: { x: 22.5, y: 13.5, z: 1 },
-    COLLISION: { width: 8, depth: 12, height: 12, padding: 2 },
-    POPUP_DISTANCE: 15
+export const INTERACTION = {
+    HYSTERESIS_DISTANCE: 2,
+    TOAST_FADE_DURATION: 0.3
 };
 
-export const OCEAN = {
-    START_COL: 15,
-    START_ROW: 15
-};
-
-export const WATER = {
-    BLOCK_ENTRY: true
+export const WATER_ANIMATION = {
+    CYCLE_INTERVAL: 500 // ms between water frame changes
 };
 
 export const TRAIL = {
