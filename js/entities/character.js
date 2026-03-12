@@ -1,5 +1,6 @@
 import * as THREE from 'three';
-import { CHARACTER, ASSETS, GROUND, OCEAN, WATER } from '../config/constants.js';
+import { CHARACTER, ASSETS, GROUND } from '../config/constants.js';
+import { WORLD_MAP, NON_WALKABLE } from '../config/worldMap.js';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -9,12 +10,9 @@ const ROWS = 3;
 const FRAME_WIDTH = 1 / COLS;
 const FRAME_HEIGHT = 1 / ROWS;
 
-// Pre-computed bounds (avoids recalculating every frame)
+// Pre-computed bounds
 const HALF_W = GROUND.WIDTH / 2;
 const HALF_H = GROUND.HEIGHT / 2;
-const GRID_COUNT = Math.floor(GROUND.WIDTH / GROUND.TILE_SIZE);
-const OCEAN_WORLD_X = -HALF_W + (OCEAN.START_COL / GRID_COUNT) * GROUND.WIDTH;
-const OCEAN_WORLD_Z = -HALF_H + (OCEAN.START_ROW / GRID_COUNT) * GROUND.HEIGHT;
 
 export function createCharacter() {
     const texture = textureLoader.load(
@@ -90,15 +88,41 @@ function updateAnimation(sprite) {
     );
 }
 
-// -- Movement helpers ---------------------------------------------------------
+// -- Tile-based collision -----------------------------------------------------
+
+function worldToTile(worldX, worldZ) {
+    const col = Math.floor(worldX / GROUND.TILE_SIZE + GROUND.GRID / 2);
+    const row = Math.floor(worldZ / GROUND.TILE_SIZE + GROUND.GRID / 2);
+    return { col, row };
+}
+
+function isTileBlocked(col, row) {
+    if (col < 0 || col >= GROUND.GRID || row < 0 || row >= GROUND.GRID) return true;
+    const terrain = WORLD_MAP[row]?.[col];
+    if (!terrain) return true;
+    return NON_WALKABLE.has(terrain);
+}
+
+function isTerrainBlocked(x, z) {
+    const r = CHARACTER.COLLISION_RADIUS;
+    // Check all 4 corners of the character's bounding box
+    const corners = [
+        worldToTile(x - r, z - r),
+        worldToTile(x + r, z - r),
+        worldToTile(x - r, z + r),
+        worldToTile(x + r, z + r),
+    ];
+    return corners.some(c => isTileBlocked(c.col, c.row));
+}
 
 function isBlocked(pos, colliders) {
+    // Tile-based terrain check
+    if (isTerrainBlocked(pos.x, pos.z)) return true;
+
+    // Entity collider check (Box3 intersection)
     const sphere = new THREE.Sphere(pos, CHARACTER.COLLISION_RADIUS);
     for (let i = 0; i < colliders.length; i++) {
         if (colliders[i].intersectsSphere(sphere)) return true;
-    }
-    if (WATER.BLOCK_ENTRY && pos.x >= OCEAN_WORLD_X && pos.z >= OCEAN_WORLD_Z) {
-        return true;
     }
     return false;
 }
@@ -123,7 +147,15 @@ function tryMove(sprite, delta, colliders) {
 
 // -- Public update ------------------------------------------------------------
 
-export function updateCharacterPosition(character, controlsState, clock, colliders = []) {
+export function updateCharacterPosition(character, controlsState, clock, colliders = [], inputBlocked = false) {
+    if (inputBlocked) {
+        // Still bobbing, just no movement processing
+        const { BASE_HEIGHT, SPEED: bSpeed, AMOUNT } = CHARACTER.BOBBING;
+        character.position.y = BASE_HEIGHT + Math.sin(clock.getElapsedTime() * bSpeed) * AMOUNT;
+        updateAnimation(character);
+        return;
+    }
+
     const { keys, targetPosition } = controlsState;
     const speed = CHARACTER.SPEED * (keys[' '] ? CHARACTER.DASH_MULTIPLIER : 1);
     const moveDir = new THREE.Vector3();
