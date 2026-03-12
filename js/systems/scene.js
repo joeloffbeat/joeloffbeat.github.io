@@ -10,7 +10,7 @@ import {
  */
 export function setupScene() {
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(SCENE.INITIAL_BACKGROUND);
+    scene.background = new THREE.Color(SCENE.BACKGROUND_COLOR);
 
     // Ambient Light
     const ambientLight = new THREE.AmbientLight(

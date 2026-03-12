@@ -4,13 +4,16 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { setupScene } from '../systems/scene.js';
 import { createCamera } from '../systems/camera.js';
 import { createCharacter, updateCharacterPosition } from '../entities/character.js';
-import { createGround } from '../entities/ground.js';
-import { createCar } from '../entities/car.js';
+import { createGround, updateWater } from '../entities/ground.js';
+import { InteractiveEntity } from '../entities/interactiveEntity.js';
 import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
+import { initInteraction, updateInteraction } from '../systems/interaction.js';
+import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui/overlay.js';
+import { ENTITY_PLACEMENTS } from '../config/worldMap.js';
 
 import {
-    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, CAR, TRAIL
+    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND
 } from '../config/constants.js';
 import { DEBUG } from '../config/debug.js';
 
@@ -24,7 +27,7 @@ export class App {
 
         this.character = null;
         this.ground = null;
-        this.car = null;
+        this.entities = [];
         this.colliders = [];
 
         this.ambientLight = null;
@@ -32,7 +35,6 @@ export class App {
 
         this.trailGhosts = [];
         this.trailTimer = 0;
-        this.carPopupEl = null;
 
         this.controlsState = {
             keys: {
@@ -45,15 +47,15 @@ export class App {
         };
     }
 
-    init() {
+    async init() {
         this.initScene();
         this.initCamera();
         this.initRenderer();
         this.initOrbitControls();
-        this.createWorld();
+        await this.createWorld();
         this.initInputControls();
         this.applyLighting();
-        this.carPopupEl = document.getElementById('car-popup');
+        this.initUI();
         window.addEventListener('resize', () => this.onResize());
         this.animate();
     }
@@ -93,29 +95,29 @@ export class App {
         };
     }
 
-    createWorld() {
-        this.ground = createGround();
+    async createWorld() {
+        // Ground + side walls
+        const { groundMesh, walls } = await createGround();
+        this.ground = groundMesh;
         this.scene.add(this.ground);
-
-        this.car = createCar();
-        this.car.position.set(CAR.POSITION.x, CAR.POSITION.y, CAR.POSITION.z);
-        this.scene.add(this.car);
-
-        const { width, depth, height, padding } = CAR.COLLISION;
-        const cx = CAR.POSITION.x;
-        const cz = CAR.POSITION.z;
-        const carCollider = new THREE.Box3(
-            new THREE.Vector3(cx - width, 0, cz - depth),
-            new THREE.Vector3(cx, height, cz + padding)
-        );
-        this.colliders.push(carCollider);
-
-        // Visualize collider as red box (debug)
-        if (DEBUG.COLLIDER_BOXES) {
-            const colliderHelper = new THREE.Box3Helper(carCollider, 0xff0000);
-            this.scene.add(colliderHelper);
+        for (const wall of walls) {
+            this.scene.add(wall);
         }
 
+        // Interactive entities
+        for (const config of ENTITY_PLACEMENTS) {
+            const entity = new InteractiveEntity(config);
+            await entity.create();
+            this.scene.add(entity.sprite);
+            this.colliders.push(entity.collider);
+            this.entities.push(entity);
+
+            if (DEBUG.COLLIDER_BOXES) {
+                this.scene.add(new THREE.Box3Helper(entity.collider, 0xff0000));
+            }
+        }
+
+        // Character (added last to render on top)
         this.character = createCharacter();
         this.scene.add(this.character);
         this.controlsState.targetPosition.copy(this.character.position);
@@ -124,6 +126,14 @@ export class App {
     initInputControls() {
         setupControls(this.camera, this.ground, this.controlsState, this.renderer.domElement);
         setupCameraController(this.camera, this.orbitControls, this.character);
+    }
+
+    initUI() {
+        const toastEl = document.getElementById('entity-toast');
+        initOverlay();
+        initInteraction(this.entities, toastEl, (overlayId) => {
+            openOverlay(overlayId);
+        });
     }
 
     applyLighting() {
@@ -152,21 +162,20 @@ export class App {
 
         this.orbitControls.update();
         updateCamera();
-        updateCharacterPosition(this.character, this.controlsState, this.clock, this.colliders);
+
+        // Pass overlay state to block input during overlay
+        const blocked = overlayIsOpen;
+        updateCharacterPosition(this.character, this.controlsState, this.clock, this.colliders, blocked);
+
+        // Water animation
+        updateWater(delta);
+
+        // Proximity / toast
+        updateInteraction(this.character.position, blocked);
 
         this.updateTrail(delta);
-        this.updateCarPopup();
 
         this.renderer.render(this.scene, this.camera);
-    }
-
-    // -- Car proximity popup ------------------------------------------------------
-
-    updateCarPopup() {
-        const dx = this.character.position.x - CAR.POSITION.x;
-        const dz = this.character.position.z - CAR.POSITION.z;
-        const near = Math.sqrt(dx * dx + dz * dz) < CAR.POPUP_DISTANCE;
-        this.carPopupEl.style.opacity = near ? '1' : '0';
     }
 
     // -- Dash trail ---------------------------------------------------------------
