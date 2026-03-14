@@ -1,0 +1,35 @@
+{
+  "current": {
+    "place": "Update me — where are you now?",
+    "dates": "Mar 2026",
+    "flag": "📍",
+    "notes": "Edit _travel/travel.json to update your location"
+  },
+  "upcoming": [
+    {
+      "place": "Tokyo, Japan",
+      "dates": "Apr 10–20 2026",
+      "flag": "🇯🇵",
+      "status": "confirmed",
+      "notes": "Cherry blossom season"
+    },
+    {
+      "place": "Iceland",
+      "dates": "Jul 2026",
+      "flag": "🇮🇸",
+      "status": "exploring"
+    }
+  ],
+  "past": [
+    {
+      "place": "Barcelona, Spain",
+      "dates": "Sep 2025",
+      "flag": "🇪🇸"
+    },
+    {
+      "place": "Singapore",
+      "dates": "Jan 2025",
+      "flag": "🇸🇬"
+    }
+  ]
+}
