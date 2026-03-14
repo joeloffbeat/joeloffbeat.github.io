@@ -247,7 +247,7 @@ export class App {
             map: snapTex,
             transparent: true,
             opacity: TRAIL.INITIAL_OPACITY,
-            alphaTest: 0.5,
+            alphaTest: TRAIL.ALPHA_TEST,
             depthWrite: false,
         });
 

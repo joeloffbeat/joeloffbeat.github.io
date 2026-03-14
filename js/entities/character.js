@@ -58,7 +58,7 @@ export function createCharacter() {
 function getDirectionIndex(vec) {
     if (!vec || vec.lengthSq() === 0) return 0;
     const deg = (Math.atan2(vec.z, vec.x) * 180 / Math.PI + 360) % 360;
-    return (Math.round(deg / 45) % 8 + 3) % 8;
+    return (Math.round(deg / 45) % 8 + 2) % 8;
 }
 
 // -- Animation state ----------------------------------------------------------
@@ -90,9 +90,13 @@ function updateAnimation(sprite) {
 
 // -- Tile-based collision -----------------------------------------------------
 
+// Inverse of isometric tileToWorld:
+//   worldX = (col-row)*2.25, worldZ = (col+row)*1.125-34.875
 function worldToTile(worldX, worldZ) {
-    const col = Math.floor(worldX / GROUND.TILE_SIZE + GROUND.GRID / 2);
-    const row = Math.floor(worldZ / GROUND.TILE_SIZE + GROUND.GRID / 2);
+    const sum = (worldZ + 34.875) / 1.125;  // col + row
+    const diff = worldX / 2.25;              // col - row
+    const col = Math.floor((sum + diff) / 2);
+    const row = Math.floor((sum - diff) / 2);
     return { col, row };
 }
 
@@ -167,10 +171,10 @@ export function updateCharacterPosition(character, controlsState, clock, collide
     }
 
     // Isometric keyboard mapping
-    if (keys.w || keys.ArrowUp)    { moveDir.x -= 1; moveDir.z -= 1; isKeyPressed = true; }
-    if (keys.s || keys.ArrowDown)  { moveDir.x += 1; moveDir.z += 1; isKeyPressed = true; }
-    if (keys.a || keys.ArrowLeft)  { moveDir.x -= 1; moveDir.z += 1; isKeyPressed = true; }
-    if (keys.d || keys.ArrowRight) { moveDir.x += 1; moveDir.z -= 1; isKeyPressed = true; }
+    if (keys.w || keys.ArrowUp)    { moveDir.z -= 1; isKeyPressed = true; }
+    if (keys.s || keys.ArrowDown)  { moveDir.z += 1; isKeyPressed = true; }
+    if (keys.a || keys.ArrowLeft)  { moveDir.x -= 1; isKeyPressed = true; }
+    if (keys.d || keys.ArrowRight) { moveDir.x += 1; isKeyPressed = true; }
 
     if (isKeyPressed && moveDir.lengthSq() > 0) {
         controlsState.isMoving = false;

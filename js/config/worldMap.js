@@ -9,11 +9,12 @@ export const TERRAIN = {
     ROCK: 'R',
     WATER: 'W',
     STONES: 'S',
-    EDGE: 'E'
+    EDGE: 'E',
+    VOID: 'V',  // outside the playable area — not rendered, not walkable
 };
 
 /** Tiles that block character movement */
-export const NON_WALKABLE = new Set([TERRAIN.WATER, TERRAIN.STONES, TERRAIN.EDGE]);
+export const NON_WALKABLE = new Set([TERRAIN.WATER, TERRAIN.STONES, TERRAIN.EDGE, TERRAIN.VOID]);
 
 /**
  * 32×32 tile map. Each character = terrain type from TERRAIN enum.
@@ -108,11 +109,11 @@ export const ENTITY_PLACEMENTS = [
     {
         id: 'bookshelf',
         spritePath: '/assets/book_shelf.png',
-        tileCol: 6.5, tileRow: 4.5,
-        ...tileToWorld(6.5, 4.5),
-        scale: { x: 14, y: 16, z: 1 },
+        tileCol: 3, tileRow: 6,
+        ...tileToWorld(3, 6),
+        scale: { x: 15, y: 12, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 5, d: 2, h: 8 },
+        collisionBox: { w: 7, d: 3, h: 8 },
         overlayId: 'books-overlay',
         label: 'Bookshelf',
         description: 'Books & Movies',
@@ -123,9 +124,9 @@ export const ENTITY_PLACEMENTS = [
         spritePath: '/assets/server.png',
         tileCol: 15, tileRow: 4,
         ...tileToWorld(15, 4),
-        scale: { x: 12, y: 16, z: 1 },
+        scale: { x: 10, y: 8, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 4, d: 2, h: 8 },
+        collisionBox: { w: 4, d: 4, h: 7 },
         overlayId: 'blog-overlay',
         label: 'Server',
         description: 'Tech Blog',
@@ -136,9 +137,9 @@ export const ENTITY_PLACEMENTS = [
         spritePath: '/assets/rock_art.png',
         tileCol: 25, tileRow: 5,
         ...tileToWorld(25, 5),
-        scale: { x: 16, y: 12, z: 1 },
+        scale: { x: 10, y: 10, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 6, d: 2, h: 6 },
+        collisionBox: { w: 7, d: 5, h: 5 },
         overlayId: 'art-overlay',
         label: 'Rock Art',
         description: 'Art Gallery',
@@ -151,7 +152,7 @@ export const ENTITY_PLACEMENTS = [
         ...tileToWorld(15, 12),
         scale: { x: 12, y: 12, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 4, d: 3, h: 6 },
+        collisionBox: { w: 8, d: 5, h: 6 },
         overlayId: 'projects-overlay',
         label: 'Workbench',
         description: 'Projects',
@@ -162,7 +163,7 @@ export const ENTITY_PLACEMENTS = [
         spritePath: '/assets/music_player.png',
         tileCol: 18, tileRow: 14,
         ...tileToWorld(18, 14),
-        scale: { x: 6, y: 7, z: 1 },
+        scale: { x: 5, y: 4, z: 1 },
         triggerRadius: 8,
         collisionBox: { w: 2, d: 2, h: 4 },
         overlayId: 'music-overlay',
@@ -173,11 +174,11 @@ export const ENTITY_PLACEMENTS = [
     {
         id: 'contact',
         spritePath: '/assets/contact.png',
-        tileCol: 4, tileRow: 29,
-        ...tileToWorld(4, 29),
-        scale: { x: 8, y: 8, z: 1 },
+        tileCol: 4, tileRow: 28,
+        ...tileToWorld(4, 28),
+        scale: { x: 12, y: 12, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 3, d: 2, h: 4 },
+        collisionBox: { w: 4, d: 4, h: 10 },
         overlayId: 'contact-overlay',
         label: 'Birdhouse',
         description: 'Contact Info',
@@ -190,7 +191,7 @@ export const ENTITY_PLACEMENTS = [
         ...tileToWorld(11, 20),
         scale: { x: 22.5, y: 13.5, z: 1 },
         triggerRadius: 15,
-        collisionBox: { w: 8, d: 10, h: 7 },
+        collisionBox: { w: 14, d: 10, h: 6 },
         overlayId: 'travel-overlay',
         label: "Joel's Car",
         description: 'Travel Plans',

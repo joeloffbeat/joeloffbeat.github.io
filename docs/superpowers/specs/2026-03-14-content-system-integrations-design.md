@@ -70,9 +70,9 @@ Updated values in `js/config/worldMap.js`:
 **Change:** `js/ui/overlayContent.js` `contact-overlay` — add Instagram and X links.
 
 ```
-📧 hello@joel.dev
+📧 joeloffbeat@gmail.com
 🐙 github.com/joeloffbeat
-💼 LinkedIn
+💼 Linkedin (https://www.linkedin.com/in/joel-antony-xaviour-97394a140/)
 📷 instagram.com/joeloffbeat   ← new
 𝕏 x.com/joeloffbeat            ← new (replaces old Twitter entry)
 ```

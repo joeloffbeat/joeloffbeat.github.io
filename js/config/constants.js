@@ -9,15 +9,15 @@ export const LIGHTING = {
     DIRECTIONAL_POSITION: { x: 20, y: 30, z: 10 },
     SHADOW_MAP_SIZE: 2048,
     SHADOW_CAMERA_BOUNDS: {
-        top: 50, bottom: -50,
-        left: -50, right: 50,
-        near: 0.1, far: 200
+        top: 80, bottom: -80,
+        left: -80, right: 80,
+        near: 0.1, far: 300
     }
 };
 
 export const CAMERA = {
-    ISOMETRIC_DISTANCE: 40,
-    VIEW_SIZE: 30,
+    ISOMETRIC_DISTANCE: 60,
+    VIEW_SIZE: 45,
     NEAR: 1,
     FAR: 1000
 };
@@ -27,9 +27,9 @@ export const SCENE = {
 };
 
 export const CHARACTER = {
-    INITIAL_POSITION: { x: 0, y: 1, z: 11 },
+    INITIAL_POSITION: { x: 0, y: 1, z: 3 },
     SCALE: { x: 4, y: 4, z: 3 },
-    SPEED: 0.15,
+    SPEED: 0.22,
     DASH_MULTIPLIER: 2,
     COLLISION_RADIUS: 1.5,
     BOBBING: { BASE_HEIGHT: 2, SPEED: 5, AMOUNT: 0.01 },
@@ -40,12 +40,12 @@ export const CHARACTER = {
 };
 
 export const GROUND = {
-    WIDTH: 96,
-    HEIGHT: 96,
-    TILE_SIZE: 3,
+    WIDTH: 144,
+    HEIGHT: 144,
+    TILE_SIZE: 4.5,
     GRID: 32,
     CANVAS_SIZE: 2048,
-    SIDE_WALL_DEPTH: 8
+    SIDE_WALL_DEPTH: 30
 };
 
 export const RENDERER = {
@@ -77,6 +77,7 @@ export const WATER_ANIMATION = {
 
 export const TRAIL = {
     SPAWN_INTERVAL: 0.05,
-    LIFETIME: 0.3,
-    INITIAL_OPACITY: 0.3
+    LIFETIME: 0.45,
+    INITIAL_OPACITY: 0.65,
+    ALPHA_TEST: 0.05,    // must stay below INITIAL_OPACITY to avoid discarding ghost body pixels
 };

@@ -16,12 +16,11 @@ export function createCamera() {
         CAMERA.FAR
     );
     
-    // Set camera to isometric position (equal x, y, z distances)
-    camera.position.set(
-        CAMERA.ISOMETRIC_DISTANCE,
-        CAMERA.ISOMETRIC_DISTANCE,
-        CAMERA.ISOMETRIC_DISTANCE
-    );
+    // Camera sits on the Z axis (x=0) so the diamond's north vertex points
+    // straight up on screen (12 o'clock) matching the reference orientation.
+    // Y/Z ratio of 2.0/0.85 (~67°) gives a flat, surface-dominant view like the reference.
+    const d = CAMERA.ISOMETRIC_DISTANCE;
+    camera.position.set(0, d * 2.0, d * 0.85);
     
     // Ensure camera looks at the origin to maintain isometric perspective
     camera.lookAt(0, 0, 0);
