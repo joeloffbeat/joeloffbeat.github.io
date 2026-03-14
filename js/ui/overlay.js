@@ -1,4 +1,4 @@
-import { getOverlayContent } from './overlayContent.js';
+import { resolveOverlayContent } from './overlayContent.js';
 
 let _containerEl = null;
 let _titleEl = null;
@@ -23,16 +23,27 @@ export function initOverlay() {
     });
 }
 
-export function open(overlayId) {
-    const content = getOverlayContent(overlayId);
-    if (!content) return;
-
-    _titleEl.textContent = content.title;
-    _bodyEl.innerHTML = content.html;
-
+export async function open(overlayId) {
+    // Show loading indicator immediately so the user gets feedback
+    _titleEl.textContent = '';
+    _bodyEl.innerHTML = '<div class="overlay-loading">Loading...</div>';
     _containerEl.classList.remove('overlay-hidden');
     _containerEl.classList.add('overlay-visible');
     isOpen = true;
+
+    try {
+        const content = await resolveOverlayContent(overlayId);
+        if (!content) {
+            _bodyEl.innerHTML = '<div class="overlay-loading">Content not found.</div>';
+            return;
+        }
+        _titleEl.textContent = content.title;
+        _bodyEl.innerHTML = content.html;
+        if (content.onReady) content.onReady(_bodyEl);
+    } catch (err) {
+        console.error('Overlay error:', err);
+        _bodyEl.innerHTML = '<div class="overlay-loading">Failed to load content.</div>';
+    }
 }
 
 export function close() {

@@ -1,10 +1,310 @@
 /**
- * Placeholder content for each overlay. Returns { title, html }.
- * Replace with real API integrations in a future phase.
+ * Overlay content builder registry.
+ * Each builder returns { title, html, onReady? }.
+ * onReady(bodyEl) is called after innerHTML injection to wire up event listeners.
  */
 
-const OVERLAYS = {
-    'books-overlay': {
+import { artCategories, posts, travelData } from '../content/contentLoader.js';
+
+// ---------------------------------------------------------------------------
+// Art Overlay — tabs (one per _arts/ subfolder) + pagination (9 items/page)
+// ---------------------------------------------------------------------------
+
+function buildArtOverlay() {
+    if (artCategories.length === 0) {
+        return {
+            title: '\u{1F3A8} Art Gallery',
+            html: '<div class="overlay-loading">No artwork yet. Add images to _arts/ subfolders.</div>',
+        };
+    }
+
+    const tabBtns = artCategories
+        .map((cat, i) => `<button class="tab-btn${i === 0 ? ' active' : ''}" data-tab="${i}">${cat.displayName}</button>`)
+        .join('');
+
+    const panels = artCategories
+        .map((cat, i) => `
+            <div class="tab-panel${i === 0 ? '' : ' tab-panel-hidden'}" data-panel="${i}">
+                <div class="art-grid" data-category="${i}"></div>
+                <div class="pagination" data-category="${i}" style="display:none">
+                    <button class="page-btn" data-action="prev" data-cat="${i}">&#8592; Prev</button>
+                    <span class="page-info" data-category="${i}"></span>
+                    <button class="page-btn" data-action="next" data-cat="${i}">Next &#8594;</button>
+                </div>
+            </div>`)
+        .join('');
+
+    return {
+        title: '\u{1F3A8} Art Gallery',
+        html: `<div class="tab-bar">${tabBtns}</div>${panels}`,
+        onReady: (bodyEl) => {
+            const PER_PAGE = 9;
+            const pages = artCategories.map(() => 0);
+
+            function renderPage(tabIdx) {
+                const cat = artCategories[tabIdx];
+                const page = pages[tabIdx];
+                const total = cat.images.length;
+                const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+                const slice = cat.images.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
+
+                const grid = bodyEl.querySelector(`.art-grid[data-category="${tabIdx}"]`);
+                const paginationEl = bodyEl.querySelector(`.pagination[data-category="${tabIdx}"]`);
+                const pageInfo = bodyEl.querySelector(`.page-info[data-category="${tabIdx}"]`);
+
+                grid.innerHTML = slice.map(img => {
+                    const caption = img.filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+                    return `<div class="art-item" style="background-image:url(${img.url})">
+                        <div class="art-caption">${caption}</div>
+                    </div>`;
+                }).join('');
+
+                if (total > PER_PAGE) {
+                    paginationEl.style.display = 'flex';
+                    pageInfo.textContent = `Page ${page + 1} of ${totalPages}`;
+                    paginationEl.querySelector(`[data-action="prev"][data-cat="${tabIdx}"]`).disabled = page === 0;
+                    paginationEl.querySelector(`[data-action="next"][data-cat="${tabIdx}"]`).disabled = page >= totalPages - 1;
+                }
+            }
+
+            renderPage(0);
+
+            bodyEl.addEventListener('click', (e) => {
+                const tabBtn = e.target.closest('.tab-btn');
+                if (tabBtn) {
+                    const idx = parseInt(tabBtn.dataset.tab);
+                    bodyEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    tabBtn.classList.add('active');
+                    bodyEl.querySelectorAll('.tab-panel').forEach(p => p.classList.add('tab-panel-hidden'));
+                    bodyEl.querySelector(`.tab-panel[data-panel="${idx}"]`).classList.remove('tab-panel-hidden');
+                    renderPage(idx);
+                    return;
+                }
+                const pageBtn = e.target.closest('.page-btn');
+                if (pageBtn && !pageBtn.disabled) {
+                    const catIdx = parseInt(pageBtn.dataset.cat);
+                    const total = artCategories[catIdx].images.length;
+                    const totalPages = Math.ceil(total / PER_PAGE);
+                    if (pageBtn.dataset.action === 'prev' && pages[catIdx] > 0) pages[catIdx]--;
+                    if (pageBtn.dataset.action === 'next' && pages[catIdx] < totalPages - 1) pages[catIdx]++;
+                    renderPage(catIdx);
+                }
+            });
+        },
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Blog Overlay — list (5/page) + full post reader (same overlay, back button)
+// ---------------------------------------------------------------------------
+
+function buildBlogOverlay() {
+    return {
+        title: '\u{1F5A5}\uFE0F Tech Blog',
+        html: '<div class="blog-list"></div>',
+        onReady: (bodyEl) => {
+            const PER_PAGE = 5;
+            let currentPage = 0;
+
+            function renderList(page) {
+                currentPage = page;
+                const total = posts.length;
+                const totalPages = Math.max(1, Math.ceil(total / PER_PAGE));
+                const slice = posts.slice(page * PER_PAGE, (page + 1) * PER_PAGE);
+
+                const entries = slice.map(p => `
+                    <div class="blog-entry">
+                        <div class="card-title">${p.meta.title || 'Untitled'}</div>
+                        <div class="card-meta">${p.meta.date || ''}${p.meta.tags ? ' &middot; ' + p.meta.tags : ''}</div>
+                        <p class="blog-excerpt">${p.meta.excerpt || ''}</p>
+                        <button class="blog-link" data-action="read" data-slug="${p.slug}">Read more &#8594;</button>
+                    </div>`).join('');
+
+                const pagination = total > PER_PAGE ? `
+                    <div class="pagination">
+                        <button class="page-btn" data-action="prev-page" ${page === 0 ? 'disabled' : ''}>&#8592; Prev</button>
+                        <span>Page ${page + 1} of ${totalPages}</span>
+                        <button class="page-btn" data-action="next-page" ${page >= totalPages - 1 ? 'disabled' : ''}>Next &#8594;</button>
+                    </div>` : '';
+
+                bodyEl.innerHTML = `<div class="blog-list">${entries}</div>${pagination}`;
+            }
+
+            function renderPost(slug) {
+                const post = posts.find(p => p.slug === slug);
+                if (!post) { renderList(currentPage); return; }
+                bodyEl.innerHTML = `
+                    <button class="blog-back" data-action="back">&#8592; Back</button>
+                    <div class="blog-post-content">${post.html}</div>`;
+            }
+
+            // Single delegated listener — survives innerHTML replacements on bodyEl's children
+            bodyEl.addEventListener('click', (e) => {
+                const target = e.target.closest('[data-action]');
+                if (!target) return;
+                const action = target.dataset.action;
+                if (action === 'read') { renderPost(target.dataset.slug); return; }
+                if (action === 'back') { renderList(currentPage); return; }
+                const totalPages = Math.ceil(posts.length / PER_PAGE);
+                if (action === 'prev-page' && currentPage > 0) { renderList(currentPage - 1); return; }
+                if (action === 'next-page' && currentPage < totalPages - 1) { renderList(currentPage + 1); }
+            });
+
+            renderList(0);
+        },
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Travel Overlay
+// ---------------------------------------------------------------------------
+
+function buildTravelOverlay() {
+    const d = travelData;
+
+    function card(item, showBadge = false) {
+        return `
+            <div class="travel-card">
+                <span class="travel-flag">${item.flag || ''}</span>
+                <div class="travel-info">
+                    <div class="card-title">${item.place}</div>
+                    <div class="card-meta">${item.dates}</div>
+                    ${showBadge && item.status ? `<span class="travel-badge travel-badge-${item.status}">${item.status}</span>` : ''}
+                    ${item.notes ? `<div class="card-meta" style="margin-top:4px;color:#aaa">${item.notes}</div>` : ''}
+                </div>
+            </div>`;
+    }
+
+    let html = '';
+    if (d.current) html += `<div class="travel-section travel-current"><h3>\u{1F4CD} Now</h3>${card(d.current)}</div>`;
+    if (d.upcoming?.length) {
+        html += `<div class="travel-section"><h3>\u2708\uFE0F Coming Up</h3>${d.upcoming.map(i => card(i, true)).join('')}</div>`;
+    }
+    if (d.past?.length) {
+        html += `<div class="travel-section"><h3>\u{1F5FA}\uFE0F Been There</h3>${d.past.map(i => card(i)).join('')}</div>`;
+    }
+
+    return { title: '\u{1F697} Travel Plans', html };
+}
+
+// ---------------------------------------------------------------------------
+// Projects Overlay — GitHub API
+// ---------------------------------------------------------------------------
+
+const LANG_COLORS = {
+    JavaScript: '#f1e05a', TypeScript: '#3178c6', Python: '#3572A5',
+    Rust: '#dea584', Go: '#00add8', Dart: '#00b4ab', default: '#888',
+};
+
+const FALLBACK_PROJECTS = [
+    {
+        name: 'joeloffbeat.github.io',
+        description: 'Isometric pixel-art portfolio built with Three.js',
+        language: 'JavaScript',
+        stargazers_count: 0,
+        html_url: 'https://github.com/joeloffbeat/joeloffbeat.github.io',
+    },
+];
+
+let _cachedProjects = null;
+
+async function buildProjectsOverlay() {
+    let projects = FALLBACK_PROJECTS;
+    let errorHtml = '';
+
+    try {
+        if (!_cachedProjects) {
+            const res = await fetch(
+                'https://api.github.com/users/joeloffbeat/repos?sort=updated&per_page=6&type=public'
+            );
+            if (!res.ok) {
+                const rateLimited = res.status === 403 && res.headers.get('X-RateLimit-Remaining') === '0';
+                throw new Error(rateLimited ? 'rate-limit' : `HTTP ${res.status}`);
+            }
+            _cachedProjects = await res.json();
+        }
+        projects = _cachedProjects;
+    } catch (err) {
+        const msg = err.message === 'rate-limit'
+            ? 'GitHub rate limit reached. Showing cached projects.'
+            : 'Could not load live projects. Showing defaults.';
+        errorHtml = `<div class="card-meta" style="color:#f88;margin-bottom:12px">${msg}</div>`;
+    }
+
+    const cards = projects.map(p => {
+        const color = LANG_COLORS[p.language] || LANG_COLORS.default;
+        return `
+            <a class="overlay-card github-card" href="${p.html_url}" target="_blank" rel="noopener noreferrer">
+                <div class="card-info">
+                    <div class="card-title">${p.name}</div>
+                    <div class="card-meta">${p.description ? p.description.slice(0, 80) : ''}</div>
+                    ${p.language ? `
+                        <div class="project-lang">
+                            <span class="lang-dot" style="background:${color}"></span>
+                            ${p.language}
+                            <span style="margin-left:auto">\u2B50 ${p.stargazers_count}</span>
+                        </div>` : ''}
+                </div>
+            </a>`;
+    }).join('');
+
+    return {
+        title: '\u{1F527} Projects',
+        html: `
+            ${errorHtml}
+            <div class="overlay-grid">${cards}</div>
+            <div style="text-align:center;margin-top:16px">
+                <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="blog-link">
+                    View all on GitHub \u2197
+                </a>
+            </div>`,
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Music Overlay — Spotify (fetches pre-generated public/spotify-data.json)
+// ---------------------------------------------------------------------------
+
+async function buildMusicOverlay() {
+    let playlistsHtml = '';
+
+    try {
+        const res = await fetch('/spotify-data.json');
+        if (res.ok) {
+            const data = await res.json();
+            playlistsHtml = (data.playlists || []).map(p => `
+                <a class="overlay-card spotify-playlist-card" href="${p.externalUrl}" target="_blank" rel="noopener noreferrer">
+                    ${p.coverUrl
+                        ? `<img class="spotify-cover" src="${p.coverUrl}" alt="${p.name}" loading="lazy">`
+                        : `<div class="spotify-cover" style="background:#282828"></div>`}
+                    <div class="card-info">
+                        <div class="card-title">${p.name}</div>
+                        <div class="card-meta">${p.trackCount} tracks</div>
+                    </div>
+                </a>`).join('');
+        }
+    } catch (_) { /* fallback below */ }
+
+    return {
+        title: '\u{1F3B5} Music & Playlists',
+        html: `
+            <div class="overlay-section">
+                <a href="https://open.spotify.com/user/joeloffbeat" target="_blank" rel="noopener noreferrer" class="blog-link">
+                    Open Spotify Profile \u2197
+                </a>
+            </div>
+            ${playlistsHtml
+                ? `<div class="overlay-section"><h3>My Playlists</h3><div class="overlay-grid">${playlistsHtml}</div></div>`
+                : `<div class="overlay-section"><div class="card-meta">Playlist data unavailable \u2014 view them on Spotify.</div></div>`}`,
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Books Overlay — static
+// ---------------------------------------------------------------------------
+
+function buildBooksOverlay() {
+    return {
         title: '\u{1F4DA} Books & Movies',
         html: `
             <div class="overlay-grid">
@@ -15,138 +315,48 @@ const OVERLAYS = {
                             <div class="card-title">${t}</div>
                             <div class="card-meta">${'\u2605'.repeat(3 + (i % 3))}</div>
                         </div>
-                    </div>
-                `).join('')}
-            </div>
-        `
-    },
+                    </div>`).join('')}
+            </div>`,
+    };
+}
 
-    'music-overlay': {
-        title: '\u{1F3B5} Music & Playlists',
-        html: `
-            <div class="overlay-section">
-                <h3>Now Playing</h3>
-                <div class="now-playing">
-                    <div class="np-art" style="background:hsl(280, 50%, 35%)"></div>
-                    <div class="np-info">
-                        <div class="card-title">Bohemian Rhapsody</div>
-                        <div class="card-meta">Queen</div>
-                    </div>
-                </div>
-            </div>
-            <div class="overlay-section">
-                <h3>Playlists</h3>
-                <div class="overlay-grid">
-                    ${['Chill Vibes', 'Workout Mix', 'Focus Mode', 'Road Trip'].map((t, i) => `
-                        <div class="overlay-card">
-                            <div class="card-cover" style="background:hsl(${i * 80 + 180}, 50%, 35%)"></div>
-                            <div class="card-info">
-                                <div class="card-title">${t}</div>
-                                <div class="card-meta">${12 + i * 5} tracks</div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `
-    },
+// ---------------------------------------------------------------------------
+// Contact Overlay — updated with all social links
+// ---------------------------------------------------------------------------
 
-    'contact-overlay': {
+function buildContactOverlay() {
+    return {
         title: '\u{1F426} Contact Info',
         html: `
             <div class="contact-card">
                 <div class="contact-name">Joel</div>
                 <div class="contact-links">
-                    <a href="#" class="contact-link">\u{1F4E7} hello@joel.dev</a>
-                    <a href="#" class="contact-link">\u{1F419} GitHub</a>
-                    <a href="#" class="contact-link">\u{1F4BC} LinkedIn</a>
-                    <a href="#" class="contact-link">\u{1F426} Twitter</a>
+                    <a href="mailto:joeloffbeat@gmail.com" class="contact-link">\u{1F4E7} joeloffbeat@gmail.com</a>
+                    <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F419} github.com/joeloffbeat</a>
+                    <a href="https://www.linkedin.com/in/joel-antony-xaviour-97394a140/" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F4BC} LinkedIn</a>
+                    <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F4F7} instagram.com/joeloffbeat</a>
+                    <a href="https://x.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1D54F} x.com/joeloffbeat</a>
                 </div>
-            </div>
-        `
-    },
+            </div>`,
+    };
+}
 
-    'projects-overlay': {
-        title: '\u{1F527} Projects',
-        html: `
-            <div class="overlay-grid">
-                ${[
-                    { name: 'Mindscape', desc: 'Isometric pixel-art portfolio', lang: 'JavaScript' },
-                    { name: 'CLI Tool', desc: 'Developer productivity toolkit', lang: 'Rust' },
-                    { name: 'Mobile App', desc: 'Cross-platform habit tracker', lang: 'Dart' },
-                    { name: 'API Server', desc: 'RESTful backend service', lang: 'Go' },
-                ].map((p, i) => `
-                    <div class="overlay-card project-card">
-                        <div class="card-info">
-                            <div class="card-title">${p.name}</div>
-                            <div class="card-meta">${p.desc}</div>
-                            <div class="project-lang">
-                                <span class="lang-dot" style="background:hsl(${i * 90}, 60%, 50%)"></span>
-                                ${p.lang}
-                            </div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `
-    },
+// ---------------------------------------------------------------------------
+// Registry
+// ---------------------------------------------------------------------------
 
-    'art-overlay': {
-        title: '\u{1F3A8} Art Gallery',
-        html: `
-            <div class="art-grid">
-                ${Array.from({ length: 9 }, (_, i) => `
-                    <div class="art-item" style="background:hsl(${i * 40}, 45%, ${30 + i * 3}%)">
-                        <div class="art-caption">Artwork ${i + 1}</div>
-                    </div>
-                `).join('')}
-            </div>
-        `
-    },
-
-    'blog-overlay': {
-        title: '\u{1F5A5}\uFE0F Tech Blog',
-        html: `
-            <div class="blog-list">
-                ${[
-                    { title: 'Building an Isometric World with Three.js', date: '2026-03-01' },
-                    { title: 'Pixel Art Tips for Developers', date: '2026-02-15' },
-                    { title: 'Data-Driven Game Design Patterns', date: '2026-01-20' },
-                ].map(p => `
-                    <div class="blog-entry">
-                        <div class="card-title">${p.title}</div>
-                        <div class="card-meta">${p.date}</div>
-                        <p class="blog-excerpt">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt...</p>
-                        <a href="#" class="blog-link">Read more \u2192</a>
-                    </div>
-                `).join('')}
-            </div>
-        `
-    },
-
-    'travel-overlay': {
-        title: '\u{1F697} Travel Plans',
-        html: `
-            <div class="overlay-grid">
-                ${[
-                    { place: 'Tokyo, Japan', dates: 'Apr 2026' },
-                    { place: 'Iceland', dates: 'Jul 2026' },
-                    { place: 'Patagonia', dates: 'Nov 2026' },
-                    { place: 'New Zealand', dates: 'Feb 2027' },
-                ].map((d, i) => `
-                    <div class="overlay-card">
-                        <div class="card-cover" style="background:hsl(${i * 70 + 100}, 40%, 35%)"></div>
-                        <div class="card-info">
-                            <div class="card-title">${d.place}</div>
-                            <div class="card-meta">${d.dates}</div>
-                        </div>
-                    </div>
-                `).join('')}
-            </div>
-        `
-    },
+const BUILDERS = {
+    'art-overlay':      buildArtOverlay,
+    'blog-overlay':     buildBlogOverlay,
+    'travel-overlay':   buildTravelOverlay,
+    'projects-overlay': buildProjectsOverlay,
+    'music-overlay':    buildMusicOverlay,
+    'books-overlay':    buildBooksOverlay,
+    'contact-overlay':  buildContactOverlay,
 };
 
-export function getOverlayContent(overlayId) {
-    return OVERLAYS[overlayId] || null;
+export async function resolveOverlayContent(id) {
+    const builder = BUILDERS[id];
+    if (!builder) return null;
+    return builder();
 }
