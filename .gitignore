@@ -48,6 +48,3 @@ Desktop.ini
 .vite/
 
 new_assets/*
-
-# Generated Spotify data (built by scripts/prefetch-spotify.js)
-public/spotify-data.json

@@ -1,0 +1,59 @@
+{
+  "fetchedAt": "2026-03-14T12:25:59.521Z",
+  "playlists": [
+    {
+      "id": "1Cg9uI5aG5AyV8XucYeRVo",
+      "name": "1 am",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84652e7a88f596c9ffa482e56f",
+      "externalUrl": "https://open.spotify.com/playlist/1Cg9uI5aG5AyV8XucYeRVo"
+    },
+    {
+      "id": "0ZXXm4OFRZbVesTTQNJF94",
+      "name": "Mains",
+      "coverUrl": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84cb0fb88d642db125e464f52c",
+      "externalUrl": "https://open.spotify.com/playlist/0ZXXm4OFRZbVesTTQNJF94"
+    },
+    {
+      "id": "4oMf1ISgUpNurkbtg4sgLa",
+      "name": "Rizzel Riztony",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da845007655e11540941d0829370",
+      "externalUrl": "https://open.spotify.com/playlist/4oMf1ISgUpNurkbtg4sgLa"
+    },
+    {
+      "id": "6rFuvz5YJ1ya4gTTu2l2jL",
+      "name": "Loving can hurt",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da846952f89f9d5ef4d0bac18d5a",
+      "externalUrl": "https://open.spotify.com/playlist/6rFuvz5YJ1ya4gTTu2l2jL"
+    },
+    {
+      "id": "1yLgaMBPN5jlIGHWSZs5I9",
+      "name": "Violent delights",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84535cff1d2626a1a5b81b95f6",
+      "externalUrl": "https://open.spotify.com/playlist/1yLgaMBPN5jlIGHWSZs5I9"
+    },
+    {
+      "id": "70qw5Aq4QYMov18y50mt12",
+      "name": "Dagger",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84385b2d9af66d31697f076a1d",
+      "externalUrl": "https://open.spotify.com/playlist/70qw5Aq4QYMov18y50mt12"
+    },
+    {
+      "id": "1m9WACns4DKBpl4Ys73fT1",
+      "name": "We are better",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84d500a62da0d65e4801ffb954",
+      "externalUrl": "https://open.spotify.com/playlist/1m9WACns4DKBpl4Ys73fT1"
+    },
+    {
+      "id": "3qywj0squFlv6OwuICVCZ1",
+      "name": "Free fall",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da845372bf88ffce0742fbde392e",
+      "externalUrl": "https://open.spotify.com/playlist/3qywj0squFlv6OwuICVCZ1"
+    },
+    {
+      "id": "1RVhnHGLjhM8VAj2ePeBKA",
+      "name": "Cortex Fracture",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84db603a5c14b029b33e7dcd59",
+      "externalUrl": "https://open.spotify.com/playlist/1RVhnHGLjhM8VAj2ePeBKA"
+    }
+  ]
+}

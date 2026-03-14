@@ -297,7 +297,6 @@ async function buildMusicOverlay() {
                         : `<div class="spotify-cover" style="background:#282828"></div>`}
                     <div class="card-info">
                         <div class="card-title">${esc(p.name)}</div>
-                        <div class="card-meta">${esc(p.trackCount)} tracks</div>
                     </div>
                 </a>`).join('');
         }
@@ -307,7 +306,7 @@ async function buildMusicOverlay() {
         title: '\u{1F3B5} Music & Playlists',
         html: `
             <div class="overlay-section">
-                <a href="https://open.spotify.com/user/joeloffbeat" target="_blank" rel="noopener noreferrer" class="blog-link">
+                <a href="https://open.spotify.com/user/9v9n3x28qu2liz2rbmpukpqcv" target="_blank" rel="noopener noreferrer" class="blog-link">
                     Open Spotify Profile \u2197
                 </a>
             </div>
