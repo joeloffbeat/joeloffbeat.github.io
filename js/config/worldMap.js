@@ -22,11 +22,11 @@ export const NON_WALKABLE = new Set([TERRAIN.WATER, TERRAIN.STONES, TERRAIN.EDGE
 export const WORLD_MAP = [
     'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',
     'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',
-    'EERRRRRGGGGGGGGGGGGGGGGGGGGGRREE',
-    'EERRGGGGGGGGGGGGGGGGGGGGGGGGRREE',
-    'EEGGGGGGGGGGGGGGGGGGGGGGGRRRRREE',
-    'EEGGGGGGGGGGGGGGGGGGGGGGRRRRRREE',
-    'EEGGGGGGGGGGGGGGGGGGGGGGGRRRRGEE',
+    'EERRRRRGGGGGGGGGGGGBBBBBBBBBRREE',
+    'EERRGGGGGGGGGGGGGGGGBBBBBBBBBREE',
+    'EEGGGGGGGGGGGGGGGGBGGBBBBBBBBBEE',
+    'EEGGGGGGGGGGGGGGGGGBBBBBBBBBBBEE',
+    'EEGGGGGGGGGGGGGGGGGGGGGGGBBBBGEE',
     'EEGGGGGGGGGGGGGGGGGGGGGGGGGGGGEE',
     'EEGGGGGGGGGBBBBBBGGGGGGGGGGGGGEE',
     'EEGGGGGGGGGBBBBBBGGGGGGGGGGGGGEE',
@@ -41,9 +41,9 @@ export const WORLD_MAP = [
     'EEGGGGGGGGGGGGGGGGGGGGSSSGGGGGEE',
     'EEGGGGGGBBBBBBBBBBGGGGGGGGGGGGEE',
     'EEGGGGGGBBBBBBBBBBBGGGGGGGGGGGEE',
-    'EEGGGGGGGBBBBBBBBBBGGGGGGGGGGGEE',
-    'EEGGGGGGGBBBBBBBBGGGGGGGGGGGGGEE',
-    'EEGGGGGGGGGBBBBBGGGGGGGGGGGGGREE',
+    'EEGGGGGGGBBBBBBBBBBGGGBBGBBBGGEE',
+    'EEGGGGGGGBBBBBBBBBBBBBBBBBBBBBEE',
+    'EEGGGGGGGGGBBBBBGGGGGGBGGBGGBREE',
     'EEGGGGGGGGGGGGGGGGGGGGGGGGGGGGEE',
     'EEGGGGGGGGGGGGGGGGGGGGGGGGGRRGEE',
     'EEGGGGGGGGGGGGGGGGGGGGGGGGRRRGEE',
@@ -57,7 +57,7 @@ export const WORLD_MAP = [
 // --- Sprite Pools (all .png files per directory) ---
 
 function grassPaths() {
-    const ids = [22,23,24,27,28,29,30,31,32,33,34,35,36,37,38,39,40];
+    const ids = [22,23,24,37,38,39];
     return ids.map(n => `/assets/grass/tile_${String(n).padStart(3,'0')}.png`);
 }
 
@@ -73,7 +73,7 @@ function rockPaths() {
 
 function waterPaths() {
     const ids = [];
-    for (let i = 86; i <= 114; i++) ids.push(i);
+    for (let i = 104; i <= 114; i++) ids.push(i);
     return ids.map(n => `/assets/water/tile_${String(n).padStart(3,'0')}.png`);
 }
 
@@ -89,25 +89,30 @@ export const TILE_POOLS = {
     [TERRAIN.ROCK]: rockPaths(),
     [TERRAIN.WATER]: waterPaths(),
     [TERRAIN.STONES]: stonesPaths(),
-    [TERRAIN.EDGE]: brickPaths(), // reused, drawn with alpha=0.7
+    [TERRAIN.EDGE]: rockPaths(), // drawn with alpha=0.7
 };
 
 // --- Entity Placement Configs ---
 
-const TILE_SIZE = 3;
-function tileToWorld(col, row) {
-    return { x: (col - 16) * TILE_SIZE, z: (row - 16) * TILE_SIZE };
+// Isometric tile-to-world mapping.
+// Canvas pos: cx=(col-row)*32+1024, cy=(col+row)*16+528
+// Canvas→world: worldCoord = (canvasCoord - 1024) * 144/2048
+export function tileToWorld(col, row) {
+    return {
+        x: (col - row) * 2.25,
+        z: (col + row) * 1.125 - 34.875
+    };
 }
 
 export const ENTITY_PLACEMENTS = [
     {
         id: 'bookshelf',
         spritePath: '/assets/book_shelf.png',
-        tileCol: 5, tileRow: 3,
-        ...tileToWorld(5, 3),
-        scale: { x: 7, y: 8, z: 1 },
+        tileCol: 6.5, tileRow: 4.5,
+        ...tileToWorld(6.5, 4.5),
+        scale: { x: 14, y: 16, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 3, d: 2, h: 8 },
+        collisionBox: { w: 5, d: 2, h: 8 },
         overlayId: 'books-overlay',
         label: 'Bookshelf',
         description: 'Books & Movies',
@@ -116,11 +121,11 @@ export const ENTITY_PLACEMENTS = [
     {
         id: 'server',
         spritePath: '/assets/server.png',
-        tileCol: 10, tileRow: 3,
-        ...tileToWorld(10, 3),
-        scale: { x: 6, y: 8, z: 1 },
+        tileCol: 15, tileRow: 4,
+        ...tileToWorld(15, 4),
+        scale: { x: 12, y: 16, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 2, d: 2, h: 8 },
+        collisionBox: { w: 4, d: 2, h: 8 },
         overlayId: 'blog-overlay',
         label: 'Server',
         description: 'Tech Blog',
@@ -129,11 +134,11 @@ export const ENTITY_PLACEMENTS = [
     {
         id: 'rockart',
         spritePath: '/assets/rock_art.png',
-        tileCol: 26, tileRow: 5,
-        ...tileToWorld(26, 5),
-        scale: { x: 8, y: 6, z: 1 },
+        tileCol: 25, tileRow: 5,
+        ...tileToWorld(25, 5),
+        scale: { x: 16, y: 12, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 4, d: 3, h: 6 },
+        collisionBox: { w: 6, d: 2, h: 6 },
         overlayId: 'art-overlay',
         label: 'Rock Art',
         description: 'Art Gallery',
@@ -142,11 +147,11 @@ export const ENTITY_PLACEMENTS = [
     {
         id: 'workbench',
         spritePath: '/assets/workbench.png',
-        tileCol: 13, tileRow: 10,
-        ...tileToWorld(13, 10),
-        scale: { x: 8, y: 5, z: 1 },
+        tileCol: 15, tileRow: 12,
+        ...tileToWorld(15, 12),
+        scale: { x: 12, y: 12, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 4, d: 2, h: 5 },
+        collisionBox: { w: 4, d: 3, h: 6 },
         overlayId: 'projects-overlay',
         label: 'Workbench',
         description: 'Projects',
@@ -159,7 +164,7 @@ export const ENTITY_PLACEMENTS = [
         ...tileToWorld(18, 14),
         scale: { x: 6, y: 7, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 2, d: 2, h: 7 },
+        collisionBox: { w: 2, d: 2, h: 4 },
         overlayId: 'music-overlay',
         label: 'Gramophone',
         description: 'Music & Playlists',
@@ -168,11 +173,11 @@ export const ENTITY_PLACEMENTS = [
     {
         id: 'contact',
         spritePath: '/assets/contact.png',
-        tileCol: 7, tileRow: 15,
-        ...tileToWorld(7, 15),
-        scale: { x: 6, y: 8, z: 1 },
+        tileCol: 4, tileRow: 29,
+        ...tileToWorld(4, 29),
+        scale: { x: 8, y: 8, z: 1 },
         triggerRadius: 8,
-        collisionBox: { w: 2, d: 2, h: 8 },
+        collisionBox: { w: 3, d: 2, h: 4 },
         overlayId: 'contact-overlay',
         label: 'Birdhouse',
         description: 'Contact Info',
@@ -185,10 +190,51 @@ export const ENTITY_PLACEMENTS = [
         ...tileToWorld(11, 20),
         scale: { x: 22.5, y: 13.5, z: 1 },
         triggerRadius: 15,
-        collisionBox: { w: 8, d: 12, h: 12 },
+        collisionBox: { w: 8, d: 10, h: 7 },
         overlayId: 'travel-overlay',
         label: "Joel's Car",
         description: 'Travel Plans',
         icon: '\u{1F697}',
     },
+];
+
+export const OBJECT_LAYERS = [
+    {
+        type: TERRAIN.ROCK,
+        height: 3,
+        map: [
+            'XXXXRXXXXXXXXXXXXXXXXXXXXXXRXXXX', // row 0
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 1
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 2
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 3
+            'RXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXR', // row 4
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 5
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 6
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 7
+            'RXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXR', // row 8
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 9
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 10
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 11
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 12
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 13
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 14
+            'RXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXR', // row 15
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 16
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 17
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 18
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 19
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 20
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 21
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 22
+            'RXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXR', // row 23
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 24
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 25
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 26
+            'RXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXR', // row 27
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 28
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 29
+            'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX', // row 30
+            'XXXXRXXXXXXXXXXXXXXXXXXXXXXRXXXX', // row 31
+        ]
+    }
 ];
