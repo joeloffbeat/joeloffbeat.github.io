@@ -19,7 +19,7 @@ This spec covers 12 features across four categories for the Mindscape isometric 
 
 **Fix:** Recalculate collision boxes using the formula:
 - `w` ≈ 35% of `scale.x` (physical X-axis footprint of a billboarded sprite)
-- `d` ≈ 20% of `scale.x` (Z-axis depth footprint)
+- `d` ≈ 20% of `scale.x` (Z-axis depth footprint). Exception: the car uses `d = 10` (44% of scale.x) because its sprite represents a physically deep 3D object, not a flat billboard.
 - `h` ≈ 50–55% of `scale.y` (physical height)
 
 Updated values in `js/config/worldMap.js`:
@@ -74,8 +74,7 @@ Updated values in `js/config/worldMap.js`:
 🐙 github.com/joeloffbeat
 💼 LinkedIn
 📷 instagram.com/joeloffbeat   ← new
-𝕏 x.com/joeloffbeat            ← new
-🐦 Twitter (existing)
+𝕏 x.com/joeloffbeat            ← new (replaces old Twitter entry)
 ```
 
 All links open in `_blank` with `rel="noopener noreferrer"`.
@@ -86,7 +85,7 @@ All links open in `_blank` with `rel="noopener noreferrer"`.
 
 ### 3a. Folder Structure
 
-Three content folders at the **project root**. Their location outside `src/` makes them easy for the author to navigate and edit without touching source code.
+Three content folders at the **project root**. Their location outside `js/` makes them easy for the author to navigate and edit without touching source code.
 
 ```
 _posts/
@@ -102,21 +101,23 @@ _travel/
 
 ### 3b. Content Loader
 
-**New file:** `src/content/contentLoader.js`
+**New file:** `js/content/contentLoader.js`
 
-Single module that runs all `import.meta.glob` calls (must be string literals — Vite resolves at build time). Exports structured data consumed by overlay builders.
+Single module that runs all `import.meta.glob` calls (must be string literals — Vite resolves at build time). Glob paths beginning with `/` are resolved relative to the Vite project root, matching `_posts/`, `_arts/`, `_travel/` at the repository root. Exports structured data consumed by overlay builders.
 
 ```js
 // Art: folder → images map
+// { '/_arts/digital-art/work1.jpg': '/hashed-url', ... }
 const _artFiles = import.meta.glob(
   '/_arts/**/*.{jpg,png,jpeg,gif,webp}',
   { eager: true, query: '?url', import: 'default' }
 );
 
 // Posts: markdown strings
+// Uses query: '?raw' (Vite 5+ syntax; as: 'raw' is removed in Vite 5+)
 const _postMd = import.meta.glob(
   '/_posts/**/index.md',
-  { eager: true, as: 'raw' }
+  { eager: true, query: '?raw', import: 'default' }
 );
 
 // Post images: slug → filename → resolved URL
@@ -152,7 +153,7 @@ Parses into `{ meta: { title, date, tags, excerpt, cover }, body: string }`.
 
 ### 3d. Markdown Rendering
 
-**Dependency:** `marked` (add to `package.json`). Used to convert markdown body to HTML. Post-render, all `<img src="./filename">` attributes in the rendered HTML are replaced with their Vite-resolved URL from the `_postImgs` map for that slug.
+**Dependency:** `marked` — add to `dependencies` in `package.json` (runtime browser code, not a build-only tool). Used to convert markdown body to HTML. Post-render, all `<img src="./filename">` attributes in the rendered HTML are replaced with their Vite-resolved URL from the `_postImgs` map for that slug.
 
 ---
 
@@ -161,17 +162,27 @@ Parses into `{ meta: { title, date, tags, excerpt, cover }, body: string }`.
 ### 4a. `overlay.js`
 
 `open(overlayId)` becomes `async`. Sequence:
-1. Add `overlay-loading` class to body (shows "Loading..." text)
-2. `await resolveOverlayContent(overlayId)`
-3. Set `titleEl.textContent` and `bodyEl.innerHTML`
-4. Call `content.onReady(bodyEl)` if present
-5. Remove loading class, show modal
 
-No other changes to `overlay.js`.
+1. Inject `<div class="overlay-loading">Loading...</div>` into `.overlay-body` (not a class on `<body>`)
+2. Show modal (add `overlay-visible` class) so the loading indicator is visible
+3. `await resolveOverlayContent(overlayId)`
+4. Set `titleEl.textContent` and replace `bodyEl.innerHTML` with content HTML
+5. Call `content.onReady(bodyEl)` if present
+
+**Call site update in `App.js`:** The `openOverlay` wrapper passed to `initInteraction` is a plain sync callback. Since it now calls an async function, it must handle rejections explicitly:
+
+```js
+// js/core/App.js — initUI()
+initInteraction(this.entities, toastEl, (overlayId) => {
+    openOverlay(overlayId).catch(err => console.error('Overlay error:', err));
+});
+```
+
+Without this `.catch()`, a failed async content builder produces an unhandled promise rejection.
 
 ### 4b. `overlayContent.js`
 
-Rewritten as an **async builder registry**. Each overlay has its own builder function. Static overlays return synchronously; API-backed overlays return a Promise.
+Rewritten as an **async builder registry**. Each overlay has its own builder function. Static overlays return synchronously (coerced to Promise by `async`); API-backed overlays return a Promise.
 
 ```js
 const BUILDERS = {
@@ -179,8 +190,8 @@ const BUILDERS = {
   'blog-overlay':     buildBlogOverlay,     // sync
   'travel-overlay':   buildTravelOverlay,   // sync
   'projects-overlay': buildProjectsOverlay, // async — GitHub API
-  'music-overlay':    buildMusicOverlay,    // async — Spotify API
-  'books-overlay':    buildBooksOverlay,    // sync — unchanged
+  'music-overlay':    buildMusicOverlay,    // async — Spotify prefetch JSON
+  'books-overlay':    buildBooksOverlay,    // sync — unchanged content
   'contact-overlay':  buildContactOverlay,  // sync — updated links
 };
 
@@ -193,7 +204,7 @@ export async function resolveOverlayContent(id) {
 
 **Return type:** `{ title: string, html: string, onReady?: (bodyEl: HTMLElement) => void }`
 
-`onReady` is used to wire interactive elements (tab buttons, pagination buttons, blog "read more" links) after `innerHTML` injection, avoiding inline `onclick` attributes.
+`onReady` is optional. Its absence is handled in `overlay.js` with an `if (content.onReady)` guard. `onReady` is used to wire interactive elements (tab buttons, pagination buttons, blog "read more" links) after `innerHTML` injection, avoiding inline `onclick` attributes.
 
 ---
 
@@ -223,7 +234,7 @@ Tab state and pagination state are managed in a closure inside `onReady`.
 ← Prev    Page 1 of 3    Next →
 ```
 
-Controls hidden if total items ≤ 9. Rendered as a `<div class="pagination">` inside each tab panel. `onReady` attaches `click` listeners to buttons via `data-action="prev"` / `data-action="next"` attributes.
+Controls hidden if total items ≤ 9. Rendered as a `<div class="pagination">` inside each tab panel. `onReady` attaches `click` listeners to buttons via `data-action="prev"` / `data-action="next"` attributes on each panel's pagination div.
 
 ### Image display
 Each art item is a `<div class="art-item">` with `background-image: url(...)`, `aspect-ratio: 1`, and a caption showing the filename (without extension, underscores replaced with spaces).
@@ -240,21 +251,22 @@ Posts sorted newest-first. 5 posts per page. Each entry:
 - `Read more →` button with `data-post-slug` attribute
 
 ### Full reader view
-Clicking `Read more →` replaces `bodyEl.innerHTML` with:
+Clicking `Read more →` calls a `renderPost(slug)` function defined inside the `onReady` closure. This replaces `bodyEl.innerHTML` with:
+
 ```html
-<button class="blog-back">← Back</button>
+<button class="blog-back" data-action="back">← Back</button>
 <div class="blog-post-content">
   {rendered markdown HTML}
 </div>
 ```
 
-`Back` button re-renders the list view at the previously active page. No new overlay opened — state managed entirely in the `onReady` closure.
+`Back` button click calls `renderList(savedPage)` — a `renderList(page)` function also defined inside the same `onReady` closure. `renderList` re-renders the list HTML into `bodyEl` **and re-attaches all pagination + read-more event listeners** via a single `bodyEl.addEventListener('click', handler)` delegated listener. Using event delegation (one listener on `bodyEl` rather than per-button) means listeners survive `innerHTML` replacements because the delegation is re-registered each time `renderList` or `renderPost` is called.
 
 ### Image resolution
 After rendering markdown to HTML, scan all `<img>` tags. For each `src` value like `./cover.png`, look up the resolved URL in `post.imageUrls['cover.png']` and replace the `src`. Images without a matching entry are left as-is.
 
 ### Markdown styling
-Add CSS classes for `.blog-post-content` prose styling: `h1`–`h3` headers in gold, `p` with readable line-height, `code`/`pre` blocks in monospace with dark background, `img` at 100% max-width.
+Add CSS to `.blog-post-content`: `h1`–`h3` headers in gold, `p` with readable line-height, `code`/`pre` blocks in monospace with dark background, `img` at 100% max-width.
 
 ---
 
@@ -295,7 +307,11 @@ Three sections stacked vertically: **Now**, **Coming Up**, **Been There**. Cards
 
 **Endpoint:** `GET https://api.github.com/users/joeloffbeat/repos?sort=updated&per_page=6&type=public`
 
-**Caching:** Module-level variable. After first successful fetch, subsequent overlay opens use cached data (no re-fetch).
+**Caching:** Module-level variable. After first successful fetch, subsequent overlay opens use cached data (no re-fetch within the session).
+
+**Rate limit handling:** GitHub's unauthenticated API allows 60 requests/hour per IP. On error, inspect the response status:
+- HTTP 403 with `X-RateLimit-Remaining: 0` → show "GitHub rate limit reached. View all projects at github.com/joeloffbeat"
+- Other errors → show generic fallback list
 
 **Card layout:**
 - Repo name — links to `https://github.com/joeloffbeat/{name}` (opens `_blank`)
@@ -304,7 +320,7 @@ Three sections stacked vertically: **Now**, **Coming Up**, **Been There**. Cards
 - ⭐ star count
 - `Open ↗` button
 
-**Loading state:** "Fetching projects..." displayed while awaiting.
+**Loading state:** Inject `<div class="overlay-loading">Fetching projects...</div>` before the await, replace after.
 
 **Error state:** Fallback to a hardcoded list of 3 key projects + "View all on GitHub ↗" link.
 
@@ -312,27 +328,83 @@ Three sections stacked vertically: **Now**, **Coming Up**, **Been There**. Cards
 
 ## 9. Music Overlay — Spotify Integration
 
+### Architecture: Build-time prefetch (no browser CORS issue)
+
+The Spotify Accounts token endpoint (`POST https://accounts.spotify.com/api/token`) does **not** include CORS headers and cannot be called from a browser. Using Client Credentials from browser code always fails with a CORS error.
+
+**Solution:** A Node.js prebuild script runs `POST /api/token` server-side (Node has no CORS restrictions), fetches the user's public playlists, and writes a static `public/spotify-data.json`. The browser fetches this same-origin JSON file — no credentials, no CORS.
+
 ### Credentials
-Stored in `.env.local` (gitignored). Never committed to git.
+
+Stored in `.env.local` at the project root (gitignored). Read by the Node prebuild script only — **never embedded in the browser bundle**.
 
 ```
-VITE_SPOTIFY_CLIENT_ID=77a00f0d00114cab91d5bf3985e700f3
-VITE_SPOTIFY_CLIENT_SECRET=9aa4d72af6474e90b944cdea926739ad
+SPOTIFY_CLIENT_ID=77a00f0d00114cab91d5bf3985e700f3
+SPOTIFY_CLIENT_SECRET=9aa4d72af6474e90b944cdea926739ad
 ```
 
-> **Security note:** `VITE_` prefixed variables are embedded in the compiled JS bundle, which is publicly accessible on GitHub Pages. For a personal portfolio showing only public Spotify data (no user PII, no financial data), this is an accepted minor risk. The Spotify app secret can be rotated at any time via the Spotify Developer Dashboard if needed.
+Note: No `VITE_` prefix. These are Node-only variables, not Vite client variables.
 
-### Runtime flow
-1. `POST https://accounts.spotify.com/api/token` with `grant_type=client_credentials` and `Authorization: Basic base64(clientId:clientSecret)` — returns `access_token`
-2. Token cached in module memory (valid 1 hour; no refresh implemented — re-fetched on next overlay open if expired)
-3. `GET https://api.spotify.com/v1/users/joeloffbeat/playlists?limit=6` with `Authorization: Bearer {token}`
-4. Render playlist cards
+For CI/CD (GitHub Actions): set `SPOTIFY_CLIENT_ID` and `SPOTIFY_CLIENT_SECRET` as repository secrets.
+
+### Prebuild script — `scripts/prefetch-spotify.js`
+
+Runs before `vite build`. Uses `dotenv` to load `.env.local`. Writes output to `public/spotify-data.json`.
+
+```
+Flow:
+1. Load .env.local via dotenv.config({ path: '.env.local' })
+   (dotenv default reads .env; the path option must be explicit for .env.local)
+2. POST accounts.spotify.com/api/token → access_token
+3. GET api.spotify.com/v1/users/joeloffbeat/playlists?limit=6
+4. Write { playlists: [...], fetchedAt: ISO-date } to public/spotify-data.json
+5. Exit 0 on success, exit 0 with warning on failure (build continues)
+```
+
+Script exits with code 0 even on failure so it never blocks the build. If the file is not generated, the overlay shows the fallback.
+
+### `package.json` scripts update
+
+```json
+"prebuild": "node scripts/prefetch-spotify.js",
+"build": "vite build"
+```
+
+`prebuild` runs automatically before `build` in npm lifecycle. Also add a standalone script:
+```json
+"prefetch": "node scripts/prefetch-spotify.js"
+```
+
+For dev workflow: run `npm run prefetch` once to generate the file, then `npm run dev`.
+
+### Generated file — `public/spotify-data.json`
+
+Added to `.gitignore` (generated artifact). Structure:
+```json
+{
+  "fetchedAt": "2026-03-14T12:00:00Z",
+  "playlists": [
+    {
+      "id": "...",
+      "name": "Playlist Name",
+      "trackCount": 24,
+      "coverUrl": "https://i.scdn.co/...",
+      "externalUrl": "https://open.spotify.com/playlist/..."
+    }
+  ]
+}
+```
 
 ### Overlay layout
+
 - **Header link:** "Open Spotify Profile ↗" → `https://open.spotify.com/user/joeloffbeat`
 - **Playlist grid:** cover image (80×80px), playlist name, track count, `Open ↗` link
 
-**Fallback (API error):** Display profile link button only with a message "View playlists on Spotify".
+**Fallback (fetch error or missing JSON):** Display profile link button only with a message "View playlists on Spotify".
+
+### Dependencies
+
+Add `dotenv` to `devDependencies` (Node-only, not bundled by Vite).
 
 ---
 
@@ -379,13 +451,13 @@ Added to `index.html` `<style>` block:
 | `.page-btn` | Prev/Next button, disabled state |
 | `.blog-back` | Back button for post reader |
 | `.blog-post-content` | Prose wrapper for rendered markdown |
-| `.blog-post-content h1-h3` | Header styles |
+| `.blog-post-content h1–h3` | Header styles (gold colour) |
 | `.blog-post-content img` | Full-width images in posts |
-| `.blog-post-content pre` | Code block style |
+| `.blog-post-content pre` | Code block style (monospace, dark bg) |
 | `.travel-section` | Labelled section (Now / Coming Up / Been There) |
 | `.travel-card` | Travel destination card |
 | `.travel-badge` | Status badge (confirmed / exploring) |
-| `.overlay-loading` | Loading state text in overlay body |
+| `.overlay-loading` | Centred loading indicator injected into `.overlay-body` |
 | `.github-card` | GitHub project card (extends `.overlay-card`) |
 | `.spotify-playlist-card` | Spotify playlist card |
 | `.spotify-cover` | 80×80 playlist cover image |
@@ -397,18 +469,19 @@ Added to `index.html` `<style>` block:
 | File | Change Type | Notes |
 |---|---|---|
 | `js/config/worldMap.js` | Edit | 7 collision box updates |
-| `js/core/App.js` | Edit | `spawnGhost()` — canvas snapshot |
-| `index.html` | Edit | Wider overlay, new CSS classes |
-| `js/ui/overlay.js` | Edit | Async `open()`, loading state, `onReady` call |
+| `js/core/App.js` | Edit | `spawnGhost()` canvas snapshot + `.catch()` in overlay call |
+| `index.html` | Edit | Wider overlay + new CSS classes |
+| `js/ui/overlay.js` | Edit | Async `open()`, loading element injection, `onReady` call |
 | `js/ui/overlayContent.js` | Rewrite | Async builder registry |
-| `src/content/contentLoader.js` | New | All `import.meta.glob` calls |
+| `js/content/contentLoader.js` | New | All `import.meta.glob` calls, frontmatter parser |
+| `scripts/prefetch-spotify.js` | New | Node prebuild script for Spotify data |
 | `_posts/github-io-guide/index.md` | New | Sample blog post |
 | `_posts/github-io-guide/cover.png` | New | Placeholder cover image |
 | `_arts/` | New | Placeholder folder structure |
 | `_travel/travel.json` | New | Travel data (placeholder values) |
 | `.env.local` | New | Spotify credentials (gitignored) |
-| `.gitignore` | Edit | Add `.env.local` |
-| `package.json` | Edit | Add `marked` dependency |
+| `.gitignore` | Edit | Add `.env.local` and `public/spotify-data.json` (both are generated/secret artifacts that must not be committed) |
+| `package.json` | Edit | Add `marked` (dependencies), `dotenv` (devDependencies), `prebuild` + `prefetch` scripts |
 
 ---
 
