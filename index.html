@@ -100,7 +100,7 @@
             background: #1a1a2e;
             border: 3px solid #444;
             border-radius: 4px;
-            width: min(90vw, 800px);
+            width: min(92vw, 1100px);
             max-height: 85vh;
             display: flex;
             flex-direction: column;
@@ -272,6 +272,134 @@
             font-size: clamp(6px, 0.9vw, 9px);
         }
         .blog-link:hover { color: #7ec8e3; }
+
+        /* --- Tabs --- */
+        .tab-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tab-btn {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            color: #888;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(6px, 1vw, 9px);
+            border-radius: 3px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .tab-btn:hover { border-color: #4a9eff; color: #ccc; }
+        .tab-btn.active { background: #0f3460; border-color: #4a9eff; color: #fff; }
+        .tab-panel-hidden { display: none; }
+
+        /* --- Pagination --- */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: clamp(6px, 1vw, 9px);
+            color: #888;
+        }
+        .page-btn {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            color: #4a9eff;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(6px, 0.9vw, 8px);
+            border-radius: 3px;
+        }
+        .page-btn:disabled { color: #444; border-color: #1a1a2e; cursor: default; }
+        .page-btn:not(:disabled):hover { background: #0f3460; }
+
+        /* --- Blog reader --- */
+        .blog-back {
+            background: none;
+            border: 2px solid #4a9eff;
+            color: #4a9eff;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(6px, 0.9vw, 9px);
+            border-radius: 3px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+        .blog-back:hover { background: #0f3460; }
+        .blog-post-content { line-height: 1.8; font-size: clamp(7px, 1.2vw, 11px); }
+        .blog-post-content h1,
+        .blog-post-content h2,
+        .blog-post-content h3 { color: #ffd700; margin: 16px 0 8px; font-size: clamp(9px, 1.4vw, 13px); }
+        .blog-post-content p { margin: 8px 0; color: #ddd; }
+        .blog-post-content img { max-width: 100%; border-radius: 4px; margin: 12px 0; display: block; }
+        .blog-post-content pre {
+            background: #0d0d1a;
+            border: 1px solid #2a3a5e;
+            border-radius: 4px;
+            padding: 12px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: clamp(7px, 1.1vw, 10px);
+            color: #e0e0e0;
+            margin: 12px 0;
+        }
+        .blog-post-content code { background: #0d0d1a; padding: 2px 4px; border-radius: 2px; font-family: monospace; font-size: 0.9em; }
+        .blog-post-content pre code { background: none; padding: 0; }
+        .blog-post-content a { color: #4a9eff; }
+        .blog-post-content ul,
+        .blog-post-content ol { margin: 8px 0; padding-left: 24px; }
+        .blog-post-content li { margin: 4px 0; }
+        .blog-post-content blockquote { border-left: 3px solid #4a9eff; padding-left: 12px; color: #888; margin: 12px 0; }
+
+        /* --- Travel --- */
+        .travel-section { margin-bottom: 20px; }
+        .travel-section h3 { font-size: clamp(8px, 1.3vw, 12px); color: #4a9eff; margin-bottom: 10px; }
+        .travel-current .travel-card { border-color: #2d6a2d; }
+        .travel-card {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            border-radius: 4px;
+            padding: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .travel-flag { font-size: 24px; line-height: 1; flex-shrink: 0; }
+        .travel-info { flex: 1; }
+        .travel-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: clamp(5px, 0.7vw, 7px);
+            margin-top: 4px;
+        }
+        .travel-badge-confirmed { background: #1a4a1a; color: #6cd66c; border: 1px solid #2d6a2d; }
+        .travel-badge-exploring { background: #3a2a00; color: #ffa500; border: 1px solid #6a4a00; }
+
+        /* --- GitHub card --- */
+        .github-card { text-decoration: none; display: block; transition: border-color 0.2s; }
+        .github-card:hover { border-color: #4a9eff; }
+
+        /* --- Spotify --- */
+        .spotify-playlist-card {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .spotify-playlist-card:hover { border-color: #1db954; }
+        .spotify-cover { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+
+        /* --- Loading state --- */
+        .overlay-loading { text-align: center; padding: 32px; color: #888; font-size: clamp(7px, 1.1vw, 10px); }
     </style>
 </head>
 <body>
