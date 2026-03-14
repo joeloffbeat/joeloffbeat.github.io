@@ -7,6 +7,7 @@ let _closeBtn = null;
 let _backdropEl = null;
 
 export let isOpen = false;
+let _openId = 0;
 
 export function initOverlay() {
     _containerEl = document.getElementById('overlay-container');
@@ -24,8 +25,13 @@ export function initOverlay() {
 }
 
 export async function open(overlayId) {
+    const id = ++_openId;
     // Show loading indicator immediately so the user gets feedback
     _titleEl.textContent = '';
+    // Replace _bodyEl with a fresh clone to remove any accumulated event listeners
+    const fresh = _bodyEl.cloneNode(false);
+    _bodyEl.parentNode.replaceChild(fresh, _bodyEl);
+    _bodyEl = fresh;
     _bodyEl.innerHTML = '<div class="overlay-loading">Loading...</div>';
     _containerEl.classList.remove('overlay-hidden');
     _containerEl.classList.add('overlay-visible');
@@ -33,6 +39,7 @@ export async function open(overlayId) {
 
     try {
         const content = await resolveOverlayContent(overlayId);
+        if (id !== _openId) return; // a newer open() call superseded this one
         if (!content) {
             _bodyEl.innerHTML = '<div class="overlay-loading">Content not found.</div>';
             return;

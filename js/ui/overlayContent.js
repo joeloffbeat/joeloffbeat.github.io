@@ -6,6 +6,24 @@
 
 import { artCategories, posts, travelData } from '../content/contentLoader.js';
 
+// HTML-escape a string before injecting it into innerHTML
+function esc(str) {
+    return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+// Only allow https:// and mailto: URLs in href/src attributes
+function safeHref(url) {
+    try {
+        const u = new URL(url);
+        if (u.protocol === 'https:' || u.protocol === 'mailto:') return url;
+    } catch (_) { /* fall through */ }
+    return '#';
+}
+
 // ---------------------------------------------------------------------------
 // Art Overlay — tabs (one per _arts/ subfolder) + pagination (9 items/page)
 // ---------------------------------------------------------------------------
@@ -114,10 +132,10 @@ function buildBlogOverlay() {
 
                 const entries = slice.map(p => `
                     <div class="blog-entry">
-                        <div class="card-title">${p.meta.title || 'Untitled'}</div>
-                        <div class="card-meta">${p.meta.date || ''}${p.meta.tags ? ' &middot; ' + p.meta.tags : ''}</div>
-                        <p class="blog-excerpt">${p.meta.excerpt || ''}</p>
-                        <button class="blog-link" data-action="read" data-slug="${p.slug}">Read more &#8594;</button>
+                        <div class="card-title">${esc(p.meta.title || 'Untitled')}</div>
+                        <div class="card-meta">${esc(p.meta.date || '')}${p.meta.tags ? ' &middot; ' + esc(p.meta.tags) : ''}</div>
+                        <p class="blog-excerpt">${esc(p.meta.excerpt || '')}</p>
+                        <button class="blog-link" data-action="read" data-slug="${esc(p.slug)}">Read more &#8594;</button>
                     </div>`).join('');
 
                 const pagination = total > PER_PAGE ? `
@@ -165,12 +183,12 @@ function buildTravelOverlay() {
     function card(item, showBadge = false) {
         return `
             <div class="travel-card">
-                <span class="travel-flag">${item.flag || ''}</span>
+                <span class="travel-flag">${esc(item.flag || '')}</span>
                 <div class="travel-info">
-                    <div class="card-title">${item.place}</div>
-                    <div class="card-meta">${item.dates}</div>
-                    ${showBadge && item.status ? `<span class="travel-badge travel-badge-${item.status}">${item.status}</span>` : ''}
-                    ${item.notes ? `<div class="card-meta" style="margin-top:4px;color:#aaa">${item.notes}</div>` : ''}
+                    <div class="card-title">${esc(item.place)}</div>
+                    <div class="card-meta">${esc(item.dates)}</div>
+                    ${showBadge && item.status ? `<span class="travel-badge travel-badge-${esc(item.status)}">${esc(item.status)}</span>` : ''}
+                    ${item.notes ? `<div class="card-meta" style="margin-top:4px;color:#aaa">${esc(item.notes)}</div>` : ''}
                 </div>
             </div>`;
     }
@@ -234,14 +252,14 @@ async function buildProjectsOverlay() {
     const cards = projects.map(p => {
         const color = LANG_COLORS[p.language] || LANG_COLORS.default;
         return `
-            <a class="overlay-card github-card" href="${p.html_url}" target="_blank" rel="noopener noreferrer">
+            <a class="overlay-card github-card" href="${safeHref(p.html_url)}" target="_blank" rel="noopener noreferrer">
                 <div class="card-info">
-                    <div class="card-title">${p.name}</div>
-                    <div class="card-meta">${p.description ? p.description.slice(0, 80) : ''}</div>
+                    <div class="card-title">${esc(p.name)}</div>
+                    <div class="card-meta">${p.description ? esc(p.description.slice(0, 80)) : ''}</div>
                     ${p.language ? `
                         <div class="project-lang">
                             <span class="lang-dot" style="background:${color}"></span>
-                            ${p.language}
+                            ${esc(p.language)}
                             <span style="margin-left:auto">\u2B50 ${p.stargazers_count}</span>
                         </div>` : ''}
                 </div>
@@ -273,13 +291,13 @@ async function buildMusicOverlay() {
         if (res.ok) {
             const data = await res.json();
             playlistsHtml = (data.playlists || []).map(p => `
-                <a class="overlay-card spotify-playlist-card" href="${p.externalUrl}" target="_blank" rel="noopener noreferrer">
+                <a class="overlay-card spotify-playlist-card" href="${safeHref(p.externalUrl)}" target="_blank" rel="noopener noreferrer">
                     ${p.coverUrl
-                        ? `<img class="spotify-cover" src="${p.coverUrl}" alt="${p.name}" loading="lazy">`
+                        ? `<img class="spotify-cover" src="${safeHref(p.coverUrl)}" alt="${esc(p.name)}" loading="lazy">`
                         : `<div class="spotify-cover" style="background:#282828"></div>`}
                     <div class="card-info">
-                        <div class="card-title">${p.name}</div>
-                        <div class="card-meta">${p.trackCount} tracks</div>
+                        <div class="card-title">${esc(p.name)}</div>
+                        <div class="card-meta">${esc(p.trackCount)} tracks</div>
                     </div>
                 </a>`).join('');
         }
