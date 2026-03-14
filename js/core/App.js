@@ -5,6 +5,7 @@ import { setupScene } from '../systems/scene.js';
 import { createCamera } from '../systems/camera.js';
 import { createCharacter, updateCharacterPosition } from '../entities/character.js';
 import { createGround, updateWater } from '../entities/ground.js';
+import { createStars, updateStars } from '../entities/stars.js';
 import { InteractiveEntity } from '../entities/interactiveEntity.js';
 import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
@@ -96,6 +97,9 @@ export class App {
     }
 
     async createWorld() {
+        // Stars (behind island)
+        this.scene.add(createStars());
+
         // Ground + side walls
         const { groundMesh, walls } = await createGround();
         this.ground = groundMesh;
@@ -166,6 +170,9 @@ export class App {
         // Pass overlay state to block input during overlay
         const blocked = overlayIsOpen;
         updateCharacterPosition(this.character, this.controlsState, this.clock, this.colliders, blocked);
+
+        // Stars twinkle
+        updateStars(delta);
 
         // Water animation
         updateWater(delta);
