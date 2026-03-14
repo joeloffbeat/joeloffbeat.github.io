@@ -132,7 +132,7 @@ export class App {
         const toastEl = document.getElementById('entity-toast');
         initOverlay();
         initInteraction(this.entities, toastEl, (overlayId) => {
-            openOverlay(overlayId);
+            openOverlay(overlayId).catch(err => console.error('Overlay error:', err));
         });
     }
 
@@ -216,15 +216,39 @@ export class App {
 
     spawnGhost() {
         const charMat = this.character.material;
-        const map = charMat.map.clone();
-        map.offset.copy(charMat.map.offset);
-        map.repeat.copy(charMat.map.repeat);
+        const srcTex = charMat.map;
+        const img = srcTex.image;
+
+        // Source image pixel dimensions
+        const imgW = img.naturalWidth || img.width;
+        const imgH = img.naturalHeight || img.height;
+
+        // Current frame size in pixels (repeat = fraction of full texture)
+        const fw = Math.round(imgW * srcTex.repeat.x);
+        const fh = Math.round(imgH * srcTex.repeat.y);
+
+        // Frame pixel origin.
+        // Three.js UV: offset.y=0 is bottom of image; canvas y=0 is top — invert Y.
+        const ox = Math.round(imgW * srcTex.offset.x);
+        const oy = imgH - Math.round(imgH * (srcTex.offset.y + srcTex.repeat.y));
+
+        // Snapshot the current frame into a canvas (synchronously available — no GPU delay)
+        const canvas = document.createElement('canvas');
+        canvas.width = fw;
+        canvas.height = fh;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, ox, oy, fw, fh, 0, 0, fw, fh);
+
+        const snapTex = new THREE.CanvasTexture(canvas);
+        snapTex.magFilter = THREE.NearestFilter;
+        snapTex.minFilter = THREE.NearestFilter;
 
         const material = new THREE.SpriteMaterial({
-            map,
+            map: snapTex,
             transparent: true,
             opacity: TRAIL.INITIAL_OPACITY,
-            alphaTest: 0.1
+            alphaTest: 0.5,
+            depthWrite: false,
         });
 
         const ghost = new THREE.Sprite(material);
