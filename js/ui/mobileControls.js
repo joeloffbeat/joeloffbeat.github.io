@@ -7,6 +7,7 @@ let _getOverlayOpen = null;
 let _onOpenOverlay = null;
 
 let _interactBtn = null;
+let _initialized = false;
 
 /**
  * Initialize the virtual D-pad and interact button.
@@ -18,7 +19,8 @@ let _interactBtn = null;
  * @param {function} onOpenOverlay    - Called with overlayId to open an overlay
  */
 export function initMobileControls(controlsState, getActiveEntity, getOverlayOpen, onOpenOverlay) {
-    if (!IS_TOUCH_DEVICE) return;
+    if (!IS_TOUCH_DEVICE || _initialized) return;
+    _initialized = true;
 
     _controlsState = controlsState;
     _getActiveEntity = getActiveEntity;
@@ -87,9 +89,9 @@ function createDpad() {
             if (activeIdentifier !== null) return; // already held
 
             activeIdentifier = e.changedTouches[0].identifier;
+            _controlsState.isMoving = false;
             for (const key of btn.keys) {
                 _controlsState.keys[key] = true;
-                _controlsState.isMoving = false;
             }
             el.classList.add('active');
         }, { passive: false });
@@ -148,7 +150,9 @@ function showFirstVisitHint() {
     hint.id = 'mobile-hint';
     hint.innerHTML = 'Use the pad to move<br>Tap ⚡ to interact';
 
+    let timer;
     const dismiss = () => {
+        clearTimeout(timer);
         localStorage.setItem('mobile-hint-seen', '1');
         hint.style.opacity = '0';
         setTimeout(() => hint.remove(), 400);
@@ -156,8 +160,7 @@ function showFirstVisitHint() {
 
     hint.addEventListener('touchend', (e) => { e.preventDefault(); dismiss(); }, { passive: false });
     document.body.appendChild(hint);
-
-    setTimeout(dismiss, 4000);
+    timer = setTimeout(dismiss, 4000);
 }
 
 // ---------------------------------------------------------------------------

@@ -98,8 +98,8 @@ export class App {
             // Disable single-touch pan so it doesn't fight tap-to-move.
             // Two-finger pinch-to-zoom (DOLLY_PAN = 2) is preserved.
             this.orbitControls.touches = {
-                ONE: null,
-                TWO: THREE.TOUCH.DOLLY_PAN // numeric value: 2
+                ONE: THREE.TOUCH.NONE, // 0 — disables single-touch pan
+                TWO: THREE.TOUCH.DOLLY_PAN // 2 — keeps pinch-to-zoom
             };
         }
     }
