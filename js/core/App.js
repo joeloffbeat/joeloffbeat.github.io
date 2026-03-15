@@ -9,10 +9,9 @@ import { createStars, updateStars } from '../entities/stars.js';
 import { InteractiveEntity } from '../entities/interactiveEntity.js';
 import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
-import { initInteraction, updateInteraction } from '../systems/interaction.js';
+import { initInteraction, updateInteraction, getActiveEntity } from '../systems/interaction.js';
 import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui/overlay.js';
 import { initMobileControls } from '../ui/mobileControls.js';
-import { getActiveEntity } from '../systems/interaction.js';
 import { ENTITY_PLACEMENTS } from '../config/worldMap.js';
 
 import {
