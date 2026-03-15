@@ -1,4 +1,5 @@
 import { INTERACTION, IS_TOUCH_DEVICE } from '../config/constants.js';
+import { setInteractButtonVisible } from '../ui/mobileControls.js';
 
 let _entities = [];
 let _activeEntity = null;
@@ -31,6 +32,10 @@ export function initInteraction(entities, toastElement, onOpenOverlay) {
             _onOpenOverlay(_activeEntity.overlayId);
         }
     });
+}
+
+export function getActiveEntity() {
+    return _activeEntity;
 }
 
 export function updateInteraction(characterPosition, overlayIsOpen) {
@@ -82,10 +87,12 @@ function showToast(entity) {
 
     _toastEl.style.opacity = '1';
     _toastEl.style.pointerEvents = 'auto';
+    if (IS_TOUCH_DEVICE) setInteractButtonVisible(true);
 }
 
 function hideToast() {
     if (!_toastEl) return;
     _toastEl.style.opacity = '0';
     _toastEl.style.pointerEvents = 'none';
+    if (IS_TOUCH_DEVICE) setInteractButtonVisible(false);
 }
