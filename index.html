@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Joel's Mindscape</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -129,8 +129,8 @@
             color: #fff;
             border: 2px solid #555;
             border-radius: 4px;
-            width: 32px;
-            height: 32px;
+            min-width: 44px;
+            min-height: 44px;
             font-size: 16px;
             cursor: pointer;
             font-family: 'Press Start 2P', monospace;
@@ -145,6 +145,7 @@
             max-height: 70vh;
             font-size: clamp(7px, 1.2vw, 11px);
             line-height: 1.8;
+            touch-action: pan-y;
         }
 
         /* --- Overlay Content Styles --- */
@@ -236,7 +237,7 @@
         }
         .art-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
             gap: 8px;
         }
         .art-item {
@@ -291,6 +292,7 @@
             font-family: 'Press Start 2P', monospace;
             font-size: clamp(6px, 1vw, 9px);
             border-radius: 3px;
+            min-height: 44px;
             transition: border-color 0.2s, color 0.2s;
         }
         .tab-btn:hover { border-color: #4a9eff; color: #ccc; }
@@ -374,6 +376,7 @@
             font-family: 'Press Start 2P', monospace;
             font-size: clamp(6px, 0.9vw, 8px);
             border-radius: 3px;
+            min-height: 44px;
         }
         .page-btn:disabled { color: #444; border-color: #1a1a2e; cursor: default; }
         .page-btn:not(:disabled):hover { background: #0f3460; }
