@@ -53,6 +53,16 @@ export function setupControls(camera, ground, controlsState, domElement) {
         }
     }, { passive: true });
 
+    domElement.addEventListener('touchmove', (e) => {
+        if (touchStartX === null) return;
+        const dx = e.touches[0].clientX - touchStartX;
+        const dy = e.touches[0].clientY - touchStartY;
+        if (Math.hypot(dx, dy) >= 10) {
+            touchStartX = null; // treat as drag, not a tap
+            touchStartY = null;
+        }
+    }, { passive: true });
+
     domElement.addEventListener('touchend', (e) => {
         if (touchStartX === null) return; // guard against untracked touches
 
@@ -77,4 +87,9 @@ export function setupControls(camera, ground, controlsState, domElement) {
             }
         }
     }, { passive: false }); // passive:false required to call preventDefault
+
+    domElement.addEventListener('touchcancel', () => {
+        touchStartX = null;
+        touchStartY = null;
+    }, { passive: true });
 }

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 let _orbitControls = null;
 let _character = null;
+let _camera = null;
 const _targetVec = new THREE.Vector3();
 
 /**
@@ -9,6 +10,7 @@ const _targetVec = new THREE.Vector3();
  * Called once during App.init().
  */
 export function setupCameraController(camera, controls, character) {
+    _camera = camera;  // retained for future screen-shake / projection use
     _orbitControls = controls;
     _character = character;
 }
