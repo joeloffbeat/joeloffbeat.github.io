@@ -11,6 +11,8 @@ import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
 import { initInteraction, updateInteraction } from '../systems/interaction.js';
 import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui/overlay.js';
+import { initMobileControls } from '../ui/mobileControls.js';
+import { getActiveEntity } from '../systems/interaction.js';
 import { ENTITY_PLACEMENTS } from '../config/worldMap.js';
 
 import {
@@ -146,6 +148,12 @@ export class App {
         initInteraction(this.entities, toastEl, (overlayId) => {
             openOverlay(overlayId).catch(err => console.error('Overlay error:', err));
         });
+        initMobileControls(
+            this.controlsState,
+            () => getActiveEntity(),
+            () => overlayIsOpen,
+            (id) => openOverlay(id).catch(err => console.error('Overlay error:', err))
+        );
     }
 
     applyLighting() {
