@@ -14,6 +14,25 @@ const FRAME_HEIGHT = 1 / ROWS;
 const HALF_W = GROUND.WIDTH / 2;
 const HALF_H = GROUND.HEIGHT / 2;
 
+// Reusable vectors for camera-relative direction — avoids per-frame allocation
+const _camFwd   = new THREE.Vector3();
+const _camRight = new THREE.Vector3();
+const _yUp      = new THREE.Vector3(0, 1, 0);
+
+/**
+ * Populate _camFwd / _camRight from the camera's current orientation,
+ * projected onto the XZ plane so elevation doesn't affect movement speed.
+ */
+function updateCameraVectors(camera) {
+    camera.getWorldDirection(_camFwd);
+    _camFwd.y = 0;
+    // Guard: camera pointing straight up or down → forward is degenerate
+    if (_camFwd.lengthSq() < 0.001) _camFwd.set(0, 0, -1);
+    _camFwd.normalize();
+    // Right = forward × worldUp (Three.js right-hand rule)
+    _camRight.crossVectors(_camFwd, _yUp).normalize();
+}
+
 export function createCharacter() {
     const texture = textureLoader.load(
         ASSETS.CHARACTER_SPRITE,
@@ -164,7 +183,7 @@ function tryMoveWithSlide(sprite, displacement, colliders) {
 
 // -- Public update ------------------------------------------------------------
 
-export function updateCharacterPosition(character, controlsState, clock, delta, colliders = [], inputBlocked = false) {
+export function updateCharacterPosition(character, controlsState, clock, delta, colliders = [], inputBlocked = false, camera = null) {
     if (inputBlocked) {
         character.position.y = CHARACTER.BOBBING.BASE_HEIGHT;
         updateAnimation(character);
@@ -181,11 +200,19 @@ export function updateCharacterPosition(character, controlsState, clock, delta, 
         controlsState.targetPosition = clampToGround(controlsState.targetPosition);
     }
 
-    // Isometric keyboard mapping
-    if (keys.w || keys.ArrowUp)    { moveDir.z -= 1; isKeyPressed = true; }
-    if (keys.s || keys.ArrowDown)  { moveDir.z += 1; isKeyPressed = true; }
-    if (keys.a || keys.ArrowLeft)  { moveDir.x -= 1; isKeyPressed = true; }
-    if (keys.d || keys.ArrowRight) { moveDir.x += 1; isKeyPressed = true; }
+    // Camera-relative keyboard mapping — forward/right follow the camera's
+    // current horizontal orientation so movement feels correct after orbiting.
+    if (camera) {
+        updateCameraVectors(camera);
+    } else {
+        // Fallback to fixed world axes (matches default camera angle)
+        _camFwd.set(0, 0, -1);
+        _camRight.set(1, 0, 0);
+    }
+    if (keys.w || keys.ArrowUp)    { moveDir.addScaledVector(_camFwd,    1); isKeyPressed = true; }
+    if (keys.s || keys.ArrowDown)  { moveDir.addScaledVector(_camFwd,   -1); isKeyPressed = true; }
+    if (keys.a || keys.ArrowLeft)  { moveDir.addScaledVector(_camRight, -1); isKeyPressed = true; }
+    if (keys.d || keys.ArrowRight) { moveDir.addScaledVector(_camRight,  1); isKeyPressed = true; }
 
     if (isKeyPressed && moveDir.lengthSq() > 0) {
         controlsState.isMoving = false;
