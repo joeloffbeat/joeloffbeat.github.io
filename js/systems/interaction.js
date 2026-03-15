@@ -1,6 +1,4 @@
-import { INTERACTION } from '../config/constants.js';
-
-const isTouchDevice = 'ontouchstart' in window;
+import { INTERACTION, IS_TOUCH_DEVICE } from '../config/constants.js';
 
 let _entities = [];
 let _activeEntity = null;
@@ -15,7 +13,7 @@ export function initInteraction(entities, toastElement, onOpenOverlay) {
     // Set mobile-appropriate hint text
     const hint = _toastEl.querySelector('.toast-hint');
     if (hint) {
-        hint.innerHTML = isTouchDevice
+        hint.innerHTML = IS_TOUCH_DEVICE
             ? 'Tap to explore'
             : 'Click or press <kbd>E</kbd>';
     }

@@ -81,3 +81,5 @@ export const TRAIL = {
     INITIAL_OPACITY: 0.65,
     ALPHA_TEST: 0.05,    // must stay below INITIAL_OPACITY to avoid discarding ghost body pixels
 };
+
+export const IS_TOUCH_DEVICE = 'ontouchstart' in window;
