@@ -161,8 +161,8 @@ export const ENTITY_PLACEMENTS = [
     {
         id: 'musicplayer',
         spritePath: '/assets/music_player.png',
-        tileCol: 18, tileRow: 14,
-        ...tileToWorld(18, 14),
+        tileCol: 25, tileRow: 25,
+        ...tileToWorld(25, 25),
         scale: { x: 5, y: 4, z: 1 },
         triggerRadius: 8,
         collisionBox: { w: 4, d: 3, h: 4 },

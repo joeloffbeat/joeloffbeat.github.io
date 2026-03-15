@@ -5,22 +5,6 @@
     "genre": "Sci-Fi",
     "rating": 5,
     "cover": "",
-    "notes": "Visually stunning adaptation"
-  },
-  {
-    "title": "Interstellar",
-    "year": 2014,
-    "genre": "Sci-Fi",
-    "rating": 5,
-    "cover": "",
-    "notes": "Time and gravity, beautifully told"
-  },
-  {
-    "title": "The Matrix",
-    "year": 1999,
-    "genre": "Action / Sci-Fi",
-    "rating": 5,
-    "cover": "",
-    "notes": "Still holds up"
+    "notes": "Visually stunning"
   }
 ]
