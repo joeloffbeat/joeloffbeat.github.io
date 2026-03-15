@@ -1,0 +1,29 @@
+[
+  {
+    "title": "The Pragmatic Programmer",
+    "author": "David Thomas & Andrew Hunt",
+    "year": 1999,
+    "genre": "Tech",
+    "rating": 5,
+    "cover": "",
+    "notes": "Essential career reading"
+  },
+  {
+    "title": "Atomic Habits",
+    "author": "James Clear",
+    "year": 2018,
+    "genre": "Self-Help",
+    "rating": 4,
+    "cover": "",
+    "notes": "Small changes compound"
+  },
+  {
+    "title": "Sapiens",
+    "author": "Yuval Noah Harari",
+    "year": 2011,
+    "genre": "History",
+    "rating": 5,
+    "cover": "",
+    "notes": "Reframes everything"
+  }
+]
