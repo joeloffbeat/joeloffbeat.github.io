@@ -328,8 +328,9 @@ function buildBooksOverlay() {
     }
 
     function cover(item, placeholder) {
-        if (item.cover) {
-            return `<img class="watched-cover" src="${safeHref(item.cover)}" alt="${esc(item.title)}" loading="lazy">`;
+        const src = safeHref(item.cover || '');
+        if (src !== '#') {
+            return `<img class="watched-cover" src="${src}" alt="${esc(item.title)}" loading="lazy">`;
         }
         return `<div class="watched-cover-placeholder" style="background:hsl(${Math.abs((item.title || 'x').charCodeAt(0) * 17) % 360},40%,25%)">${placeholder}</div>`;
     }
