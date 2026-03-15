@@ -58,6 +58,7 @@ function buildArtOverlay() {
         onReady: (bodyEl) => {
             const PER_PAGE = 9;
             const pages = artCategories.map(() => 0);
+            let activePanelIdx = 0;
 
             function renderPage(tabIdx) {
                 const cat = artCategories[tabIdx];
@@ -72,7 +73,7 @@ function buildArtOverlay() {
 
                 grid.innerHTML = slice.map(img => {
                     const caption = img.filename.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
-                    return `<div class="art-item" style="background-image:url(${img.url})">
+                    return `<div class="art-item" style="background-image:url(${img.url})" data-url="${esc(img.url)}" data-caption="${esc(caption)}">
                         <div class="art-caption">${caption}</div>
                     </div>`;
                 }).join('');
@@ -85,12 +86,40 @@ function buildArtOverlay() {
                 }
             }
 
+            function showLightbox(url, caption) {
+                bodyEl.innerHTML = `
+                    <button class="blog-back" data-action="art-back">&#8592; Back to Gallery</button>
+                    <div class="art-lightbox">
+                        <img class="art-lightbox-img" src="${esc(url)}" alt="${esc(caption)}">
+                        ${caption ? `<div class="art-lightbox-caption">${esc(caption)}</div>` : ''}
+                    </div>`;
+            }
+
+            function restoreGallery() {
+                bodyEl.innerHTML = `<div class="tab-bar">${tabBtns}</div>${panels}`;
+                if (activePanelIdx !== 0) {
+                    bodyEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    bodyEl.querySelector(`.tab-btn[data-tab="${activePanelIdx}"]`).classList.add('active');
+                    bodyEl.querySelectorAll('.tab-panel').forEach(p => p.classList.add('tab-panel-hidden'));
+                    bodyEl.querySelector(`.tab-panel[data-panel="${activePanelIdx}"]`).classList.remove('tab-panel-hidden');
+                }
+                renderPage(activePanelIdx);
+            }
+
             renderPage(0);
 
             bodyEl.addEventListener('click', (e) => {
+                // Back from lightbox
+                if (e.target.closest('[data-action="art-back"]')) {
+                    restoreGallery();
+                    return;
+                }
+
+                // Tab switching
                 const tabBtn = e.target.closest('.tab-btn');
                 if (tabBtn) {
                     const idx = parseInt(tabBtn.dataset.tab);
+                    activePanelIdx = idx;
                     bodyEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                     tabBtn.classList.add('active');
                     bodyEl.querySelectorAll('.tab-panel').forEach(p => p.classList.add('tab-panel-hidden'));
@@ -98,6 +127,8 @@ function buildArtOverlay() {
                     renderPage(idx);
                     return;
                 }
+
+                // Pagination
                 const pageBtn = e.target.closest('.page-btn');
                 if (pageBtn && !pageBtn.disabled) {
                     const catIdx = parseInt(pageBtn.dataset.cat);
@@ -106,6 +137,13 @@ function buildArtOverlay() {
                     if (pageBtn.dataset.action === 'prev' && pages[catIdx] > 0) pages[catIdx]--;
                     if (pageBtn.dataset.action === 'next' && pages[catIdx] < totalPages - 1) pages[catIdx]++;
                     renderPage(catIdx);
+                    return;
+                }
+
+                // Art item → lightbox
+                const artItem = e.target.closest('.art-item');
+                if (artItem) {
+                    showLightbox(artItem.dataset.url, artItem.dataset.caption);
                 }
             });
         },
@@ -339,7 +377,6 @@ function buildBooksOverlay() {
         const meta = [m.year, m.genre].filter(Boolean).map(esc).join(' &middot; ');
         return `
             <div class="watched-card">
-                ${cover(m, '\u{1F3AC}')}
                 <div class="watched-info">
                     <div class="watched-title">${esc(m.title)}</div>
                     ${meta ? `<div class="watched-meta">${meta}</div>` : ''}
@@ -353,7 +390,6 @@ function buildBooksOverlay() {
         const meta = [b.author, b.year, b.genre].filter(Boolean).map(esc).join(' &middot; ');
         return `
             <div class="watched-card">
-                ${cover(b, '\u{1F4D6}')}
                 <div class="watched-info">
                     <div class="watched-title">${esc(b.title)}</div>
                     ${meta ? `<div class="watched-meta">${meta}</div>` : ''}
