@@ -322,15 +322,16 @@ async function buildMusicOverlay() {
 
 function buildBooksOverlay() {
     function stars(n) {
-        return '\u2605'.repeat(Math.min(5, Math.max(0, n || 0))) +
-               '\u2606'.repeat(Math.max(0, 5 - Math.min(5, n || 0)));
+        const r = Math.floor(n || 0);
+        return '\u2605'.repeat(Math.min(5, Math.max(0, r))) +
+               '\u2606'.repeat(Math.max(0, 5 - Math.min(5, r)));
     }
 
     function cover(item, placeholder) {
         if (item.cover) {
             return `<img class="watched-cover" src="${safeHref(item.cover)}" alt="${esc(item.title)}" loading="lazy">`;
         }
-        return `<div class="watched-cover-placeholder" style="background:hsl(${Math.abs(item.title.charCodeAt(0) * 17) % 360},40%,25%)">${placeholder}</div>`;
+        return `<div class="watched-cover-placeholder" style="background:hsl(${Math.abs((item.title || 'x').charCodeAt(0) * 17) % 360},40%,25%)">${placeholder}</div>`;
     }
 
     function movieCard(m) {
@@ -386,7 +387,7 @@ function buildBooksOverlay() {
                 bodyEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 bodyEl.querySelectorAll('.tab-panel').forEach(p => p.classList.add('tab-panel-hidden'));
-                bodyEl.querySelector(`.tab-panel[data-panel="${tab}"]`).classList.remove('tab-panel-hidden');
+                bodyEl.querySelector(`.tab-panel[data-panel="${CSS.escape(tab)}"]`).classList.remove('tab-panel-hidden');
             });
         },
     };
