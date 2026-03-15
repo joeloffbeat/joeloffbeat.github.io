@@ -301,7 +301,7 @@
         .watched-card {
             background: #16213e;
             border: 2px solid #2a3a5e;
-            border-radius: 6px;
+            border-radius: 4px;
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -329,22 +329,22 @@
             flex: 1;
         }
         .watched-title {
-            font-size: 0.85rem;
+            font-size: clamp(8px, 1.1vw, 13px);
             font-weight: 600;
             color: #e0e8ff;
             line-height: 1.2;
         }
         .watched-meta {
-            font-size: 0.7rem;
+            font-size: clamp(6px, 0.9vw, 10px);
             color: #7a8ba8;
         }
         .watched-stars {
-            font-size: 0.75rem;
+            font-size: clamp(6px, 0.8vw, 10px);
             color: #f5c518;
             letter-spacing: 1px;
         }
         .watched-notes {
-            font-size: 0.7rem;
+            font-size: clamp(6px, 0.8vw, 9px);
             color: #8899aa;
             font-style: italic;
             margin-top: 2px;
