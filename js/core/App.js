@@ -150,7 +150,7 @@ export class App {
         initMobileControls(
             this.controlsState,
             () => getActiveEntity(),
-            () => overlayIsOpen,
+            () => overlayIsOpen, // live ES-module binding — reads current value of overlay.js's `isOpen` each call
             (id) => openOverlay(id).catch(err => console.error('Overlay error:', err))
         );
     }

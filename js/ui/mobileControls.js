@@ -130,6 +130,7 @@ function createInteractButton() {
 
     btn.addEventListener('touchend', (e) => {
         e.preventDefault();
+        if (_getOverlayOpen && _getOverlayOpen()) return;
         const entity = _getActiveEntity && _getActiveEntity();
         if (!entity) return;
         _onOpenOverlay && _onOpenOverlay(entity.overlayId);
