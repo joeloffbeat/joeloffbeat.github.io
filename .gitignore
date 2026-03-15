@@ -48,3 +48,6 @@ Desktop.ini
 .vite/
 
 new_assets/*
+
+# Superpowers brainstorm sessions
+.superpowers/
