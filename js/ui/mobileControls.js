@@ -125,7 +125,7 @@ function createDpad() {
 function createInteractButton() {
     const btn = document.createElement('button');
     btn.id = 'mobile-interact';
-    btn.textContent = '⚡';
+    btn.textContent = 'ℹ️';
     btn.style.display = 'none'; // hidden until near an entity
 
     btn.addEventListener('touchend', (e) => {
@@ -149,7 +149,7 @@ function showFirstVisitHint() {
 
     const hint = document.createElement('div');
     hint.id = 'mobile-hint';
-    hint.innerHTML = 'Use the pad to move<br>Tap ⚡ to interact';
+    hint.innerHTML = 'Use the pad to move<br>Tap ℹ️ to interact';
 
     let timer;
     const dismiss = () => {
@@ -230,6 +230,13 @@ function injectStyles() {
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- Hide controls while overlay is open --- */
+        body:has(#overlay-container.overlay-visible) #mobile-dpad,
+        body:has(#overlay-container.overlay-visible) #mobile-interact {
+            visibility: hidden;
+            pointer-events: none;
         }
 
         /* --- First-visit hint --- */

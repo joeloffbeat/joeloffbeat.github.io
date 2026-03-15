@@ -33,7 +33,7 @@ A 2D isometric web experience built with Three.js and Vite. Fully playable on de
 |---|---|
 | D-pad (bottom-left) | Move character (8 directions, hold to keep moving) |
 | Tap ground | Tap-to-move |
-| ⚡ button (bottom-right) | Interact with nearby entity |
+| ℹ️ button (bottom-right) | Interact with nearby entity |
 | Pinch | Zoom |
 | Two-finger drag | Pan camera |
 
