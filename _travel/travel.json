@@ -1,35 +1,33 @@
 {
   "current": {
-    "place": "Update me — where are you now?",
-    "dates": "Mar 2026",
+    "place": "Chennai",
+    "dates": "Forever i guess",
     "flag": "📍",
-    "notes": "Edit _travel/travel.json to update your location"
+    "notes": "Where do you want me to move next?"
   },
   "upcoming": [
     {
-      "place": "Tokyo, Japan",
-      "dates": "Apr 10–20 2026",
-      "flag": "🇯🇵",
-      "status": "confirmed",
+      "place": "Bengaluru, India",
+      "dates": "March End, 2026",
+      "flag": "🇮🇳",
+      "status": "Maybe",
       "notes": "Cherry blossom season"
     },
     {
-      "place": "Iceland",
-      "dates": "Jul 2026",
-      "flag": "🇮🇸",
-      "status": "exploring"
+      "place": "Vietnam",
+      "dates": "June 2026",
+      "flag": "🇻🇳",
+      "status": "Confirmed",
+      "notes": "Experience the vibrant lantern festival"
     }
   ],
   "past": [
     {
-      "place": "Barcelona, Spain",
-      "dates": "Sep 2025",
-      "flag": "🇪🇸"
-    },
-    {
-      "place": "Singapore",
-      "dates": "Jan 2025",
-      "flag": "🇸🇬"
+      "place": "Sivakasi, India",
+      "dates": "Feb 2026",
+      "flag": "🇮🇳",
+      "status": "Visited",
+      "notes": "Sundeep's marriage"
     }
   ]
 }

@@ -139,8 +139,8 @@ function clampToGround(pos) {
     return clamped;
 }
 
-function tryMove(sprite, delta, colliders) {
-    let proposed = sprite.position.clone().add(delta);
+function tryMove(sprite, displacement, colliders) {
+    let proposed = sprite.position.clone().add(displacement);
     proposed = clampToGround(proposed);
     if (!isBlocked(proposed, colliders)) {
         sprite.position.copy(proposed);
@@ -149,13 +149,24 @@ function tryMove(sprite, delta, colliders) {
     return false;
 }
 
+// Try full move, then slide along each axis so character doesn't stop dead at walls
+function tryMoveWithSlide(sprite, displacement, colliders) {
+    if (tryMove(sprite, displacement, colliders)) return true;
+
+    const xOnly = new THREE.Vector3(displacement.x, 0, 0);
+    if (xOnly.lengthSq() > 0 && tryMove(sprite, xOnly, colliders)) return true;
+
+    const zOnly = new THREE.Vector3(0, 0, displacement.z);
+    if (zOnly.lengthSq() > 0 && tryMove(sprite, zOnly, colliders)) return true;
+
+    return false;
+}
+
 // -- Public update ------------------------------------------------------------
 
-export function updateCharacterPosition(character, controlsState, clock, colliders = [], inputBlocked = false) {
+export function updateCharacterPosition(character, controlsState, clock, delta, colliders = [], inputBlocked = false) {
     if (inputBlocked) {
-        // Still bobbing, just no movement processing
-        const { BASE_HEIGHT, SPEED: bSpeed, AMOUNT } = CHARACTER.BOBBING;
-        character.position.y = BASE_HEIGHT + Math.sin(clock.getElapsedTime() * bSpeed) * AMOUNT;
+        character.position.y = CHARACTER.BOBBING.BASE_HEIGHT;
         updateAnimation(character);
         return;
     }
@@ -181,9 +192,9 @@ export function updateCharacterPosition(character, controlsState, clock, collide
         setAnimation(character, 'walk');
         moveDir.normalize();
         character.userData.directionIndex = getDirectionIndex(moveDir);
-        moveDir.multiplyScalar(speed);
+        moveDir.multiplyScalar(speed * delta);
 
-        if (!tryMove(character, moveDir, colliders)) {
+        if (!tryMoveWithSlide(character, moveDir, colliders)) {
             setAnimation(character, 'idle');
         }
     } else if (controlsState.isMoving) {
@@ -197,9 +208,9 @@ export function updateCharacterPosition(character, controlsState, clock, collide
             dir.normalize();
             character.userData.directionIndex = getDirectionIndex(dir);
             character.userData.direction = dir.x > 0 ? 'right' : 'left';
-            dir.multiplyScalar(speed);
+            dir.multiplyScalar(speed * delta);
 
-            if (!tryMove(character, dir, colliders)) {
+            if (!tryMoveWithSlide(character, dir, colliders)) {
                 controlsState.isMoving = false;
                 setAnimation(character, 'idle');
             }
@@ -211,9 +222,7 @@ export function updateCharacterPosition(character, controlsState, clock, collide
         setAnimation(character, 'idle');
     }
 
-    // Bobbing
-    const { BASE_HEIGHT, SPEED: bSpeed, AMOUNT } = CHARACTER.BOBBING;
-    character.position.y = BASE_HEIGHT + Math.sin(clock.getElapsedTime() * bSpeed) * AMOUNT;
+    character.position.y = CHARACTER.BOBBING.BASE_HEIGHT;
 
     updateAnimation(character);
 }

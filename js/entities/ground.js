@@ -198,7 +198,7 @@ function createSideWalls(pools) {
     const corners = [
         [0, -DIAMOND_HZ], [DIAMOND_HX, 0], [0, DIAMOND_HZ], [-DIAMOND_HX, 0],
     ];
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 1; i++) {
         const c1 = corners[i];
         const c2 = corners[(i + 1) % 4];
         const wallLen = Math.sqrt((c2[0] - c1[0]) ** 2 + (c2[1] - c1[1]) ** 2);

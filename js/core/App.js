@@ -169,7 +169,7 @@ export class App {
 
         // Pass overlay state to block input during overlay
         const blocked = overlayIsOpen;
-        updateCharacterPosition(this.character, this.controlsState, this.clock, this.colliders, blocked);
+        updateCharacterPosition(this.character, this.controlsState, this.clock, delta, this.colliders, blocked);
 
         // Stars twinkle
         updateStars(delta);

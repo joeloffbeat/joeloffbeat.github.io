@@ -29,7 +29,7 @@ export const SCENE = {
 export const CHARACTER = {
     INITIAL_POSITION: { x: 0, y: 1, z: 3 },
     SCALE: { x: 4, y: 4, z: 3 },
-    SPEED: 0.22,
+    SPEED: 13.2,  // world-units per second (was 0.22/frame @ 60fps)
     DASH_MULTIPLIER: 2,
     COLLISION_RADIUS: 1.5,
     BOBBING: { BASE_HEIGHT: 2, SPEED: 5, AMOUNT: 0.01 },

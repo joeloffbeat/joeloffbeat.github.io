@@ -349,10 +349,10 @@ function buildContactOverlay() {
                 <div class="contact-name">Joel</div>
                 <div class="contact-links">
                     <a href="mailto:joeloffbeat@gmail.com" class="contact-link">\u{1F4E7} joeloffbeat@gmail.com</a>
-                    <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F419} github.com/joeloffbeat</a>
+                    <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F419} GitHub </a>
                     <a href="https://www.linkedin.com/in/joel-antony-xaviour-97394a140/" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F4BC} LinkedIn</a>
-                    <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F4F7} instagram.com/joeloffbeat</a>
-                    <a href="https://x.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1D54F} x.com/joeloffbeat</a>
+                    <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F4F7} Instagram </a>
+                    <a href="https://x.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1D54F} X </a>
                 </div>
             </div>`,
     };

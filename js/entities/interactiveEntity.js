@@ -44,12 +44,12 @@ export class InteractiveEntity {
                         new THREE.Vector3(
                             this.position.x - w / 2,
                             0,
-                            this.position.z - d / 2
+                            this.position.z - this.scale.y / 2 - d / 2
                         ),
                         new THREE.Vector3(
                             this.position.x + w / 2,
                             h,
-                            this.position.z + d / 2
+                            this.position.z - this.scale.y / 2 + d / 2
                         )
                     );
 

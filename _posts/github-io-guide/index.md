@@ -92,6 +92,7 @@ Then `npm run deploy` — Vite builds to `dist/` and `gh-pages` pushes it to a `
 
 Free HTTPS is included — GitHub handles the SSL certificate automatically.
 
+![There is your rock](./baba.jpg)
 ---
 
 That's it. Your portfolio is live. Start adding your work!
