@@ -164,8 +164,8 @@ export class App {
 
         const delta = this.clock.getDelta();
 
-        this.orbitControls.update();
-        updateCamera();
+        updateCamera(delta);          // lerp target first
+        this.orbitControls.update();  // then apply damping against new target
 
         // Pass overlay state to block input during overlay
         const blocked = overlayIsOpen;
