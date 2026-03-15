@@ -1,6 +1,6 @@
 # Joel's Mindscape
 
-A 2D isometric web experience built with Three.js and Vite.
+A 2D isometric web experience built with Three.js and Vite. Fully playable on desktop and mobile.
 
 **Live Demo:** [https://joeloffbeat.github.io](https://joeloffbeat.github.io)
 
@@ -10,10 +10,14 @@ A 2D isometric web experience built with Three.js and Vite.
 - **Character** — sprite-sheet based, 8-direction facing, walk/idle animations
 - **Dash** — hold Space while moving for 2x speed with a ghost trail effect
 - **Collision** — car obstacle with Box3 collision, water boundary blocking
-- **Click-to-move** — left-click anywhere on the ground to walk there
+- **Click / tap-to-move** — click or tap the ground to walk there
 - **Keyboard movement** — WASD / Arrow keys (isometric-mapped)
+- **Camera follow** — smooth frame-rate-independent character tracking
+- **Mobile controls** — virtual D-pad (8 directions), ⚡ interact button, pinch-to-zoom
 
 ## Controls
+
+### Desktop
 
 | Input | Action |
 |---|---|
@@ -22,6 +26,16 @@ A 2D isometric web experience built with Three.js and Vite.
 | Left Click | Click-to-move |
 | Scroll | Zoom |
 | Right Click + Drag | Pan camera |
+
+### Mobile
+
+| Input | Action |
+|---|---|
+| D-pad (bottom-left) | Move character (8 directions, hold to keep moving) |
+| Tap ground | Tap-to-move |
+| ℹ️ button (bottom-right) | Interact with nearby entity |
+| Pinch | Zoom |
+| Two-finger drag | Pan camera |
 
 ## Getting Started
 
@@ -55,19 +69,23 @@ Pushes to `main` trigger the GitHub Actions workflow (`.github/workflows/deploy.
 ```
 js/
 ├── config/
-│   └── constants.js        # All tunable values
-|   └── debug.js            # All debug configs
+│   ├── constants.js         # All tunable values (incl. IS_TOUCH_DEVICE)
+│   └── debug.js             # Debug configs
 ├── core/
-│   └── App.js              # Main class — init, game loop, trail, popup
+│   └── App.js               # Main class — init, game loop, wiring
 ├── entities/
 │   ├── character.js         # Sprite, animation, movement, collision
 │   ├── ground.js            # Canvas-composited isometric tile map
 │   └── car.js               # Car sprite
-└── systems/
-    ├── scene.js             # Scene + lighting setup
-    ├── camera.js            # Orthographic camera factory
-    ├── cameraController.js  # Camera controller stub
-    └── controls.js          # Keyboard + mouse input
+├── systems/
+│   ├── scene.js             # Scene + lighting setup
+│   ├── camera.js            # Orthographic camera factory
+│   ├── cameraController.js  # Smooth character-follow camera (lerp)
+│   ├── controls.js          # Keyboard, mouse, and touch tap-to-move
+│   └── interaction.js       # Entity proximity detection + toast
+└── ui/
+    ├── overlay.js           # Content overlay (books, movies, art, etc.)
+    └── mobileControls.js    # Virtual D-pad, interact button, first-visit hint
 ```
 
 ## Tech Stack

@@ -1,5 +1,5 @@
 {
-  "fetchedAt": "2026-03-15T18:52:13.834Z",
+  "fetchedAt": "2026-03-15T19:37:47.664Z",
   "playlists": [
     {
       "id": "1Cg9uI5aG5AyV8XucYeRVo",
@@ -10,7 +10,7 @@
     {
       "id": "0ZXXm4OFRZbVesTTQNJF94",
       "name": "Mains",
-      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84cb0fb88d642db125e464f52c",
+      "coverUrl": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84cb0fb88d642db125e464f52c",
       "externalUrl": "https://open.spotify.com/playlist/0ZXXm4OFRZbVesTTQNJF94"
     },
     {
@@ -40,19 +40,19 @@
     {
       "id": "1m9WACns4DKBpl4Ys73fT1",
       "name": "We are better",
-      "coverUrl": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84d500a62da0d65e4801ffb954",
+      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84d500a62da0d65e4801ffb954",
       "externalUrl": "https://open.spotify.com/playlist/1m9WACns4DKBpl4Ys73fT1"
     },
     {
       "id": "3qywj0squFlv6OwuICVCZ1",
       "name": "Free fall",
-      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da845372bf88ffce0742fbde392e",
+      "coverUrl": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da845372bf88ffce0742fbde392e",
       "externalUrl": "https://open.spotify.com/playlist/3qywj0squFlv6OwuICVCZ1"
     },
     {
       "id": "1RVhnHGLjhM8VAj2ePeBKA",
       "name": "Cortex Fracture",
-      "coverUrl": "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84db603a5c14b029b33e7dcd59",
+      "coverUrl": "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84db603a5c14b029b33e7dcd59",
       "externalUrl": "https://open.spotify.com/playlist/1RVhnHGLjhM8VAj2ePeBKA"
     }
   ]
