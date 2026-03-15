@@ -4,7 +4,7 @@
  * onReady(bodyEl) is called after innerHTML injection to wire up event listeners.
  */
 
-import { artCategories, posts, travelData } from '../content/contentLoader.js';
+import { artCategories, posts, travelData, moviesData, booksData } from '../content/contentLoader.js';
 
 // HTML-escape a string before injecting it into innerHTML
 function esc(str) {
@@ -317,23 +317,78 @@ async function buildMusicOverlay() {
 }
 
 // ---------------------------------------------------------------------------
-// Books Overlay — static
+// Books & Movies Overlay — two tabs, data from _watched/*.json
 // ---------------------------------------------------------------------------
 
 function buildBooksOverlay() {
+    function stars(n) {
+        return '\u2605'.repeat(Math.min(5, Math.max(0, n || 0))) +
+               '\u2606'.repeat(Math.max(0, 5 - Math.min(5, n || 0)));
+    }
+
+    function cover(item, placeholder) {
+        if (item.cover) {
+            return `<img class="watched-cover" src="${safeHref(item.cover)}" alt="${esc(item.title)}" loading="lazy">`;
+        }
+        return `<div class="watched-cover-placeholder" style="background:hsl(${Math.abs(item.title.charCodeAt(0) * 17) % 360},40%,25%)">${placeholder}</div>`;
+    }
+
+    function movieCard(m) {
+        const meta = [m.year, m.genre].filter(Boolean).map(esc).join(' &middot; ');
+        return `
+            <div class="watched-card">
+                ${cover(m, '\u{1F3AC}')}
+                <div class="watched-info">
+                    <div class="watched-title">${esc(m.title)}</div>
+                    ${meta ? `<div class="watched-meta">${meta}</div>` : ''}
+                    <div class="watched-stars">${stars(m.rating)}</div>
+                    ${m.notes ? `<div class="watched-notes">${esc(m.notes)}</div>` : ''}
+                </div>
+            </div>`;
+    }
+
+    function bookCard(b) {
+        const meta = [b.author, b.year, b.genre].filter(Boolean).map(esc).join(' &middot; ');
+        return `
+            <div class="watched-card">
+                ${cover(b, '\u{1F4D6}')}
+                <div class="watched-info">
+                    <div class="watched-title">${esc(b.title)}</div>
+                    ${meta ? `<div class="watched-meta">${meta}</div>` : ''}
+                    <div class="watched-stars">${stars(b.rating)}</div>
+                    ${b.notes ? `<div class="watched-notes">${esc(b.notes)}</div>` : ''}
+                </div>
+            </div>`;
+    }
+
+    const booksHtml = booksData.length
+        ? `<div class="watched-grid">${booksData.map(bookCard).join('')}</div>`
+        : '<div class="overlay-loading">No books yet. Add entries to _watched/books.json.</div>';
+
+    const moviesHtml = moviesData.length
+        ? `<div class="watched-grid">${moviesData.map(movieCard).join('')}</div>`
+        : '<div class="overlay-loading">No movies yet. Add entries to _watched/movies.json.</div>';
+
     return {
         title: '\u{1F4DA} Books & Movies',
         html: `
-            <div class="overlay-grid">
-                ${['The Pragmatic Programmer', 'Dune', 'Interstellar', 'Atomic Habits', 'The Matrix', 'Sapiens'].map((t, i) => `
-                    <div class="overlay-card">
-                        <div class="card-cover" style="background:hsl(${i * 55}, 50%, 35%)"></div>
-                        <div class="card-info">
-                            <div class="card-title">${t}</div>
-                            <div class="card-meta">${'\u2605'.repeat(3 + (i % 3))}</div>
-                        </div>
-                    </div>`).join('')}
-            </div>`,
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="books">\u{1F4DA} Books</button>
+                <button class="tab-btn" data-tab="movies">\u{1F3AC} Movies</button>
+            </div>
+            <div class="tab-panel" data-panel="books">${booksHtml}</div>
+            <div class="tab-panel tab-panel-hidden" data-panel="movies">${moviesHtml}</div>`,
+        onReady: (bodyEl) => {
+            bodyEl.addEventListener('click', (e) => {
+                const btn = e.target.closest('.tab-btn');
+                if (!btn) return;
+                const tab = btn.dataset.tab;
+                bodyEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                bodyEl.querySelectorAll('.tab-panel').forEach(p => p.classList.add('tab-panel-hidden'));
+                bodyEl.querySelector(`.tab-panel[data-panel="${tab}"]`).classList.remove('tab-panel-hidden');
+            });
+        },
     };
 }
 
