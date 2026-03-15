@@ -9,16 +9,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
+        * { box-sizing: border-box; }
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
 
+        /* --- Title --- */
         #title {
             position: absolute;
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
             font-family: 'Press Start 2P', monospace;
-            font-size: 28px;
+            font-size: clamp(14px, 2.5vw, 28px);
             color: #ffffff;
             background: #000000;
             padding: 16px 32px;
@@ -30,13 +32,14 @@
             z-index: 10;
         }
 
-        #car-popup {
+        /* --- Entity Toast Popup --- */
+        #entity-toast {
             position: fixed;
             bottom: 12%;
             left: 50%;
             transform: translateX(-50%);
             font-family: 'Press Start 2P', monospace;
-            font-size: 14px;
+            font-size: clamp(8px, 1.5vw, 14px);
             color: #333333;
             background: rgba(255, 215, 0, 0.95);
             padding: 12px 24px;
@@ -44,14 +47,442 @@
             opacity: 0;
             transition: opacity 0.3s ease;
             pointer-events: none;
-            z-index: 10;
+            z-index: 20;
             white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
         }
+        #entity-toast .toast-icon { font-size: 1.2em; }
+        #entity-toast .toast-desc { opacity: 0.7; }
+        #entity-toast .toast-hint {
+            margin-left: 8px;
+            opacity: 0.6;
+            font-size: 0.8em;
+        }
+        #entity-toast kbd {
+            background: #333;
+            color: #ffd700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Press Start 2P', monospace;
+            font-size: 0.9em;
+        }
+
+        /* --- Overlay --- */
+        #overlay-container {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        #overlay-container.overlay-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #overlay-container.overlay-visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .overlay-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+        }
+        .overlay-content {
+            position: relative;
+            background: #1a1a2e;
+            border: 3px solid #444;
+            border-radius: 4px;
+            width: min(92vw, 1100px);
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            font-family: 'Press Start 2P', monospace;
+            color: #e0e0e0;
+            transform: scale(1);
+            animation: overlayIn 0.3s ease-out;
+        }
+        @keyframes overlayIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .overlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 2px solid #333;
+        }
+        .overlay-title {
+            font-size: clamp(10px, 2vw, 16px);
+            margin: 0;
+        }
+        .overlay-close {
+            background: #333;
+            color: #fff;
+            border: 2px solid #555;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            font-size: 16px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay-close:hover { background: #555; }
+        .overlay-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 70vh;
+            font-size: clamp(7px, 1.2vw, 11px);
+            line-height: 1.8;
+        }
+
+        /* --- Overlay Content Styles --- */
+        .overlay-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
+        }
+        .overlay-card {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .card-cover {
+            height: 80px;
+        }
+        .card-info {
+            padding: 10px;
+        }
+        .card-title {
+            font-size: clamp(7px, 1.1vw, 10px);
+            margin-bottom: 4px;
+            color: #fff;
+        }
+        .card-meta {
+            font-size: clamp(6px, 0.9vw, 9px);
+            color: #888;
+        }
+        .overlay-section {
+            margin-bottom: 20px;
+        }
+        .overlay-section h3 {
+            font-size: clamp(8px, 1.3vw, 12px);
+            color: #4a9eff;
+            margin-bottom: 12px;
+        }
+        .now-playing {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #16213e;
+            padding: 12px;
+            border: 2px solid #2a3a5e;
+            border-radius: 4px;
+        }
+        .np-art {
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+        .contact-card {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+        }
+        .contact-name {
+            font-size: clamp(12px, 2vw, 18px);
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .contact-link {
+            color: #4a9eff;
+            text-decoration: none;
+            font-size: clamp(7px, 1.1vw, 10px);
+        }
+        .contact-link:hover { color: #7ec8e3; }
+        .project-lang {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 6px;
+            font-size: clamp(6px, 0.8vw, 8px);
+            color: #aaa;
+        }
+        .lang-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .art-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .art-item {
+            aspect-ratio: 1;
+            border-radius: 4px;
+            display: flex;
+            align-items: flex-end;
+            padding: 6px;
+            background-size: cover;
+            background-position: center;
+        }
+        .art-caption {
+            font-size: clamp(5px, 0.7vw, 7px);
+            color: rgba(255,255,255,0.7);
+        }
+        .blog-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .blog-entry {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            border-radius: 4px;
+            padding: 14px;
+        }
+        .blog-excerpt {
+            color: #999;
+            margin: 8px 0;
+            font-size: clamp(6px, 0.9vw, 9px);
+        }
+        .blog-link {
+            color: #4a9eff;
+            text-decoration: none;
+            font-size: clamp(6px, 0.9vw, 9px);
+        }
+        .blog-link:hover { color: #7ec8e3; }
+
+        /* --- Tabs --- */
+        .tab-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .tab-btn {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            color: #888;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(6px, 1vw, 9px);
+            border-radius: 3px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .tab-btn:hover { border-color: #4a9eff; color: #ccc; }
+        .tab-btn.active { background: #0f3460; border-color: #4a9eff; color: #fff; }
+        .tab-panel-hidden { display: none; }
+
+        /* --- Watched Cards --- */
+        .watched-card {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .watched-cover {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            background: #0d1b2a;
+            display: block;
+        }
+        .watched-cover-placeholder {
+            width: 100%;
+            aspect-ratio: 2/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        .watched-info {
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            flex: 1;
+        }
+        .watched-title {
+            font-size: clamp(8px, 1.1vw, 13px);
+            font-weight: 600;
+            color: #e0e8ff;
+            line-height: 1.2;
+        }
+        .watched-meta {
+            font-size: clamp(6px, 0.9vw, 10px);
+            color: #7a8ba8;
+        }
+        .watched-stars {
+            font-size: clamp(6px, 0.8vw, 10px);
+            color: #f5c518;
+            letter-spacing: 1px;
+        }
+        .watched-notes {
+            font-size: clamp(6px, 0.8vw, 9px);
+            color: #8899aa;
+            font-style: italic;
+            margin-top: 2px;
+        }
+        .watched-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+        }
+
+        /* --- Pagination --- */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 12px;
+            font-size: clamp(6px, 1vw, 9px);
+            color: #888;
+        }
+        .page-btn {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            color: #4a9eff;
+            padding: 6px 10px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(6px, 0.9vw, 8px);
+            border-radius: 3px;
+        }
+        .page-btn:disabled { color: #444; border-color: #1a1a2e; cursor: default; }
+        .page-btn:not(:disabled):hover { background: #0f3460; }
+
+        /* --- Blog reader --- */
+        .blog-back {
+            background: none;
+            border: 2px solid #4a9eff;
+            color: #4a9eff;
+            padding: 8px 14px;
+            cursor: pointer;
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(6px, 0.9vw, 9px);
+            border-radius: 3px;
+            margin-bottom: 16px;
+            display: inline-block;
+        }
+        .blog-back:hover { background: #0f3460; }
+        .blog-post-content { line-height: 1.8; font-size: clamp(7px, 1.2vw, 11px); }
+        .blog-post-content h1,
+        .blog-post-content h2,
+        .blog-post-content h3 { color: #ffd700; margin: 16px 0 8px; font-size: clamp(9px, 1.4vw, 13px); }
+        .blog-post-content p { margin: 8px 0; color: #ddd; }
+        .blog-post-content img { max-width: 100%; border-radius: 4px; margin: 12px 0; display: block; }
+        .blog-post-content pre {
+            background: #0d0d1a;
+            border: 1px solid #2a3a5e;
+            border-radius: 4px;
+            padding: 12px;
+            overflow-x: auto;
+            font-family: monospace;
+            font-size: clamp(7px, 1.1vw, 10px);
+            color: #e0e0e0;
+            margin: 12px 0;
+        }
+        .blog-post-content code { background: #0d0d1a; padding: 2px 4px; border-radius: 2px; font-family: monospace; font-size: 0.9em; }
+        .blog-post-content pre code { background: none; padding: 0; }
+        .blog-post-content a { color: #4a9eff; }
+        .blog-post-content ul,
+        .blog-post-content ol { margin: 8px 0; padding-left: 24px; }
+        .blog-post-content li { margin: 4px 0; }
+        .blog-post-content blockquote { border-left: 3px solid #4a9eff; padding-left: 12px; color: #888; margin: 12px 0; }
+
+        /* --- Travel --- */
+        .travel-section { margin-bottom: 20px; }
+        .travel-section h3 { font-size: clamp(8px, 1.3vw, 12px); color: #4a9eff; margin-bottom: 10px; }
+        .travel-current .travel-card { border-color: #2d6a2d; }
+        .travel-card {
+            background: #16213e;
+            border: 2px solid #2a3a5e;
+            border-radius: 4px;
+            padding: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .travel-flag { font-size: 24px; line-height: 1; flex-shrink: 0; }
+        .travel-info { flex: 1; }
+        .travel-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: clamp(5px, 0.7vw, 7px);
+            margin-top: 4px;
+        }
+        .travel-badge-confirmed { background: #1a4a1a; color: #6cd66c; border: 1px solid #2d6a2d; }
+        .travel-badge-exploring { background: #3a2a00; color: #ffa500; border: 1px solid #6a4a00; }
+
+        /* --- GitHub card --- */
+        .github-card { text-decoration: none; display: block; transition: border-color 0.2s; }
+        .github-card:hover { border-color: #4a9eff; }
+
+        /* --- Spotify --- */
+        .spotify-playlist-card {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: border-color 0.2s;
+        }
+        .spotify-playlist-card:hover { border-color: #1db954; }
+        .spotify-cover { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; }
+
+        /* --- Loading state --- */
+        .overlay-loading { text-align: center; padding: 32px; color: #888; font-size: clamp(7px, 1.1vw, 10px); }
     </style>
-  <script type="module" crossorigin src="/assets/index-B2yTNVDJ.js"></script>
+  <script type="module" crossorigin src="/assets/index-sYjqWvlq.js"></script>
 </head>
 <body>
     <div id="title">Joel's Mindscape</div>
-    <div id="car-popup">Joel's Car</div>
+
+    <div id="entity-toast">
+        <span class="toast-icon"></span>
+        <span class="toast-label"></span>
+        <span class="toast-desc"></span>
+        <span class="toast-hint">Click or press <kbd>E</kbd></span>
+    </div>
+
+    <div id="overlay-container" class="overlay-hidden">
+        <div class="overlay-backdrop"></div>
+        <div class="overlay-content">
+            <div class="overlay-header">
+                <h2 class="overlay-title"></h2>
+                <button class="overlay-close">&times;</button>
+            </div>
+            <div class="overlay-body"></div>
+        </div>
+    </div>
+
 </body>
 </html>
