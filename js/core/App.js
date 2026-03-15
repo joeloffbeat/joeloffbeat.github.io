@@ -14,7 +14,7 @@ import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui
 import { ENTITY_PLACEMENTS } from '../config/worldMap.js';
 
 import {
-    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND
+    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
 } from '../config/constants.js';
 import { DEBUG } from '../config/debug.js';
 
@@ -94,6 +94,14 @@ export class App {
             MIDDLE: THREE.MOUSE.DOLLY,
             RIGHT: THREE.MOUSE.PAN
         };
+        if (IS_TOUCH_DEVICE) {
+            // Disable single-touch pan so it doesn't fight tap-to-move.
+            // Two-finger pinch-to-zoom (DOLLY_PAN = 2) is preserved.
+            this.orbitControls.touches = {
+                ONE: null,
+                TWO: THREE.TOUCH.DOLLY_PAN // numeric value: 2
+            };
+        }
     }
 
     async createWorld() {
