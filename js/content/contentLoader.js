@@ -1,5 +1,7 @@
 import { marked } from 'marked';
 import travelData from '../../_travel/travel.json';
+import moviesData from '../../_watched/movies.json';
+import booksData from '../../_watched/books.json';
 
 // ---------------------------------------------------------------------------
 // Vite build-time glob imports — patterns MUST be string literals
@@ -108,4 +110,4 @@ function buildPosts() {
 
 export const artCategories = buildArtCategories();
 export const posts = buildPosts();
-export { travelData };
+export { travelData, moviesData, booksData };
