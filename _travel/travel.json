@@ -8,7 +8,7 @@
   "upcoming": [
     {
       "place": "Bengaluru, India",
-      "dates": "March End, 2026",
+      "dates": "April Start, 2026",
       "flag": "🇮🇳",
       "status": "Maybe",
       "notes": "Cherry blossom season"
@@ -28,6 +28,13 @@
       "flag": "🇮🇳",
       "status": "Visited",
       "notes": "Sundeep's marriage"
+    },
+    {
+      "place": "Delhi, India",
+      "dates": "March 2026",
+      "flag": "🇮🇳",
+      "status": "Visited",
+      "notes": "US Visa"
     }
   ]
 }

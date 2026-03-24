@@ -261,8 +261,8 @@ export const DECORATIVE_PLACEMENTS = [
     {
         id: 'ship',
         spritePath: '/assets/ship.png',
-        position: { x: -25, y: 10, z: -60 }, // northwest void — same west side as bookshelf (tile 3,6 = world -7,−27), further north
-        scale: { x: 20, y: 16 },
+        position: { x: 40, y: 10, z: -20 }, // northwest void — same west side as bookshelf (tile 3,6 = world -7,−27), further north
+        scale: { x: 40, y: 32 },
         animation: { type: 'hover', amplitude: 1.5, speed: 1.2 },
     },
 ];
