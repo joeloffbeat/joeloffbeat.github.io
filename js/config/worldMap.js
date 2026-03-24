@@ -97,11 +97,11 @@ export const TILE_POOLS = {
 
 // Isometric tile-to-world mapping.
 // Canvas pos: cx=(col-row)*32+1024, cy=(col+row)*16+528
-// Canvas→world: worldCoord = (canvasCoord - 1024) * 144/2048
+// Canvas→world: worldCoord = (canvasCoord - 1024) * 158.4/2048
 export function tileToWorld(col, row) {
     return {
-        x: (col - row) * 2.25,
-        z: (col + row) * 1.125 - 34.875
+        x: (col - row) * 2.475,
+        z: (col + row) * 1.2375 - 38.3625
     };
 }
 
@@ -185,6 +185,19 @@ export const ENTITY_PLACEMENTS = [
         icon: '\u{1F426}',
     },
     {
+        id: 'home',
+        spritePath: '/assets/home.png',
+        tileCol: 17, tileRow: 24,
+        ...tileToWorld(17, 24),
+        scale: { x: 18, y: 16, z: 1 },
+        triggerRadius: 10,
+        collisionBox: { w: 12, d: 5, h: 10 },
+        overlayId: null,
+        label: 'Home',
+        description: 'Home',
+        icon: '\u{1F3E0}',
+    },
+    {
         id: 'car',
         spritePath: '/assets/car.png',
         tileCol: 11, tileRow: 20,
@@ -238,4 +251,18 @@ export const OBJECT_LAYERS = [
             'XXXXRXXXXXXXXXXXXXXXXXXXXXXRXXXX', // row 31
         ]
     }
+];
+
+// --- Decorative Placements (non-interactive, animated world objects) ---
+// Positions are direct world coordinates — not tile-based — so objects can be
+// placed in the void outside the tile grid.
+
+export const DECORATIVE_PLACEMENTS = [
+    {
+        id: 'ship',
+        spritePath: '/assets/ship.png',
+        position: { x: -25, y: 10, z: -60 }, // northwest void — same west side as bookshelf (tile 3,6 = world -7,−27), further north
+        scale: { x: 20, y: 16 },
+        animation: { type: 'hover', amplitude: 1.5, speed: 1.2 },
+    },
 ];
