@@ -21,14 +21,14 @@ export function initInteraction(entities, toastElement, onOpenOverlay) {
 
     // Toast click handler
     _toastEl.addEventListener('click', () => {
-        if (_activeEntity) {
+        if (_activeEntity && _activeEntity.overlayId) {
             _onOpenOverlay(_activeEntity.overlayId);
         }
     });
 
     // E-key handler
     window.addEventListener('keydown', (e) => {
-        if ((e.key === 'e' || e.key === 'E') && _activeEntity) {
+        if ((e.key === 'e' || e.key === 'E') && _activeEntity && _activeEntity.overlayId) {
             _onOpenOverlay(_activeEntity.overlayId);
         }
     });
@@ -85,9 +85,12 @@ function showToast(entity) {
     if (label) label.textContent = entity.label;
     if (desc) desc.textContent = entity.description;
 
+    const hint = _toastEl.querySelector('.toast-hint');
+    if (hint) hint.style.display = entity.overlayId ? '' : 'none';
+
     _toastEl.style.opacity = '1';
-    _toastEl.style.pointerEvents = 'auto';
-    if (IS_TOUCH_DEVICE) setInteractButtonVisible(true);
+    _toastEl.style.pointerEvents = entity.overlayId ? 'auto' : 'none';
+    if (IS_TOUCH_DEVICE) setInteractButtonVisible(!!entity.overlayId);
 }
 
 function hideToast() {
