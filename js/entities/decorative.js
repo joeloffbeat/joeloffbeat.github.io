@@ -1,11 +1,5 @@
 import * as THREE from 'three';
-import { CAMERA } from '../config/constants.js';
-
-// Same fixed tilt as InteractiveEntity — both face the same camera angle.
-const SPRITE_ROTATION_X = -Math.atan2(
-    CAMERA.ISOMETRIC_DISTANCE * 2.0,
-    CAMERA.ISOMETRIC_DISTANCE * 0.85
-);
+import { SPRITE_ROTATION_X } from '../config/constants.js';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -59,6 +53,9 @@ export function updateDecoratives(decoratives, elapsed) {
         switch (anim.type) {
             case 'hover':
                 dec.mesh.position.y = dec.baseY + Math.sin(elapsed * anim.speed) * anim.amplitude;
+                break;
+            default:
+                console.warn(`[decorative] Unknown animation type: "${anim.type}" on "${dec.config.id}"`);
                 break;
         }
     }

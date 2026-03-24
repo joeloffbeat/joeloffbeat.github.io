@@ -9,8 +9,8 @@ export const LIGHTING = {
     DIRECTIONAL_POSITION: { x: 20, y: 30, z: 10 },
     SHADOW_MAP_SIZE: 2048,
     SHADOW_CAMERA_BOUNDS: {
-        top: 80, bottom: -80,
-        left: -80, right: 80,
+        top: 88, bottom: -88,
+        left: -88, right: 88,
         near: 0.1, far: 300
     }
 };
@@ -21,6 +21,11 @@ export const CAMERA = {
     NEAR: 1,
     FAR: 1000
 };
+
+// Derived: fixed plane tilt so world-space sprites face the isometric camera.
+// Camera sits at (0, d*2.0, d*0.85); d cancels so only the 2.0/0.85 ratio matters.
+// Used by InteractiveEntity and decorative.js — update here if camera elevation changes.
+export const SPRITE_ROTATION_X = -Math.atan2(CAMERA.ISOMETRIC_DISTANCE * 2.0, CAMERA.ISOMETRIC_DISTANCE * 0.85);
 
 export const SCENE = {
     BACKGROUND_COLOR: 0x0a0a0f
@@ -40,9 +45,9 @@ export const CHARACTER = {
 };
 
 export const GROUND = {
-    WIDTH: 144,
-    HEIGHT: 144,
-    TILE_SIZE: 4.5,
+    WIDTH: 158.4,
+    HEIGHT: 158.4,
+    TILE_SIZE: 4.95,
     GRID: 32,
     CANVAS_SIZE: 2048,
     SIDE_WALL_DEPTH: 30

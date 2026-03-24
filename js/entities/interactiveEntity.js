@@ -1,14 +1,7 @@
 import * as THREE from 'three';
-import { CAMERA } from '../config/constants.js';
+import { SPRITE_ROTATION_X } from '../config/constants.js';
 
 const textureLoader = new THREE.TextureLoader();
-
-// Fixed tilt matching the isometric camera angle (camera.js: position y=d*2.0, z=d*0.85).
-// Baked once — the camera never rotates (enableRotate: false), so this is always correct.
-const SPRITE_ROTATION_X = -Math.atan2(
-    CAMERA.ISOMETRIC_DISTANCE * 2.0,
-    CAMERA.ISOMETRIC_DISTANCE * 0.85
-);
 
 export class InteractiveEntity {
     constructor(config) {
