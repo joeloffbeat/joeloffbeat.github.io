@@ -7,12 +7,13 @@ import { createCharacter, updateCharacterPosition } from '../entities/character.
 import { createGround, updateWater } from '../entities/ground.js';
 import { createStars, updateStars } from '../entities/stars.js';
 import { InteractiveEntity } from '../entities/interactiveEntity.js';
+import { createDecoratives, updateDecoratives } from '../entities/decorative.js';
 import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
 import { initInteraction, updateInteraction, getActiveEntity } from '../systems/interaction.js';
 import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui/overlay.js';
 import { initMobileControls } from '../ui/mobileControls.js';
-import { ENTITY_PLACEMENTS } from '../config/worldMap.js';
+import { ENTITY_PLACEMENTS, DECORATIVE_PLACEMENTS } from '../config/worldMap.js';
 
 import {
     LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
@@ -30,6 +31,7 @@ export class App {
         this.character = null;
         this.ground = null;
         this.entities = [];
+        this.decoratives = [];
         this.colliders = [];
 
         this.ambientLight = null;
@@ -134,6 +136,12 @@ export class App {
         this.character = createCharacter();
         this.scene.add(this.character);
         this.controlsState.targetPosition.copy(this.character.position);
+
+        // Decorative objects (non-interactive, animated)
+        this.decoratives = await createDecoratives(DECORATIVE_PLACEMENTS);
+        for (const dec of this.decoratives) {
+            this.scene.add(dec.mesh);
+        }
     }
 
     initInputControls() {
@@ -191,6 +199,9 @@ export class App {
 
         // Water animation
         updateWater(delta);
+
+        // Decorative animations
+        updateDecoratives(this.decoratives, this.clock.getElapsedTime());
 
         // Proximity / toast
         updateInteraction(this.character.position, blocked);
