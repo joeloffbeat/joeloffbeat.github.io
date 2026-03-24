@@ -121,7 +121,7 @@ export class App {
         for (const config of ENTITY_PLACEMENTS) {
             const entity = new InteractiveEntity(config);
             await entity.create();
-            this.scene.add(entity.sprite);
+            this.scene.add(entity.mesh);
             this.colliders.push(entity.collider);
             this.entities.push(entity);
 
