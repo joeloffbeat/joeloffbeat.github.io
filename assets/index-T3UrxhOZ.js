@@ -4096,104 +4096,104 @@ void main() {
             opacity: 1;
             transition: opacity 0.4s ease;
         }
-    `,document.head.appendChild(s)}let tg=[],rn=null,mn=null,ch=null;function dw(s,e,t){tg=s,mn=e,ch=t;const n=mn.querySelector(".toast-hint");n&&(n.innerHTML=ya?"Tap to explore":"Click or press <kbd>E</kbd>"),mn.addEventListener("click",()=>{rn&&rn.overlayId&&ch(rn.overlayId)}),window.addEventListener("keydown",i=>{(i.key==="e"||i.key==="E")&&rn&&rn.overlayId&&ch(rn.overlayId)})}function fw(){return rn}function pw(s,e){if(e){Vf();return}let t=null,n=1/0;for(const i of tg){const r=i.getDistanceTo(s);r<i.triggerRadius&&r<n&&(t=i,n=r)}if(rn&&t&&t!==rn){const i=rn.getDistanceTo(s);i<rn.triggerRadius&&n>=i-xE.HYSTERESIS_DISTANCE&&(t=rn)}t?(mw(t),rn=t):(Vf(),rn=null)}function mw(s){if(!mn)return;const e=mn.querySelector(".toast-icon"),t=mn.querySelector(".toast-label"),n=mn.querySelector(".toast-desc");e&&(e.textContent=s.icon),t&&(t.textContent=s.label),n&&(n.textContent=s.description);const i=mn.querySelector(".toast-hint");i&&(i.style.display=s.overlayId?"":"none"),mn.style.opacity="1",mn.style.pointerEvents=s.overlayId?"auto":"none",ya&&eg(!!s.overlayId)}function Vf(){mn&&(mn.style.opacity="0",mn.style.pointerEvents="none",ya&&eg(!1))}const gw="/assets/ajay-DJu6yGcF.png",_w="/assets/amma-BETgS8tz.png",xw="/assets/gabriel-Du9u3_tD.png",vw="/assets/kamalam-CQZYPKIG.png",yw="/assets/kausik-QLkPP3LY.png",bw="/assets/neha-TUYTkRIK.png",Sw="/assets/nila-PIbm4Mkv.png",Mw="/assets/pappa_mummy-noyZWOXM.png",Ew="/assets/prakash-DVjkgQW-.png",ww="/assets/rashmi-Dol_jgvp.png",Tw="/assets/roona-BBkT8woK.png",Aw="/assets/self-BZsMSzeb.png",Cw="/assets/shirley-Dcb2PNh9.png",Rw="/assets/siva-nK1Ml-8Y.png",Iw="/assets/faces_of_neha-CSjnlGoX.png",Pw="/assets/friends-DY4e--VB.png",Lw="/assets/personalities_of_neha-T-7xFVDR.png",Dw="/assets/teachers-BS4wM95O.png",Nw="/assets/mika-C6EfqaR1.png",Uw="/assets/neha_hammock-CIYhZsbC.png",Fw="/assets/neha_pole-Du7GFvFb.png",Ow="/assets/rinibot-Ce3X2xlg.png",Bw="/assets/the_girl-B6UuTOhF.png",kw=`---
-title: How to Create Your Own GitHub.io Site
-date: 2026-03-14
-tags: github, tutorial, web
-excerpt: A step-by-step beginner's guide to launching your first GitHub Pages site from scratch.
-cover: cover.png
----
-
-# How to Create Your Own GitHub.io Site
-
-GitHub Pages lets you host a website directly from a GitHub repository — for free. In this guide we'll go from zero to a live site at \`https://yourusername.github.io\`.
-
-## What is GitHub Pages?
-
-GitHub Pages is a static site hosting service built into GitHub. Push HTML, CSS, and JavaScript files to a repository, and GitHub publishes them as a live website. No servers, no hosting bills, free HTTPS.
-
-## Step 1: Create a GitHub Account
-
-If you don't have one yet, sign up at [github.com](https://github.com). Choose your username carefully — it becomes part of your site's permanent URL.
-
-## Step 2: Create the Repository
-
-Create a new public repository named **exactly** \`{yourusername}.github.io\`. This naming convention is required by GitHub Pages. Initialise it with a README.
-
-## Step 3: Add Your First Page
-
-Clone the repository locally and create \`index.html\`:
-
-\`\`\`html
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>My Site</title>
-</head>
-<body>
-  <h1>Hello from GitHub Pages!</h1>
-</body>
-</html>
-\`\`\`
-
-## Step 4: Enable GitHub Pages
-
-In your repository **Settings → Pages**, set Source to **Deploy from a branch**, select \`main\` and \`/ (root)\`, then save.
-
-## Step 5: Push and Wait
-
-\`\`\`bash
-git add index.html
-git commit -m "feat: add index.html"
-git push
-\`\`\`
-
-Wait about 1 minute, then visit \`https://{yourusername}.github.io\`. Done!
-
-## Step 6: Level Up with Vite
-
-For a modern development experience with hot reload and bundling:
-
-\`\`\`bash
-npm create vite@latest my-site -- --template vanilla
-cd my-site
-npm install
-npm run dev
-\`\`\`
-
-Add \`gh-pages\` for deployment:
-
-\`\`\`bash
-npm install --save-dev gh-pages
-\`\`\`
-
-Add to \`package.json\`:
-
-\`\`\`json
-{
-  "scripts": {
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
-  }
-}
-\`\`\`
-
-Then \`npm run deploy\` — Vite builds to \`dist/\` and \`gh-pages\` pushes it to a \`gh-pages\` branch that GitHub Pages serves.
-
-## Custom Domain (Optional)
-
-1. Buy a domain from any registrar
-2. Add a \`CNAME\` file to your repo root containing your domain (e.g. \`joel.dev\`)
-3. In your domain registrar's DNS settings, add \`A\` records pointing to GitHub's Pages IPs (listed in their docs)
-4. Enable "Enforce HTTPS" in repo Settings → Pages
-
-Free HTTPS is included — GitHub handles the SSL certificate automatically.
-
-![There is your rock](./baba.jpg)
----
-
-That's it. Your portfolio is live. Start adding your work!
+    `,document.head.appendChild(s)}let tg=[],rn=null,mn=null,ch=null;function dw(s,e,t){tg=s,mn=e,ch=t;const n=mn.querySelector(".toast-hint");n&&(n.innerHTML=ya?"Tap to explore":"Click or press <kbd>E</kbd>"),mn.addEventListener("click",()=>{rn&&rn.overlayId&&ch(rn.overlayId)}),window.addEventListener("keydown",i=>{(i.key==="e"||i.key==="E")&&rn&&rn.overlayId&&ch(rn.overlayId)})}function fw(){return rn}function pw(s,e){if(e){Vf();return}let t=null,n=1/0;for(const i of tg){const r=i.getDistanceTo(s);r<i.triggerRadius&&r<n&&(t=i,n=r)}if(rn&&t&&t!==rn){const i=rn.getDistanceTo(s);i<rn.triggerRadius&&n>=i-xE.HYSTERESIS_DISTANCE&&(t=rn)}t?(mw(t),rn=t):(Vf(),rn=null)}function mw(s){if(!mn)return;const e=mn.querySelector(".toast-icon"),t=mn.querySelector(".toast-label"),n=mn.querySelector(".toast-desc");e&&(e.textContent=s.icon),t&&(t.textContent=s.label),n&&(n.textContent=s.description);const i=mn.querySelector(".toast-hint");i&&(i.style.display=s.overlayId?"":"none"),mn.style.opacity="1",mn.style.pointerEvents=s.overlayId?"auto":"none",ya&&eg(!!s.overlayId)}function Vf(){mn&&(mn.style.opacity="0",mn.style.pointerEvents="none",ya&&eg(!1))}const gw="/assets/ajay-DJu6yGcF.png",_w="/assets/amma-BETgS8tz.png",xw="/assets/gabriel-Du9u3_tD.png",vw="/assets/kamalam-CQZYPKIG.png",yw="/assets/kausik-QLkPP3LY.png",bw="/assets/neha-TUYTkRIK.png",Sw="/assets/nila-PIbm4Mkv.png",Mw="/assets/pappa_mummy-noyZWOXM.png",Ew="/assets/prakash-DVjkgQW-.png",ww="/assets/rashmi-Dol_jgvp.png",Tw="/assets/roona-BBkT8woK.png",Aw="/assets/self-BZsMSzeb.png",Cw="/assets/shirley-Dcb2PNh9.png",Rw="/assets/siva-nK1Ml-8Y.png",Iw="/assets/faces_of_neha-CSjnlGoX.png",Pw="/assets/friends-DY4e--VB.png",Lw="/assets/personalities_of_neha-T-7xFVDR.png",Dw="/assets/teachers-BS4wM95O.png",Nw="/assets/mika-C6EfqaR1.png",Uw="/assets/neha_hammock-CIYhZsbC.png",Fw="/assets/neha_pole-Du7GFvFb.png",Ow="/assets/rinibot-Ce3X2xlg.png",Bw="/assets/the_girl-B6UuTOhF.png",kw=`---\r
+title: How to Create Your Own GitHub.io Site\r
+date: 2026-03-14\r
+tags: github, tutorial, web\r
+excerpt: A step-by-step beginner's guide to launching your first GitHub Pages site from scratch.\r
+cover: cover.png\r
+---\r
+\r
+# How to Create Your Own GitHub.io Site\r
+\r
+GitHub Pages lets you host a website directly from a GitHub repository — for free. In this guide we'll go from zero to a live site at \`https://yourusername.github.io\`.\r
+\r
+## What is GitHub Pages?\r
+\r
+GitHub Pages is a static site hosting service built into GitHub. Push HTML, CSS, and JavaScript files to a repository, and GitHub publishes them as a live website. No servers, no hosting bills, free HTTPS.\r
+\r
+## Step 1: Create a GitHub Account\r
+\r
+If you don't have one yet, sign up at [github.com](https://github.com). Choose your username carefully — it becomes part of your site's permanent URL.\r
+\r
+## Step 2: Create the Repository\r
+\r
+Create a new public repository named **exactly** \`{yourusername}.github.io\`. This naming convention is required by GitHub Pages. Initialise it with a README.\r
+\r
+## Step 3: Add Your First Page\r
+\r
+Clone the repository locally and create \`index.html\`:\r
+\r
+\`\`\`html\r
+<!DOCTYPE html>\r
+<html lang="en">\r
+<head>\r
+  <meta charset="UTF-8">\r
+  <title>My Site</title>\r
+</head>\r
+<body>\r
+  <h1>Hello from GitHub Pages!</h1>\r
+</body>\r
+</html>\r
+\`\`\`\r
+\r
+## Step 4: Enable GitHub Pages\r
+\r
+In your repository **Settings → Pages**, set Source to **Deploy from a branch**, select \`main\` and \`/ (root)\`, then save.\r
+\r
+## Step 5: Push and Wait\r
+\r
+\`\`\`bash\r
+git add index.html\r
+git commit -m "feat: add index.html"\r
+git push\r
+\`\`\`\r
+\r
+Wait about 1 minute, then visit \`https://{yourusername}.github.io\`. Done!\r
+\r
+## Step 6: Level Up with Vite\r
+\r
+For a modern development experience with hot reload and bundling:\r
+\r
+\`\`\`bash\r
+npm create vite@latest my-site -- --template vanilla\r
+cd my-site\r
+npm install\r
+npm run dev\r
+\`\`\`\r
+\r
+Add \`gh-pages\` for deployment:\r
+\r
+\`\`\`bash\r
+npm install --save-dev gh-pages\r
+\`\`\`\r
+\r
+Add to \`package.json\`:\r
+\r
+\`\`\`json\r
+{\r
+  "scripts": {\r
+    "predeploy": "npm run build",\r
+    "deploy": "gh-pages -d dist"\r
+  }\r
+}\r
+\`\`\`\r
+\r
+Then \`npm run deploy\` — Vite builds to \`dist/\` and \`gh-pages\` pushes it to a \`gh-pages\` branch that GitHub Pages serves.\r
+\r
+## Custom Domain (Optional)\r
+\r
+1. Buy a domain from any registrar\r
+2. Add a \`CNAME\` file to your repo root containing your domain (e.g. \`joel.dev\`)\r
+3. In your domain registrar's DNS settings, add \`A\` records pointing to GitHub's Pages IPs (listed in their docs)\r
+4. Enable "Enforce HTTPS" in repo Settings → Pages\r
+\r
+Free HTTPS is included — GitHub handles the SSL certificate automatically.\r
+\r
+![There is your rock](./baba.jpg)\r
+---\r
+\r
+That's it. Your portfolio is live. Start adding your work!\r
 `,Gw="/assets/baba-B6G5mPMb.jpg";function Bu(){return{async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null}}var ys=Bu();function ng(s){ys=s}var ns={exec:()=>null};function et(s,e=""){let t=typeof s=="string"?s:s.source,n={replace:(i,r)=>{let a=typeof r=="string"?r:r.source;return a=a.replace(Jt.caret,"$1"),t=t.replace(i,a),n},getRegex:()=>new RegExp(t,e)};return n}var zw=(()=>{try{return!!new RegExp("(?<=1)(?<!1)")}catch{return!1}})(),Jt={codeRemoveIndent:/^(?: {1,4}| {0,3}\t)/gm,outputLinkReplace:/\\([\[\]])/g,indentCodeCompensation:/^(\s+)(?:```)/,beginningSpace:/^\s+/,endingHash:/#$/,startingSpaceChar:/^ /,endingSpaceChar:/ $/,nonSpaceChar:/[^ ]/,newLineCharGlobal:/\n/g,tabCharGlobal:/\t/g,multipleSpaceGlobal:/\s+/g,blankLine:/^[ \t]*$/,doubleBlankLine:/\n[ \t]*\n[ \t]*$/,blockquoteStart:/^ {0,3}>/,blockquoteSetextReplace:/\n {0,3}((?:=+|-+) *)(?=\n|$)/g,blockquoteSetextReplace2:/^ {0,3}>[ \t]?/gm,listReplaceNesting:/^ {1,4}(?=( {4})*[^ ])/g,listIsTask:/^\[[ xX]\] +\S/,listReplaceTask:/^\[[ xX]\] +/,listTaskCheckbox:/\[[ xX]\]/,anyLine:/\n.*\n/,hrefBrackets:/^<(.*)>$/,tableDelimiter:/[:|]/,tableAlignChars:/^\||\| *$/g,tableRowBlankLine:/\n[ \t]*$/,tableAlignRight:/^ *-+: *$/,tableAlignCenter:/^ *:-+: *$/,tableAlignLeft:/^ *:-+ *$/,startATag:/^<a /i,endATag:/^<\/a>/i,startPreScriptTag:/^<(pre|code|kbd|script)(\s|>)/i,endPreScriptTag:/^<\/(pre|code|kbd|script)(\s|>)/i,startAngleBracket:/^</,endAngleBracket:/>$/,pedanticHrefTitle:/^([^'"]*[^\s])\s+(['"])(.*)\2/,unicodeAlphaNumeric:/[\p{L}\p{N}]/u,escapeTest:/[&<>"']/,escapeReplace:/[&<>"']/g,escapeTestNoEncode:/[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/,escapeReplaceNoEncode:/[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g,caret:/(^|[^\[])\^/g,percentDecode:/%25/g,findPipe:/\|/g,splitPipe:/ \|/,slashPipe:/\\\|/g,carriageReturn:/\r\n|\r/g,spaceLine:/^ +$/gm,notSpaceStart:/^\S*/,endingNewline:/\n$/,listItemRegex:s=>new RegExp(`^( {0,3}${s})((?:[	 ][^\\n]*)?(?:\\n|$))`),nextBulletRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`),hrRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`),fencesBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}(?:\`\`\`|~~~)`),headingBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}#`),htmlBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}<(?:[a-z].*>|!--)`,"i"),blockquoteBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}>`)},Vw=/^(?:[ \t]*(?:\n|$))+/,Hw=/^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/,Ww=/^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/,ba=/^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,Xw=/^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,ku=/ {0,3}(?:[*+-]|\d{1,9}[.)])/,ig=/^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,sg=et(ig).replace(/bull/g,ku).replace(/blockCode/g,/(?: {4}| {0,3}\t)/).replace(/fences/g,/ {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g,/ {0,3}>/).replace(/heading/g,/ {0,3}#{1,6}/).replace(/html/g,/ {0,3}<[^\n>]+>\n/).replace(/\|table/g,"").getRegex(),qw=et(ig).replace(/bull/g,ku).replace(/blockCode/g,/(?: {4}| {0,3}\t)/).replace(/fences/g,/ {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g,/ {0,3}>/).replace(/heading/g,/ {0,3}#{1,6}/).replace(/html/g,/ {0,3}<[^\n>]+>\n/).replace(/table/g,/ {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(),Gu=/^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,Yw=/^[^\n]+/,zu=/(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/,$w=et(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label",zu).replace("title",/(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(),Zw=et(/^(bull)([ \t][^\n]+?)?(?:\n|$)/).replace(/bull/g,ku).getRegex(),uc="address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul",Vu=/<!--(?:-?>|[\s\S]*?(?:-->|$))/,Jw=et("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))","i").replace("comment",Vu).replace("tag",uc).replace("attribute",/ +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(),rg=et(Gu).replace("hr",ba).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("|table","").replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",uc).getRegex(),Kw=et(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph",rg).getRegex(),Hu={blockquote:Kw,code:Hw,def:$w,fences:Ww,heading:Xw,hr:ba,html:Jw,lheading:sg,list:Zw,newline:Vw,paragraph:rg,table:ns,text:Yw},Hf=et("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr",ba).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("blockquote"," {0,3}>").replace("code","(?: {4}| {0,3}	)[^\\n]").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",uc).getRegex(),jw={...Hu,lheading:qw,table:Hf,paragraph:et(Gu).replace("hr",ba).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("table",Hf).replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",uc).getRegex()},Qw={...Hu,html:et(`^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))`).replace("comment",Vu).replace(/tag/g,"(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,heading:/^(#{1,6})(.*)(?:\n+|$)/,fences:ns,lheading:/^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,paragraph:et(Gu).replace("hr",ba).replace("heading",` *#{1,6} *[^
 ]`).replace("lheading",sg).replace("|table","").replace("blockquote"," {0,3}>").replace("|fences","").replace("|list","").replace("|html","").replace("|tag","").getRegex()},eT=/^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,tT=/^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,ag=/^( {2,}|\\)\n(?!\s*$)/,nT=/^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,dc=/[\p{P}\p{S}]/u,Wu=/[\s\p{P}\p{S}]/u,og=/[^\s\p{P}\p{S}]/u,iT=et(/^((?![*_])punctSpace)/,"u").replace(/punctSpace/g,Wu).getRegex(),lg=/(?!~)[\p{P}\p{S}]/u,sT=/(?!~)[\s\p{P}\p{S}]/u,rT=/(?:[^\s\p{P}\p{S}]|~)/u,cg=/(?![*_])[\p{P}\p{S}]/u,aT=/(?![*_])[\s\p{P}\p{S}]/u,oT=/(?:[^\s\p{P}\p{S}]|[*_])/u,lT=et(/link|precode-code|html/,"g").replace("link",/\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-",zw?"(?<!`)()":"(^^|[^`])").replace("code",/(?<b>`+)[^`]+\k<b>(?!`)/).replace("html",/<(?! )[^<>]*?>/).getRegex(),hg=/^(?:\*+(?:((?!\*)punct)|[^\s*]))|^_+(?:((?!_)punct)|([^\s_]))/,cT=et(hg,"u").replace(/punct/g,dc).getRegex(),hT=et(hg,"u").replace(/punct/g,lg).getRegex(),ug="^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)",uT=et(ug,"gu").replace(/notPunctSpace/g,og).replace(/punctSpace/g,Wu).replace(/punct/g,dc).getRegex(),dT=et(ug,"gu").replace(/notPunctSpace/g,rT).replace(/punctSpace/g,sT).replace(/punct/g,lg).getRegex(),fT=et("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)","gu").replace(/notPunctSpace/g,og).replace(/punctSpace/g,Wu).replace(/punct/g,dc).getRegex(),pT=et(/^~~?(?:((?!~)punct)|[^\s~])/,"u").replace(/punct/g,cg).getRegex(),mT="^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)",gT=et(mT,"gu").replace(/notPunctSpace/g,oT).replace(/punctSpace/g,aT).replace(/punct/g,cg).getRegex(),_T=et(/\\(punct)/,"gu").replace(/punct/g,dc).getRegex(),xT=et(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme",/[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email",/[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(),vT=et(Vu).replace("(?:-->|$)","-->").getRegex(),yT=et("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment",vT).replace("attribute",/\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(),yl=/(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+[^`]*?`+(?!`)|[^\[\]\\`])*?/,bT=et(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label",yl).replace("href",/<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]*/).replace("title",/"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(),dg=et(/^!?\[(label)\]\[(ref)\]/).replace("label",yl).replace("ref",zu).getRegex(),fg=et(/^!?\[(ref)\](?:\[\])?/).replace("ref",zu).getRegex(),ST=et("reflink|nolink(?!\\()","g").replace("reflink",dg).replace("nolink",fg).getRegex(),Wf=/[hH][tT][tT][pP][sS]?|[fF][tT][pP]/,Xu={_backpedal:ns,anyPunctuation:_T,autolink:xT,blockSkip:lT,br:ag,code:tT,del:ns,delLDelim:ns,delRDelim:ns,emStrongLDelim:cT,emStrongRDelimAst:uT,emStrongRDelimUnd:fT,escape:eT,link:bT,nolink:fg,punctuation:iT,reflink:dg,reflinkSearch:ST,tag:yT,text:nT,url:ns},MT={...Xu,link:et(/^!?\[(label)\]\((.*?)\)/).replace("label",yl).getRegex(),reflink:et(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label",yl).getRegex()},Gh={...Xu,emStrongRDelimAst:dT,emStrongLDelim:hT,delLDelim:pT,delRDelim:gT,url:et(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol",Wf).replace("email",/[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),_backpedal:/(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,del:/^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/,text:et(/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol",Wf).getRegex()},ET={...Gh,br:et(ag).replace("{2,}","*").getRegex(),text:et(Gh.text).replace("\\b_","\\b_| {2,}\\n").replace(/\{2,\}/g,"*").getRegex()},xo={normal:Hu,gfm:jw,pedantic:Qw},Ar={normal:Xu,gfm:Gh,breaks:ET,pedantic:MT},wT={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"},Xf=s=>wT[s];function Gn(s,e){if(e){if(Jt.escapeTest.test(s))return s.replace(Jt.escapeReplace,Xf)}else if(Jt.escapeTestNoEncode.test(s))return s.replace(Jt.escapeReplaceNoEncode,Xf);return s}function qf(s){try{s=encodeURI(s).replace(Jt.percentDecode,"%")}catch{return null}return s}function Yf(s,e){let t=s.replace(Jt.findPipe,(r,a,o)=>{let l=!1,c=a;for(;--c>=0&&o[c]==="\\";)l=!l;return l?"|":" |"}),n=t.split(Jt.splitPipe),i=0;if(n[0].trim()||n.shift(),n.length>0&&!n.at(-1)?.trim()&&n.pop(),e)if(n.length>e)n.splice(e);else for(;n.length<e;)n.push("");for(;i<n.length;i++)n[i]=n[i].trim().replace(Jt.slashPipe,"|");return n}function Cr(s,e,t){let n=s.length;if(n===0)return"";let i=0;for(;i<n&&s.charAt(n-i-1)===e;)i++;return s.slice(0,n-i)}function TT(s,e){if(s.indexOf(e[1])===-1)return-1;let t=0;for(let n=0;n<s.length;n++)if(s[n]==="\\")n++;else if(s[n]===e[0])t++;else if(s[n]===e[1]&&(t--,t<0))return n;return t>0?-2:-1}function AT(s,e=0){let t=e,n="";for(let i of s)if(i==="	"){let r=4-t%4;n+=" ".repeat(r),t+=r}else n+=i,t++;return n}function $f(s,e,t,n,i){let r=e.href,a=e.title||null,o=s[1].replace(i.other.outputLinkReplace,"$1");n.state.inLink=!0;let l={type:s[0].charAt(0)==="!"?"image":"link",raw:t,href:r,title:a,text:o,tokens:n.inlineTokens(o)};return n.state.inLink=!1,l}function CT(s,e,t){let n=s.match(t.other.indentCodeCompensation);if(n===null)return e;let i=n[1];return e.split(`
 `).map(r=>{let a=r.match(t.other.beginningSpace);if(a===null)return r;let[o]=a;return o.length>=i.length?r.slice(i.length):r}).join(`
@@ -4352,4 +4352,4 @@ Please report this to https://github.com/markedjs/marked.`,s){let n="<p>An error
                     <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">📷 Instagram </a>
                     <a href="https://x.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">𝕏 X </a>
                 </div>
-            </div>`}}const $T={"art-overlay":GT,"blog-overlay":zT,"travel-overlay":VT,"projects-overlay":WT,"music-overlay":XT,"books-overlay":qT,"contact-overlay":YT};async function ZT(s){const e=$T[s];return e?e():null}let hi=null,Wh=null,zn=null,jf=null,Qf=null,la=!1,ep=0;function JT(){hi=document.getElementById("overlay-container"),Wh=hi.querySelector(".overlay-title"),zn=hi.querySelector(".overlay-body"),jf=hi.querySelector(".overlay-close"),Qf=hi.querySelector(".overlay-backdrop"),jf.addEventListener("click",uh),Qf.addEventListener("click",uh),window.addEventListener("keydown",s=>{s.key==="Escape"&&la&&uh()})}async function tp(s){const e=++ep;Wh.textContent="";const t=zn.cloneNode(!1);zn.parentNode.replaceChild(t,zn),zn=t,zn.innerHTML='<div class="overlay-loading">Loading...</div>',hi.classList.remove("overlay-hidden"),hi.classList.add("overlay-visible"),la=!0;try{const n=await ZT(s);if(e!==ep)return;if(!n){zn.innerHTML='<div class="overlay-loading">Content not found.</div>';return}Wh.textContent=n.title,zn.innerHTML=n.html,n.onReady&&n.onReady(zn)}catch(n){console.error("Overlay error:",n),zn.innerHTML='<div class="overlay-loading">Failed to load content.</div>'}}function uh(){hi.classList.remove("overlay-visible"),hi.classList.add("overlay-hidden"),la=!1}class KT{constructor(){this.scene=null,this.camera=null,this.renderer=null,this.orbitControls=null,this.clock=new Lu,this.character=null,this.ground=null,this.entities=[],this.decoratives=[],this.colliders=[],this.ambientLight=null,this.directionalLight=null,this.trailGhosts=[],this.trailTimer=0,this.controlsState={keys:{w:!1,a:!1,s:!1,d:!1,ArrowUp:!1,ArrowLeft:!1,ArrowDown:!1,ArrowRight:!1," ":!1},isMoving:!1,targetPosition:new C}}async init(){this.initScene(),this.initCamera(),this.initRenderer(),this.initOrbitControls(),await this.createWorld(),this.initInputControls(),this.applyLighting(),this.initUI(),window.addEventListener("resize",()=>this.onResize()),this.animate()}initScene(){const{scene:e,ambientLight:t,directionalLight:n}=yE();this.scene=e,this.ambientLight=t,this.directionalLight=n}initCamera(){this.camera=bE()}initRenderer(){this.renderer=new Wm({antialias:!0}),this.renderer.setSize(window.innerWidth,window.innerHeight),this.renderer.setPixelRatio(window.devicePixelRatio),this.renderer.shadowMap.enabled=ah.ENABLE_SHADOWS,this.renderer.shadowMap.type=nE[ah.SHADOW_TYPE],this.renderer.toneMapping=El,this.renderer.toneMappingExposure=ah.TONE_MAPPING_EXPOSURE,document.body.appendChild(this.renderer.domElement)}initOrbitControls(){this.orbitControls=new sE(this.camera,this.renderer.domElement),this.orbitControls.enableRotate=Tr.ENABLE_ROTATE,this.orbitControls.enableDamping=Tr.ENABLE_DAMPING,this.orbitControls.dampingFactor=Tr.DAMPING_FACTOR,this.orbitControls.screenSpacePanning=Tr.SCREEN_SPACE_PANNING,this.orbitControls.mouseButtons={LEFT:Tr.MOUSE_BUTTONS.LEFT,MIDDLE:fi.DOLLY,RIGHT:fi.PAN},ya&&(this.orbitControls.touches={ONE:ui.NONE,TWO:ui.DOLLY_PAN})}async createWorld(){this.scene.add(ZE());const{groundMesh:e,walls:t}=await qE();this.ground=e,this.scene.add(this.ground);for(const n of t)this.scene.add(n);for(const n of CE){const i=new jE(n);await i.create(),this.scene.add(i.mesh),this.colliders.push(i.collider),this.entities.push(i)}this.character=UE(),this.scene.add(this.character),this.controlsState.targetPosition.copy(this.character.position),this.decoratives=await tw(RE);for(const n of this.decoratives)this.scene.add(n.mesh)}initInputControls(){iw(this.camera,this.ground,this.controlsState,this.renderer.domElement),sw(this.camera,this.orbitControls,this.character)}initUI(){const e=document.getElementById("entity-toast");JT(),dw(this.entities,e,t=>{tp(t).catch(n=>console.error("Overlay error:",n))}),aw(this.controlsState,()=>fw(),()=>la,t=>tp(t).catch(n=>console.error("Overlay error:",n)))}applyLighting(){this.ambientLight.intensity=Vn.AMBIENT_INTENSITY,this.directionalLight.intensity=Vn.DIRECTIONAL_INTENSITY,this.scene.background=new ve(Ym.BACKGROUND_COLOR)}onResize(){const e=window.innerWidth/window.innerHeight,t=Ti.VIEW_SIZE;this.camera.left=-t*e,this.camera.right=t*e,this.camera.top=t,this.camera.bottom=-t,this.camera.updateProjectionMatrix(),this.renderer.setSize(window.innerWidth,window.innerHeight)}animate(){requestAnimationFrame(()=>this.animate());const e=this.clock.getDelta();rw(e),this.orbitControls.update();const t=la;kE(this.character,this.controlsState,this.clock,e,this.colliders,t,this.camera),JE(e),YE(e),nw(this.decoratives,this.clock.getElapsedTime()),pw(this.character.position,t),this.updateTrail(e),this.renderer.render(this.scene,this.camera)}updateTrail(e){const t=this.controlsState.keys,n=t[" "],i=this.controlsState.isMoving||t.w||t.a||t.s||t.d||t.ArrowUp||t.ArrowLeft||t.ArrowDown||t.ArrowRight;n&&i?(this.trailTimer+=e,this.trailTimer>=Hs.SPAWN_INTERVAL&&(this.trailTimer=0,this.spawnGhost())):this.trailTimer=0;for(let r=this.trailGhosts.length-1;r>=0;r--){const a=this.trailGhosts[r];a.userData.life-=e,a.material.opacity=Math.max(0,a.userData.life/Hs.LIFETIME*Hs.INITIAL_OPACITY),a.userData.life<=0&&(this.scene.remove(a),a.material.map.dispose(),a.material.dispose(),this.trailGhosts.splice(r,1))}}spawnGhost(){const t=this.character.material.map,n=t.image,i=n.naturalWidth||n.width,r=n.naturalHeight||n.height,a=Math.round(i*t.repeat.x),o=Math.round(r*t.repeat.y),l=Math.round(i*t.offset.x),c=r-Math.round(r*(t.offset.y+t.repeat.y)),h=document.createElement("canvas");h.width=a,h.height=o,h.getContext("2d").drawImage(n,l,c,a,o,0,0,a,o);const d=new Yl(h);d.magFilter=rt,d.minFilter=rt;const f=new da({map:d,transparent:!0,opacity:Hs.INITIAL_OPACITY,alphaTest:Hs.ALPHA_TEST,depthWrite:!1}),p=new Vl(f);p.scale.copy(this.character.scale),p.position.copy(this.character.position),p.userData.life=Hs.LIFETIME,this.scene.add(p),this.trailGhosts.push(p)}}const pg=new KT;pg.init().catch(s=>console.error("Failed to initialize:",s));window.__app=pg;
+            </div>`}}const $T={"art-overlay":GT,"blog-overlay":zT,"travel-overlay":VT,"projects-overlay":WT,"music-overlay":XT,"books-overlay":qT,"contact-overlay":YT};async function ZT(s){const e=$T[s];return e?e():null}let hi=null,Wh=null,zn=null,jf=null,Qf=null,la=!1,ep=0;function JT(){hi=document.getElementById("overlay-container"),Wh=hi.querySelector(".overlay-title"),zn=hi.querySelector(".overlay-body"),jf=hi.querySelector(".overlay-close"),Qf=hi.querySelector(".overlay-backdrop"),jf.addEventListener("click",uh),Qf.addEventListener("click",uh),window.addEventListener("keydown",s=>{s.key==="Escape"&&la&&uh()})}async function tp(s){const e=++ep;Wh.textContent="";const t=zn.cloneNode(!1);zn.parentNode.replaceChild(t,zn),zn=t,zn.innerHTML='<div class="overlay-loading">Loading...</div>',hi.classList.remove("overlay-hidden"),hi.classList.add("overlay-visible"),la=!0;try{const n=await ZT(s);if(e!==ep)return;if(!n){zn.innerHTML='<div class="overlay-loading">Content not found.</div>';return}Wh.textContent=n.title,zn.innerHTML=n.html,n.onReady&&n.onReady(zn)}catch(n){console.error("Overlay error:",n),zn.innerHTML='<div class="overlay-loading">Failed to load content.</div>'}}function uh(){hi.classList.remove("overlay-visible"),hi.classList.add("overlay-hidden"),la=!1}class KT{constructor(){this.scene=null,this.camera=null,this.renderer=null,this.orbitControls=null,this.clock=new Lu,this.character=null,this.ground=null,this.entities=[],this.decoratives=[],this.colliders=[],this.ambientLight=null,this.directionalLight=null,this.trailGhosts=[],this.trailTimer=0,this.controlsState={keys:{w:!1,a:!1,s:!1,d:!1,ArrowUp:!1,ArrowLeft:!1,ArrowDown:!1,ArrowRight:!1," ":!1},isMoving:!1,targetPosition:new C}}async init(){this.initScene(),this.initCamera(),this.initRenderer(),this.initOrbitControls(),await this.createWorld(),this.initInputControls(),this.applyLighting(),this.initUI(),window.addEventListener("resize",()=>this.onResize()),this.animate()}initScene(){const{scene:e,ambientLight:t,directionalLight:n}=yE();this.scene=e,this.ambientLight=t,this.directionalLight=n}initCamera(){this.camera=bE()}initRenderer(){this.renderer=new Wm({antialias:!0}),this.renderer.setSize(window.innerWidth,window.innerHeight),this.renderer.setPixelRatio(window.devicePixelRatio),this.renderer.shadowMap.enabled=ah.ENABLE_SHADOWS,this.renderer.shadowMap.type=nE[ah.SHADOW_TYPE],this.renderer.toneMapping=El,this.renderer.toneMappingExposure=ah.TONE_MAPPING_EXPOSURE,document.body.appendChild(this.renderer.domElement)}initOrbitControls(){this.orbitControls=new sE(this.camera,this.renderer.domElement),this.orbitControls.enableRotate=Tr.ENABLE_ROTATE,this.orbitControls.enableDamping=Tr.ENABLE_DAMPING,this.orbitControls.dampingFactor=Tr.DAMPING_FACTOR,this.orbitControls.screenSpacePanning=Tr.SCREEN_SPACE_PANNING,this.orbitControls.mouseButtons={LEFT:Tr.MOUSE_BUTTONS.LEFT,MIDDLE:fi.DOLLY,RIGHT:fi.PAN},ya&&(this.orbitControls.touches={ONE:ui.NONE,TWO:ui.DOLLY_PAN})}async createWorld(){this.scene.add(ZE());const{groundMesh:e,walls:t}=await qE();this.ground=e,this.scene.add(this.ground);for(const n of t)this.scene.add(n);for(const n of CE){const i=new jE(n);await i.create(),this.scene.add(i.mesh),this.colliders.push(i.collider),this.entities.push(i)}this.character=UE(),this.scene.add(this.character),this.controlsState.targetPosition.copy(this.character.position),this.decoratives=await tw(RE);for(const n of this.decoratives)this.scene.add(n.mesh)}initInputControls(){iw(this.camera,this.ground,this.controlsState,this.renderer.domElement),sw(this.camera,this.orbitControls,this.character)}initUI(){const e=document.getElementById("entity-toast");JT(),dw(this.entities,e,t=>{tp(t).catch(n=>console.error("Overlay error:",n))}),aw(this.controlsState,()=>fw(),()=>la,t=>tp(t).catch(n=>console.error("Overlay error:",n)))}applyLighting(){this.ambientLight.intensity=Vn.AMBIENT_INTENSITY,this.directionalLight.intensity=Vn.DIRECTIONAL_INTENSITY,this.scene.background=new ve(Ym.BACKGROUND_COLOR)}onResize(){const e=window.innerWidth/window.innerHeight,t=Ti.VIEW_SIZE;this.camera.left=-t*e,this.camera.right=t*e,this.camera.top=t,this.camera.bottom=-t,this.camera.updateProjectionMatrix(),this.renderer.setSize(window.innerWidth,window.innerHeight)}animate(){requestAnimationFrame(()=>this.animate());const e=this.clock.getDelta();rw(e),this.orbitControls.update();const t=la;kE(this.character,this.controlsState,this.clock,e,this.colliders,t,this.camera),JE(e),YE(e),nw(this.decoratives,this.clock.getElapsedTime()),pw(this.character.position,t),this.updateTrail(e),this.renderer.render(this.scene,this.camera)}updateTrail(e){const t=this.controlsState.keys,n=t[" "],i=this.controlsState.isMoving||t.w||t.a||t.s||t.d||t.ArrowUp||t.ArrowLeft||t.ArrowDown||t.ArrowRight;n&&i?(this.trailTimer+=e,this.trailTimer>=Hs.SPAWN_INTERVAL&&(this.trailTimer=0,this.spawnGhost())):this.trailTimer=0;for(let r=this.trailGhosts.length-1;r>=0;r--){const a=this.trailGhosts[r];a.userData.life-=e,a.material.opacity=Math.max(0,a.userData.life/Hs.LIFETIME*Hs.INITIAL_OPACITY),a.userData.life<=0&&(this.scene.remove(a),a.material.map.dispose(),a.material.dispose(),this.trailGhosts.splice(r,1))}}spawnGhost(){const t=this.character.material.map,n=t.image,i=n.naturalWidth||n.width,r=n.naturalHeight||n.height,a=Math.round(i*t.repeat.x),o=Math.round(r*t.repeat.y),l=Math.round(i*t.offset.x),c=r-Math.round(r*(t.offset.y+t.repeat.y)),h=document.createElement("canvas");h.width=a,h.height=o,h.getContext("2d").drawImage(n,l,c,a,o,0,0,a,o);const d=new Yl(h);d.magFilter=rt,d.minFilter=rt;const f=new da({map:d,transparent:!0,opacity:Hs.INITIAL_OPACITY,alphaTest:Hs.ALPHA_TEST,depthWrite:!1}),p=new Vl(f);p.scale.copy(this.character.scale),p.position.copy(this.character.position),p.userData.life=Hs.LIFETIME,this.scene.add(p),this.trailGhosts.push(p)}}const pg=new KT;pg.init().then(()=>{const s=document.getElementById("loading-screen");s&&(s.classList.add("ls-done"),s.addEventListener("transitionend",()=>s.remove(),{once:!0}))}).catch(s=>console.error("Failed to initialize:",s));window.__app=pg;
