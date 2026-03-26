@@ -486,6 +486,89 @@
 
         /* --- Loading state --- */
         .overlay-loading { text-align: center; padding: 32px; color: #888; font-size: clamp(7px, 1.1vw, 10px); }
+
+        /* --- Pixel Art Loading Screen --- */
+        #loading-screen {
+            position: fixed;
+            inset: 0;
+            background: #0a0a0a;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Press Start 2P', monospace;
+            transition: opacity 0.6s ease;
+        }
+        #loading-screen.ls-done {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .ls-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+        .ls-title {
+            font-size: clamp(16px, 3vw, 30px);
+            color: #ffffff;
+            background: #000000;
+            padding: 16px 32px;
+            text-shadow: 3px 3px 0 #333;
+            letter-spacing: 2px;
+            border: 3px solid #444;
+            text-align: center;
+            line-height: 1.8;
+        }
+        .ls-sprite {
+            width: 72px;
+            height: 72px;
+            background-image: url('/assets/character.png');
+            background-size: 800% 300%;
+            background-position: 0% 0%;
+            image-rendering: pixelated;
+            animation: ls-walk 0.8s steps(8) infinite;
+        }
+        @keyframes ls-walk {
+            from { background-position: 0% 0%; }
+            to   { background-position: 100% 0%; }
+        }
+        .ls-bar {
+            width: min(280px, 70vw);
+            height: 18px;
+            border: 3px solid #444;
+            background: #111;
+            overflow: hidden;
+            position: relative;
+        }
+        .ls-bar-fill {
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                #4a9eff 0, #4a9eff 12px,
+                #1a3a6e 12px, #1a3a6e 16px
+            );
+            transform: translateX(-100%);
+            animation: ls-scan 1.4s linear infinite;
+        }
+        @keyframes ls-scan {
+            to { transform: translateX(100%); }
+        }
+        .ls-label {
+            color: #666;
+            font-size: clamp(8px, 1.5vw, 11px);
+            letter-spacing: 3px;
+        }
+        .ls-d {
+            animation: ls-blink 1.2s step-start infinite;
+        }
+        .ls-d:nth-child(2) { animation-delay: 0.3s; }
+        .ls-d:nth-child(3) { animation-delay: 0.6s; }
+        @keyframes ls-blink {
+            0%, 49% { opacity: 0; }
+            50%, 100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -506,6 +589,15 @@
                 <button class="overlay-close">&times;</button>
             </div>
             <div class="overlay-body"></div>
+        </div>
+    </div>
+
+    <div id="loading-screen">
+        <div class="ls-inner">
+            <div class="ls-title">JOEL'S<br>MINDSCAPE</div>
+            <div class="ls-sprite"></div>
+            <div class="ls-bar"><div class="ls-bar-fill"></div></div>
+            <div class="ls-label">LOADING<span class="ls-d">.</span><span class="ls-d">.</span><span class="ls-d">.</span></div>
         </div>
     </div>
 
