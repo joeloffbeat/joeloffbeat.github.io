@@ -4325,104 +4325,104 @@ Your future self will thank you.
 ---
 
 *Built this site using Claude Code and a bunch of skills I wrote while procrastinating on actual work. See the source at [github.com/joeloffbeat/joeloffbeat.github.io](https://github.com/joeloffbeat/joeloffbeat.github.io).*
-`,VE=`---\r
-title: How to Create Your Own GitHub.io Site\r
-date: 2026-03-14\r
-tags: github, tutorial, web\r
-excerpt: A step-by-step beginner's guide to launching your first GitHub Pages site from scratch.\r
-cover: cover.png\r
----\r
-\r
-# How to Create Your Own GitHub.io Site\r
-\r
-GitHub Pages lets you host a website directly from a GitHub repository — for free. In this guide we'll go from zero to a live site at \`https://yourusername.github.io\`.\r
-\r
-## What is GitHub Pages?\r
-\r
-GitHub Pages is a static site hosting service built into GitHub. Push HTML, CSS, and JavaScript files to a repository, and GitHub publishes them as a live website. No servers, no hosting bills, free HTTPS.\r
-\r
-## Step 1: Create a GitHub Account\r
-\r
-If you don't have one yet, sign up at [github.com](https://github.com). Choose your username carefully — it becomes part of your site's permanent URL.\r
-\r
-## Step 2: Create the Repository\r
-\r
-Create a new public repository named **exactly** \`{yourusername}.github.io\`. This naming convention is required by GitHub Pages. Initialise it with a README.\r
-\r
-## Step 3: Add Your First Page\r
-\r
-Clone the repository locally and create \`index.html\`:\r
-\r
-\`\`\`html\r
-<!DOCTYPE html>\r
-<html lang="en">\r
-<head>\r
-  <meta charset="UTF-8">\r
-  <title>My Site</title>\r
-</head>\r
-<body>\r
-  <h1>Hello from GitHub Pages!</h1>\r
-</body>\r
-</html>\r
-\`\`\`\r
-\r
-## Step 4: Enable GitHub Pages\r
-\r
-In your repository **Settings → Pages**, set Source to **Deploy from a branch**, select \`main\` and \`/ (root)\`, then save.\r
-\r
-## Step 5: Push and Wait\r
-\r
-\`\`\`bash\r
-git add index.html\r
-git commit -m "feat: add index.html"\r
-git push\r
-\`\`\`\r
-\r
-Wait about 1 minute, then visit \`https://{yourusername}.github.io\`. Done!\r
-\r
-## Step 6: Level Up with Vite\r
-\r
-For a modern development experience with hot reload and bundling:\r
-\r
-\`\`\`bash\r
-npm create vite@latest my-site -- --template vanilla\r
-cd my-site\r
-npm install\r
-npm run dev\r
-\`\`\`\r
-\r
-Add \`gh-pages\` for deployment:\r
-\r
-\`\`\`bash\r
-npm install --save-dev gh-pages\r
-\`\`\`\r
-\r
-Add to \`package.json\`:\r
-\r
-\`\`\`json\r
-{\r
-  "scripts": {\r
-    "predeploy": "npm run build",\r
-    "deploy": "gh-pages -d dist"\r
-  }\r
-}\r
-\`\`\`\r
-\r
-Then \`npm run deploy\` — Vite builds to \`dist/\` and \`gh-pages\` pushes it to a \`gh-pages\` branch that GitHub Pages serves.\r
-\r
-## Custom Domain (Optional)\r
-\r
-1. Buy a domain from any registrar\r
-2. Add a \`CNAME\` file to your repo root containing your domain (e.g. \`joel.dev\`)\r
-3. In your domain registrar's DNS settings, add \`A\` records pointing to GitHub's Pages IPs (listed in their docs)\r
-4. Enable "Enforce HTTPS" in repo Settings → Pages\r
-\r
-Free HTTPS is included — GitHub handles the SSL certificate automatically.\r
-\r
-![There is your rock](./baba.jpg)\r
----\r
-\r
-That's it. Your portfolio is live. Start adding your work!\r
+`,VE=`---
+title: How to Create Your Own GitHub.io Site
+date: 2026-03-14
+tags: github, tutorial, web
+excerpt: A step-by-step beginner's guide to launching your first GitHub Pages site from scratch.
+cover: cover.png
+---
+
+# How to Create Your Own GitHub.io Site
+
+GitHub Pages lets you host a website directly from a GitHub repository — for free. In this guide we'll go from zero to a live site at \`https://yourusername.github.io\`.
+
+## What is GitHub Pages?
+
+GitHub Pages is a static site hosting service built into GitHub. Push HTML, CSS, and JavaScript files to a repository, and GitHub publishes them as a live website. No servers, no hosting bills, free HTTPS.
+
+## Step 1: Create a GitHub Account
+
+If you don't have one yet, sign up at [github.com](https://github.com). Choose your username carefully — it becomes part of your site's permanent URL.
+
+## Step 2: Create the Repository
+
+Create a new public repository named **exactly** \`{yourusername}.github.io\`. This naming convention is required by GitHub Pages. Initialise it with a README.
+
+## Step 3: Add Your First Page
+
+Clone the repository locally and create \`index.html\`:
+
+\`\`\`html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Site</title>
+</head>
+<body>
+  <h1>Hello from GitHub Pages!</h1>
+</body>
+</html>
+\`\`\`
+
+## Step 4: Enable GitHub Pages
+
+In your repository **Settings → Pages**, set Source to **Deploy from a branch**, select \`main\` and \`/ (root)\`, then save.
+
+## Step 5: Push and Wait
+
+\`\`\`bash
+git add index.html
+git commit -m "feat: add index.html"
+git push
+\`\`\`
+
+Wait about 1 minute, then visit \`https://{yourusername}.github.io\`. Done!
+
+## Step 6: Level Up with Vite
+
+For a modern development experience with hot reload and bundling:
+
+\`\`\`bash
+npm create vite@latest my-site -- --template vanilla
+cd my-site
+npm install
+npm run dev
+\`\`\`
+
+Add \`gh-pages\` for deployment:
+
+\`\`\`bash
+npm install --save-dev gh-pages
+\`\`\`
+
+Add to \`package.json\`:
+
+\`\`\`json
+{
+  "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  }
+}
+\`\`\`
+
+Then \`npm run deploy\` — Vite builds to \`dist/\` and \`gh-pages\` pushes it to a \`gh-pages\` branch that GitHub Pages serves.
+
+## Custom Domain (Optional)
+
+1. Buy a domain from any registrar
+2. Add a \`CNAME\` file to your repo root containing your domain (e.g. \`joel.dev\`)
+3. In your domain registrar's DNS settings, add \`A\` records pointing to GitHub's Pages IPs (listed in their docs)
+4. Enable "Enforce HTTPS" in repo Settings → Pages
+
+Free HTTPS is included — GitHub handles the SSL certificate automatically.
+
+![There is your rock](./baba.jpg)
+---
+
+That's it. Your portfolio is live. Start adding your work!
 `,HE="/assets/baba-B6G5mPMb.jpg";function Bu(){return{async:!1,breaks:!1,extensions:null,gfm:!0,hooks:null,pedantic:!1,renderer:null,silent:!1,tokenizer:null,walkTokens:null}}var vs=Bu();function sg(s){vs=s}var ns={exec:()=>null};function et(s,e=""){let t=typeof s=="string"?s:s.source,n={replace:(i,r)=>{let a=typeof r=="string"?r:r.source;return a=a.replace(Jt.caret,"$1"),t=t.replace(i,a),n},getRegex:()=>new RegExp(t,e)};return n}var WE=(()=>{try{return!!new RegExp("(?<=1)(?<!1)")}catch{return!1}})(),Jt={codeRemoveIndent:/^(?: {1,4}| {0,3}\t)/gm,outputLinkReplace:/\\([\[\]])/g,indentCodeCompensation:/^(\s+)(?:```)/,beginningSpace:/^\s+/,endingHash:/#$/,startingSpaceChar:/^ /,endingSpaceChar:/ $/,nonSpaceChar:/[^ ]/,newLineCharGlobal:/\n/g,tabCharGlobal:/\t/g,multipleSpaceGlobal:/\s+/g,blankLine:/^[ \t]*$/,doubleBlankLine:/\n[ \t]*\n[ \t]*$/,blockquoteStart:/^ {0,3}>/,blockquoteSetextReplace:/\n {0,3}((?:=+|-+) *)(?=\n|$)/g,blockquoteSetextReplace2:/^ {0,3}>[ \t]?/gm,listReplaceNesting:/^ {1,4}(?=( {4})*[^ ])/g,listIsTask:/^\[[ xX]\] +\S/,listReplaceTask:/^\[[ xX]\] +/,listTaskCheckbox:/\[[ xX]\]/,anyLine:/\n.*\n/,hrefBrackets:/^<(.*)>$/,tableDelimiter:/[:|]/,tableAlignChars:/^\||\| *$/g,tableRowBlankLine:/\n[ \t]*$/,tableAlignRight:/^ *-+: *$/,tableAlignCenter:/^ *:-+: *$/,tableAlignLeft:/^ *:-+ *$/,startATag:/^<a /i,endATag:/^<\/a>/i,startPreScriptTag:/^<(pre|code|kbd|script)(\s|>)/i,endPreScriptTag:/^<\/(pre|code|kbd|script)(\s|>)/i,startAngleBracket:/^</,endAngleBracket:/>$/,pedanticHrefTitle:/^([^'"]*[^\s])\s+(['"])(.*)\2/,unicodeAlphaNumeric:/[\p{L}\p{N}]/u,escapeTest:/[&<>"']/,escapeReplace:/[&<>"']/g,escapeTestNoEncode:/[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/,escapeReplaceNoEncode:/[<>"']|&(?!(#\d{1,7}|#[Xx][a-fA-F0-9]{1,6}|\w+);)/g,caret:/(^|[^\[])\^/g,percentDecode:/%25/g,findPipe:/\|/g,splitPipe:/ \|/,slashPipe:/\\\|/g,carriageReturn:/\r\n|\r/g,spaceLine:/^ +$/gm,notSpaceStart:/^\S*/,endingNewline:/\n$/,listItemRegex:s=>new RegExp(`^( {0,3}${s})((?:[	 ][^\\n]*)?(?:\\n|$))`),nextBulletRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}(?:[*+-]|\\d{1,9}[.)])((?:[ 	][^\\n]*)?(?:\\n|$))`),hrRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}((?:- *){3,}|(?:_ *){3,}|(?:\\* *){3,})(?:\\n+|$)`),fencesBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}(?:\`\`\`|~~~)`),headingBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}#`),htmlBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}<(?:[a-z].*>|!--)`,"i"),blockquoteBeginRegex:s=>new RegExp(`^ {0,${Math.min(3,s-1)}}>`)},XE=/^(?:[ \t]*(?:\n|$))+/,qE=/^((?: {4}| {0,3}\t)[^\n]+(?:\n(?:[ \t]*(?:\n|$))*)?)+/,YE=/^ {0,3}(`{3,}(?=[^`\n]*(?:\n|$))|~{3,})([^\n]*)(?:\n|$)(?:|([\s\S]*?)(?:\n|$))(?: {0,3}\1[~`]* *(?=\n|$)|$)/,ba=/^ {0,3}((?:-[\t ]*){3,}|(?:_[ \t]*){3,}|(?:\*[ \t]*){3,})(?:\n+|$)/,$E=/^ {0,3}(#{1,6})(?=\s|$)(.*)(?:\n+|$)/,ku=/ {0,3}(?:[*+-]|\d{1,9}[.)])/,rg=/^(?!bull |blockCode|fences|blockquote|heading|html|table)((?:.|\n(?!\s*?\n|bull |blockCode|fences|blockquote|heading|html|table))+?)\n {0,3}(=+|-+) *(?:\n+|$)/,ag=et(rg).replace(/bull/g,ku).replace(/blockCode/g,/(?: {4}| {0,3}\t)/).replace(/fences/g,/ {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g,/ {0,3}>/).replace(/heading/g,/ {0,3}#{1,6}/).replace(/html/g,/ {0,3}<[^\n>]+>\n/).replace(/\|table/g,"").getRegex(),ZE=et(rg).replace(/bull/g,ku).replace(/blockCode/g,/(?: {4}| {0,3}\t)/).replace(/fences/g,/ {0,3}(?:`{3,}|~{3,})/).replace(/blockquote/g,/ {0,3}>/).replace(/heading/g,/ {0,3}#{1,6}/).replace(/html/g,/ {0,3}<[^\n>]+>\n/).replace(/table/g,/ {0,3}\|?(?:[:\- ]*\|)+[\:\- ]*\n/).getRegex(),Gu=/^([^\n]+(?:\n(?!hr|heading|lheading|blockquote|fences|list|html|table| +\n)[^\n]+)*)/,JE=/^[^\n]+/,zu=/(?!\s*\])(?:\\[\s\S]|[^\[\]\\])+/,KE=et(/^ {0,3}\[(label)\]: *(?:\n[ \t]*)?([^<\s][^\s]*|<.*?>)(?:(?: +(?:\n[ \t]*)?| *\n[ \t]*)(title))? *(?:\n+|$)/).replace("label",zu).replace("title",/(?:"(?:\\"?|[^"\\])*"|'[^'\n]*(?:\n[^'\n]+)*\n?'|\([^()]*\))/).getRegex(),jE=et(/^(bull)([ \t][^\n]+?)?(?:\n|$)/).replace(/bull/g,ku).getRegex(),uc="address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[1-6]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|meta|nav|noframes|ol|optgroup|option|p|param|search|section|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul",Vu=/<!--(?:-?>|[\s\S]*?(?:-->|$))/,QE=et("^ {0,3}(?:<(script|pre|style|textarea)[\\s>][\\s\\S]*?(?:</\\1>[^\\n]*\\n+|$)|comment[^\\n]*(\\n+|$)|<\\?[\\s\\S]*?(?:\\?>\\n*|$)|<![A-Z][\\s\\S]*?(?:>\\n*|$)|<!\\[CDATA\\[[\\s\\S]*?(?:\\]\\]>\\n*|$)|</?(tag)(?: +|\\n|/?>)[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|<(?!script|pre|style|textarea)([a-z][\\w-]*)(?:attribute)*? */?>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$)|</(?!script|pre|style|textarea)[a-z][\\w-]*\\s*>(?=[ \\t]*(?:\\n|$))[\\s\\S]*?(?:(?:\\n[ 	]*)+\\n|$))","i").replace("comment",Vu).replace("tag",uc).replace("attribute",/ +[a-zA-Z:_][\w.:-]*(?: *= *"[^"\n]*"| *= *'[^'\n]*'| *= *[^\s"'=<>`]+)?/).getRegex(),og=et(Gu).replace("hr",ba).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("|table","").replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",uc).getRegex(),eT=et(/^( {0,3}> ?(paragraph|[^\n]*)(?:\n|$))+/).replace("paragraph",og).getRegex(),Hu={blockquote:eT,code:qE,def:KE,fences:YE,heading:$E,hr:ba,html:QE,lheading:ag,list:jE,newline:XE,paragraph:og,table:ns,text:JE},Hf=et("^ *([^\\n ].*)\\n {0,3}((?:\\| *)?:?-+:? *(?:\\| *:?-+:? *)*(?:\\| *)?)(?:\\n((?:(?! *\\n|hr|heading|blockquote|code|fences|list|html).*(?:\\n|$))*)\\n*|$)").replace("hr",ba).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("blockquote"," {0,3}>").replace("code","(?: {4}| {0,3}	)[^\\n]").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",uc).getRegex(),tT={...Hu,lheading:ZE,table:Hf,paragraph:et(Gu).replace("hr",ba).replace("heading"," {0,3}#{1,6}(?:\\s|$)").replace("|lheading","").replace("table",Hf).replace("blockquote"," {0,3}>").replace("fences"," {0,3}(?:`{3,}(?=[^`\\n]*\\n)|~{3,})[^\\n]*\\n").replace("list"," {0,3}(?:[*+-]|1[.)])[ \\t]").replace("html","</?(?:tag)(?: +|\\n|/?>)|<(?:script|pre|style|textarea|!--)").replace("tag",uc).getRegex()},nT={...Hu,html:et(`^ *(?:comment *(?:\\n|\\s*$)|<(tag)[\\s\\S]+?</\\1> *(?:\\n{2,}|\\s*$)|<tag(?:"[^"]*"|'[^']*'|\\s[^'"/>\\s]*)*?/?> *(?:\\n{2,}|\\s*$))`).replace("comment",Vu).replace(/tag/g,"(?!(?:a|em|strong|small|s|cite|q|dfn|abbr|data|time|code|var|samp|kbd|sub|sup|i|b|u|mark|ruby|rt|rp|bdi|bdo|span|br|wbr|ins|del|img)\\b)\\w+(?!:|[^\\w\\s@]*@)\\b").getRegex(),def:/^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +(["(][^\n]+[")]))? *(?:\n+|$)/,heading:/^(#{1,6})(.*)(?:\n+|$)/,fences:ns,lheading:/^(.+?)\n {0,3}(=+|-+) *(?:\n+|$)/,paragraph:et(Gu).replace("hr",ba).replace("heading",` *#{1,6} *[^
 ]`).replace("lheading",ag).replace("|table","").replace("blockquote"," {0,3}>").replace("|fences","").replace("|list","").replace("|html","").replace("|tag","").getRegex()},iT=/^\\([!"#$%&'()*+,\-./:;<=>?@\[\]\\^_`{|}~])/,sT=/^(`+)([^`]|[^`][\s\S]*?[^`])\1(?!`)/,lg=/^( {2,}|\\)\n(?!\s*$)/,rT=/^(`+|[^`])(?:(?= {2,}\n)|[\s\S]*?(?:(?=[\\<!\[`*_]|\b_|$)|[^ ](?= {2,}\n)))/,dc=/[\p{P}\p{S}]/u,Wu=/[\s\p{P}\p{S}]/u,cg=/[^\s\p{P}\p{S}]/u,aT=et(/^((?![*_])punctSpace)/,"u").replace(/punctSpace/g,Wu).getRegex(),hg=/(?!~)[\p{P}\p{S}]/u,oT=/(?!~)[\s\p{P}\p{S}]/u,lT=/(?:[^\s\p{P}\p{S}]|~)/u,ug=/(?![*_])[\p{P}\p{S}]/u,cT=/(?![*_])[\s\p{P}\p{S}]/u,hT=/(?:[^\s\p{P}\p{S}]|[*_])/u,uT=et(/link|precode-code|html/,"g").replace("link",/\[(?:[^\[\]`]|(?<a>`+)[^`]+\k<a>(?!`))*?\]\((?:\\[\s\S]|[^\\\(\)]|\((?:\\[\s\S]|[^\\\(\)])*\))*\)/).replace("precode-",WE?"(?<!`)()":"(^^|[^`])").replace("code",/(?<b>`+)[^`]+\k<b>(?!`)/).replace("html",/<(?! )[^<>]*?>/).getRegex(),dg=/^(?:\*+(?:((?!\*)punct)|[^\s*]))|^_+(?:((?!_)punct)|([^\s_]))/,dT=et(dg,"u").replace(/punct/g,dc).getRegex(),fT=et(dg,"u").replace(/punct/g,hg).getRegex(),fg="^[^_*]*?__[^_*]*?\\*[^_*]*?(?=__)|[^*]+(?=[^*])|(?!\\*)punct(\\*+)(?=[\\s]|$)|notPunctSpace(\\*+)(?!\\*)(?=punctSpace|$)|(?!\\*)punctSpace(\\*+)(?=notPunctSpace)|[\\s](\\*+)(?!\\*)(?=punct)|(?!\\*)punct(\\*+)(?!\\*)(?=punct)|notPunctSpace(\\*+)(?=notPunctSpace)",pT=et(fg,"gu").replace(/notPunctSpace/g,cg).replace(/punctSpace/g,Wu).replace(/punct/g,dc).getRegex(),mT=et(fg,"gu").replace(/notPunctSpace/g,lT).replace(/punctSpace/g,oT).replace(/punct/g,hg).getRegex(),gT=et("^[^_*]*?\\*\\*[^_*]*?_[^_*]*?(?=\\*\\*)|[^_]+(?=[^_])|(?!_)punct(_+)(?=[\\s]|$)|notPunctSpace(_+)(?!_)(?=punctSpace|$)|(?!_)punctSpace(_+)(?=notPunctSpace)|[\\s](_+)(?!_)(?=punct)|(?!_)punct(_+)(?!_)(?=punct)","gu").replace(/notPunctSpace/g,cg).replace(/punctSpace/g,Wu).replace(/punct/g,dc).getRegex(),_T=et(/^~~?(?:((?!~)punct)|[^\s~])/,"u").replace(/punct/g,ug).getRegex(),xT="^[^~]+(?=[^~])|(?!~)punct(~~?)(?=[\\s]|$)|notPunctSpace(~~?)(?!~)(?=punctSpace|$)|(?!~)punctSpace(~~?)(?=notPunctSpace)|[\\s](~~?)(?!~)(?=punct)|(?!~)punct(~~?)(?!~)(?=punct)|notPunctSpace(~~?)(?=notPunctSpace)",yT=et(xT,"gu").replace(/notPunctSpace/g,hT).replace(/punctSpace/g,cT).replace(/punct/g,ug).getRegex(),vT=et(/\\(punct)/,"gu").replace(/punct/g,dc).getRegex(),bT=et(/^<(scheme:[^\s\x00-\x1f<>]*|email)>/).replace("scheme",/[a-zA-Z][a-zA-Z0-9+.-]{1,31}/).replace("email",/[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+(@)[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)+(?![-_])/).getRegex(),ST=et(Vu).replace("(?:-->|$)","-->").getRegex(),MT=et("^comment|^</[a-zA-Z][\\w:-]*\\s*>|^<[a-zA-Z][\\w-]*(?:attribute)*?\\s*/?>|^<\\?[\\s\\S]*?\\?>|^<![a-zA-Z]+\\s[\\s\\S]*?>|^<!\\[CDATA\\[[\\s\\S]*?\\]\\]>").replace("comment",ST).replace("attribute",/\s+[a-zA-Z:_][\w.:-]*(?:\s*=\s*"[^"]*"|\s*=\s*'[^']*'|\s*=\s*[^\s"'=<>`]+)?/).getRegex(),vl=/(?:\[(?:\\[\s\S]|[^\[\]\\])*\]|\\[\s\S]|`+[^`]*?`+(?!`)|[^\[\]\\`])*?/,wT=et(/^!?\[(label)\]\(\s*(href)(?:(?:[ \t]+(?:\n[ \t]*)?|\n[ \t]*)(title))?\s*\)/).replace("label",vl).replace("href",/<(?:\\.|[^\n<>\\])+>|[^ \t\n\x00-\x1f]*/).replace("title",/"(?:\\"?|[^"\\])*"|'(?:\\'?|[^'\\])*'|\((?:\\\)?|[^)\\])*\)/).getRegex(),pg=et(/^!?\[(label)\]\[(ref)\]/).replace("label",vl).replace("ref",zu).getRegex(),mg=et(/^!?\[(ref)\](?:\[\])?/).replace("ref",zu).getRegex(),ET=et("reflink|nolink(?!\\()","g").replace("reflink",pg).replace("nolink",mg).getRegex(),Wf=/[hH][tT][tT][pP][sS]?|[fF][tT][pP]/,Xu={_backpedal:ns,anyPunctuation:vT,autolink:bT,blockSkip:uT,br:lg,code:sT,del:ns,delLDelim:ns,delRDelim:ns,emStrongLDelim:dT,emStrongRDelimAst:pT,emStrongRDelimUnd:gT,escape:iT,link:wT,nolink:mg,punctuation:aT,reflink:pg,reflinkSearch:ET,tag:MT,text:rT,url:ns},TT={...Xu,link:et(/^!?\[(label)\]\((.*?)\)/).replace("label",vl).getRegex(),reflink:et(/^!?\[(label)\]\s*\[([^\]]*)\]/).replace("label",vl).getRegex()},Gh={...Xu,emStrongRDelimAst:mT,emStrongLDelim:fT,delLDelim:_T,delRDelim:yT,url:et(/^((?:protocol):\/\/|www\.)(?:[a-zA-Z0-9\-]+\.?)+[^\s<]*|^email/).replace("protocol",Wf).replace("email",/[A-Za-z0-9._+-]+(@)[a-zA-Z0-9-_]+(?:\.[a-zA-Z0-9-_]*[a-zA-Z0-9])+(?![-_])/).getRegex(),_backpedal:/(?:[^?!.,:;*_'"~()&]+|\([^)]*\)|&(?![a-zA-Z0-9]+;$)|[?!.,:;*_'"~)]+(?!$))+/,del:/^(~~?)(?=[^\s~])((?:\\[\s\S]|[^\\])*?(?:\\[\s\S]|[^\s~\\]))\1(?=[^~]|$)/,text:et(/^([`~]+|[^`~])(?:(?= {2,}\n)|(?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)|[\s\S]*?(?:(?=[\\<!\[`*~_]|\b_|protocol:\/\/|www\.|$)|[^ ](?= {2,}\n)|[^a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-](?=[a-zA-Z0-9.!#$%&'*+\/=?_`{\|}~-]+@)))/).replace("protocol",Wf).getRegex()},AT={...Gh,br:et(lg).replace("{2,}","*").getRegex(),text:et(Gh.text).replace("\\b_","\\b_| {2,}\\n").replace(/\{2,\}/g,"*").getRegex()},xo={normal:Hu,gfm:tT,pedantic:nT},Ar={normal:Xu,gfm:Gh,breaks:AT,pedantic:TT},CT={"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"},Xf=s=>CT[s];function Gn(s,e){if(e){if(Jt.escapeTest.test(s))return s.replace(Jt.escapeReplace,Xf)}else if(Jt.escapeTestNoEncode.test(s))return s.replace(Jt.escapeReplaceNoEncode,Xf);return s}function qf(s){try{s=encodeURI(s).replace(Jt.percentDecode,"%")}catch{return null}return s}function Yf(s,e){let t=s.replace(Jt.findPipe,(r,a,o)=>{let l=!1,c=a;for(;--c>=0&&o[c]==="\\";)l=!l;return l?"|":" |"}),n=t.split(Jt.splitPipe),i=0;if(n[0].trim()||n.shift(),n.length>0&&!n.at(-1)?.trim()&&n.pop(),e)if(n.length>e)n.splice(e);else for(;n.length<e;)n.push("");for(;i<n.length;i++)n[i]=n[i].trim().replace(Jt.slashPipe,"|");return n}function Cr(s,e,t){let n=s.length;if(n===0)return"";let i=0;for(;i<n&&s.charAt(n-i-1)===e;)i++;return s.slice(0,n-i)}function RT(s,e){if(s.indexOf(e[1])===-1)return-1;let t=0;for(let n=0;n<s.length;n++)if(s[n]==="\\")n++;else if(s[n]===e[0])t++;else if(s[n]===e[1]&&(t--,t<0))return n;return t>0?-2:-1}function IT(s,e=0){let t=e,n="";for(let i of s)if(i==="	"){let r=4-t%4;n+=" ".repeat(r),t+=r}else n+=i,t++;return n}function $f(s,e,t,n,i){let r=e.href,a=e.title||null,o=s[1].replace(i.other.outputLinkReplace,"$1");n.state.inLink=!0;let l={type:s[0].charAt(0)==="!"?"image":"link",raw:t,href:r,title:a,text:o,tokens:n.inlineTokens(o)};return n.state.inLink=!1,l}function PT(s,e,t){let n=s.match(t.other.indentCodeCompensation);if(n===null)return e;let i=n[1];return e.split(`
 `).map(r=>{let a=r.match(t.other.beginningSpace);if(a===null)return r;let[o]=a;return o.length>=i.length?r.slice(i.length):r}).join(`
