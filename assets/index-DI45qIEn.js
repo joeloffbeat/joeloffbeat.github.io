@@ -4489,9 +4489,9 @@ Please report this to https://github.com/markedjs/marked.`,s){let n="<p>An error
                     <span class="page-info" data-category="${n}"></span>
                     <button class="page-btn" data-action="next" data-cat="${n}">Next &#8594;</button>
                 </div>
-            </div>`).join("");return{title:"🎨 Art Gallery",html:`<div class="tab-bar">${s}</div>${e}`,onReady:t=>{const i=qs.map(()=>0);let r=0;function a(c){const h=qs[c],u=i[c],d=h.images.length,f=Math.max(1,Math.ceil(d/9)),p=h.images.slice(u*9,(u+1)*9),_=t.querySelector(`.art-grid[data-category="${c}"]`),g=t.querySelector(`.pagination[data-category="${c}"]`),m=t.querySelector(`.page-info[data-category="${c}"]`);_.innerHTML=p.map(y=>{const x=y.filename.replace(/\.[^.]+$/,"").replace(/[-_]/g," ");return`<div class="art-item" style="background-image:url(${y.url})" data-url="${gt(y.url)}" data-caption="${gt(x)}">
-                        <div class="art-caption">${x}</div>
-                    </div>`}).join(""),d>9&&(g.style.display="flex",m.textContent=`Page ${u+1} of ${f}`,g.querySelector(`[data-action="prev"][data-cat="${c}"]`).disabled=u===0,g.querySelector(`[data-action="next"][data-cat="${c}"]`).disabled=u>=f-1)}function o(c,h){t.innerHTML=`
+            </div>`).join("");return{title:"🎨 Art Gallery",html:`<div class="tab-bar">${s}</div>${e}`,onReady:t=>{const i=qs.map(()=>0);let r=0;function a(c){const h=qs[c],u=i[c],d=h.images.length,f=Math.max(1,Math.ceil(d/9)),p=h.images.slice(u*9,(u+1)*9),_=t.querySelector(`.art-grid[data-category="${c}"]`),g=t.querySelector(`.pagination[data-category="${c}"]`),m=t.querySelector(`.page-info[data-category="${c}"]`);_.innerHTML=p.map(b=>{const E=b.filename.replace(/\.[^.]+$/,"").replace(/[-_]/g," ");return`<div class="art-item" style="background-image:url(${b.url})" data-url="${gt(b.url)}" data-caption="${gt(E)}">
+                        <div class="art-caption">${E}</div>
+                    </div>`}).join("");const y=g.querySelector(`[data-action="prev"][data-cat="${c}"]`),x=g.querySelector(`[data-action="next"][data-cat="${c}"]`);d>9?(g.style.display="flex",m.textContent=`Page ${u+1} of ${f}`,y.style.visibility=u===0?"hidden":"visible",x.style.visibility=u>=f-1?"hidden":"visible"):g.style.display="none"}function o(c,h){t.innerHTML=`
                     <button class="blog-back" data-action="art-back">&#8592; Back to Gallery</button>
                     <div class="art-lightbox">
                         <img class="art-lightbox-img" src="${gt(c)}" alt="${gt(h)}">
