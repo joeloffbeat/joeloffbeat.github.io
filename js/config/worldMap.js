@@ -191,7 +191,7 @@ export const ENTITY_PLACEMENTS = [
         ...tileToWorld(17, 24),
         scale: { x: 18, y: 16, z: 1 },
         triggerRadius: 10,
-        collisionBox: { w: 12, d: 5, h: 10 },
+        collisionBox: { w: 10, d: 8, h: 10, zCenter: -4 },
         overlayId: null,
         label: 'Home',
         description: 'Home',

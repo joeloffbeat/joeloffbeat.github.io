@@ -43,18 +43,23 @@ export class InteractiveEntity {
                     this.mesh.rotation.x = SPRITE_ROTATION_X;
                     this.mesh.position.copy(this.position);
 
-                    // Collision box centered on entity position
+                    // Collision box centered on entity position.
+                    // zCenter defaults to -scale.y/2 (midpoint of sprite depth) but can
+                    // be overridden per-entity with collisionBox.zCenter for tall sprites.
                     const { w, d, h } = this.collisionBoxSize;
+                    const zOff = this.collisionBoxSize.zCenter !== undefined
+                        ? this.collisionBoxSize.zCenter
+                        : -this.scale.y / 2;
                     this.collider = new THREE.Box3(
                         new THREE.Vector3(
                             this.position.x - w / 2,
                             0,
-                            this.position.z - this.scale.y / 2 - d / 2
+                            this.position.z + zOff - d / 2
                         ),
                         new THREE.Vector3(
                             this.position.x + w / 2,
                             h,
-                            this.position.z - this.scale.y / 2 + d / 2
+                            this.position.z + zOff + d / 2
                         )
                     );
 

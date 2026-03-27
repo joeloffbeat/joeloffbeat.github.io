@@ -262,16 +262,39 @@ const FALLBACK_PROJECTS = [
     },
 ];
 
+// ---------------------------------------------------------------------------
+// Repo filter config — edit these two lists to control what appears.
+//
+// SHOWN_REPOS: if non-empty, ONLY these repos are displayed (allowlist).
+//              Set to [] to show all (minus IGNORED_REPOS).
+// IGNORED_REPOS: repos always hidden, regardless of SHOWN_REPOS.
+// ---------------------------------------------------------------------------
+const SHOWN_REPOS = [
+    'joeloffbeat.github.io',
+];
+
+const IGNORED_REPOS = [
+    // e.g. 'my-old-experiment',
+];
+
+function filterRepos(repos) {
+    return repos.filter(p => {
+        if (IGNORED_REPOS.includes(p.name)) return false;
+        if (SHOWN_REPOS.length > 0) return SHOWN_REPOS.includes(p.name);
+        return true;
+    });
+}
+
 let _cachedProjects = null;
 
 async function buildProjectsOverlay() {
-    let projects = FALLBACK_PROJECTS;
+    let projects = filterRepos(FALLBACK_PROJECTS);
     let errorHtml = '';
 
     try {
         if (!_cachedProjects) {
             const res = await fetch(
-                'https://api.github.com/users/joeloffbeat/repos?sort=updated&per_page=6&type=public'
+                'https://api.github.com/users/joeloffbeat/repos?sort=updated&per_page=100&type=public'
             );
             if (!res.ok) {
                 const rateLimited = res.status === 403 && res.headers.get('X-RateLimit-Remaining') === '0';
@@ -279,7 +302,7 @@ async function buildProjectsOverlay() {
             }
             _cachedProjects = await res.json();
         }
-        projects = _cachedProjects;
+        projects = filterRepos(_cachedProjects);
     } catch (err) {
         const msg = err.message === 'rate-limit'
             ? 'GitHub rate limit reached. Showing cached projects.'
