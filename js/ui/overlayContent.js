@@ -78,11 +78,15 @@ function buildArtOverlay() {
                     </div>`;
                 }).join('');
 
+                const prevBtn = paginationEl.querySelector(`[data-action="prev"][data-cat="${tabIdx}"]`);
+                const nextBtn = paginationEl.querySelector(`[data-action="next"][data-cat="${tabIdx}"]`);
                 if (total > PER_PAGE) {
                     paginationEl.style.display = 'flex';
                     pageInfo.textContent = `Page ${page + 1} of ${totalPages}`;
-                    paginationEl.querySelector(`[data-action="prev"][data-cat="${tabIdx}"]`).disabled = page === 0;
-                    paginationEl.querySelector(`[data-action="next"][data-cat="${tabIdx}"]`).disabled = page >= totalPages - 1;
+                    prevBtn.style.visibility = page === 0 ? 'hidden' : 'visible';
+                    nextBtn.style.visibility = page >= totalPages - 1 ? 'hidden' : 'visible';
+                } else {
+                    paginationEl.style.display = 'none';
                 }
             }
 
