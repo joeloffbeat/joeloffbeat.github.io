@@ -16,6 +16,7 @@ import { initMobileControls } from '../ui/mobileControls.js';
 import { ENTITY_PLACEMENTS, DECORATIVE_PLACEMENTS, WORLD_MAP, tileToWorld } from '../config/worldMap.js';
 import { initAudio, setAudioEnabled, isAudioEnabled, playFootstep, playUI, setWaterProximity } from '../systems/audio.js';
 import { worldToTile } from '../entities/character.js';
+import { playIntro, updateIntro, isIntroActive } from '../systems/intro.js';
 
 import {
     LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
@@ -66,7 +67,8 @@ export class App {
         this.applyLighting();
         this.initUI();
         window.addEventListener('resize', () => this.onResize());
-        this.animate();
+        this.animate(); // start loop first so zoom can animate
+        playIntro(this.camera, () => {}); // unlock controls on keypress
     }
 
     initScene() {
@@ -215,11 +217,13 @@ export class App {
 
         const delta = this.clock.getDelta();
 
+        updateIntro(delta); // camera zoom — no-op after zoom completes
+
         updateCamera(delta);          // lerp target first
         this.orbitControls.update();  // then apply damping against new target
 
         // Pass overlay state to block input during overlay
-        const blocked = overlayIsOpen;
+        const blocked = overlayIsOpen || isIntroActive();
         updateCharacterPosition(this.character, this.controlsState, this.clock, delta, this.colliders, blocked, this.camera);
 
         // Stars twinkle
