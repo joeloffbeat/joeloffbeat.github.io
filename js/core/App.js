@@ -18,6 +18,7 @@ import { initAudio, setAudioEnabled, isAudioEnabled, playFootstep, playUI, setWa
 import { worldToTile } from '../entities/character.js';
 import { playIntro, updateIntro, isIntroActive } from '../systems/intro.js';
 import { updateDayNight, getPhase } from '../systems/dayNight.js';
+import { createWeather, updateWeather } from '../systems/weather.js';
 
 import {
     LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
@@ -163,6 +164,8 @@ export class App {
             }
         }
         this._prevCharPos.copy(this.character.position);
+
+        createWeather(this.scene);
     }
 
     initInputControls() {
@@ -238,6 +241,8 @@ export class App {
 
         // Decorative animations
         updateDecoratives(this.decoratives, this.clock.getElapsedTime());
+
+        updateWeather(delta);
 
         // Proximity / toast
         updateInteraction(this.character.position, blocked);
