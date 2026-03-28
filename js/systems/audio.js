@@ -20,6 +20,7 @@ const STEP_COOLDOWN = 0.38; // seconds
 
 async function _decode(url) {
     const res = await fetch(url);
+    if (!res.ok) { console.warn(`Audio: could not load ${url} (${res.status})`); return null; }
     const ab = await res.arrayBuffer();
     return _ctx.decodeAudioData(ab);
 }
@@ -38,11 +39,10 @@ function _oneShot(key, vol = 0.6) {
 export async function initAudio() {
     _ctx = new (window.AudioContext || window.webkitAudioContext)();
 
-    _buffers = Object.fromEntries(
-        await Promise.all(
-            Object.entries(SOUNDS).map(async ([k, url]) => [k, await _decode(url)])
-        )
-    );
+    await Promise.allSettled(Object.entries(SOUNDS).map(async ([k, url]) => {
+        const buf = await _decode(url);
+        if (buf) _buffers[k] = buf;
+    }));
 
     // BGM — looping background music
     const bgmSrc = _ctx.createBufferSource();
@@ -101,5 +101,5 @@ export function playUI(event) {
 export function setWaterProximity(distanceWorldUnits) {
     if (!_waterGain || !_ctx) return;
     const vol = Math.max(0, 0.7 * (1 - distanceWorldUnits / 18));
-    _waterGain.gain.value = vol;
+    _waterGain.gain.setTargetAtTime(vol, _ctx.currentTime, 0.5);
 }
