@@ -252,7 +252,7 @@ export class App {
 
         // Decorative animations
         updateDecoratives(this.decoratives, this.clock.getElapsedTime());
-        updateFireflies(this.clock.getElapsedTime(), getPhase());
+        updateFireflies(this.clock.getElapsedTime(), getPhase(), delta);
 
         updateWeather(delta);
         updateNPCs(this.npcs, delta);

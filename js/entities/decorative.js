@@ -99,10 +99,10 @@ function _makeFireflyTexture() {
 
 export function createFireflies(scene) {
     const tex = _makeFireflyTexture();
+    const geo = new THREE.PlaneGeometry(0.9, 0.9);
     _fireflies = [];
 
     for (let i = 0; i < FIREFLY_COUNT; i++) {
-        const geo = new THREE.PlaneGeometry(0.9, 0.9);
         const mat = new THREE.MeshBasicMaterial({
             map: tex,
             transparent: true,
@@ -133,8 +133,8 @@ export function createFireflies(scene) {
     }
 }
 
-export function updateFireflies(elapsed, phase) {
-    // Target opacity: 1 at night/evening, 0 at day, 0.4 at dawn/dusk
+export function updateFireflies(elapsed, phase, delta) {
+    // Target opacity: 1 at night/evening, 0 at day, 0.35 at dawn/dusk
     const targetOpacity = (phase === 'night' || phase === 'evening') ? 1.0
                         : (phase === 'dawn'  || phase === 'dusk')    ? 0.35 : 0.0;
 
@@ -142,9 +142,9 @@ export function updateFireflies(elapsed, phase) {
         // Hover bob
         ff.mesh.position.y = ff.baseY + Math.sin(elapsed * 1.2 + ff.phase) * 0.6;
 
-        // Drift
-        ff.mesh.position.x += ff.driftX * 0.016;
-        ff.mesh.position.z += ff.driftZ * 0.016;
+        // Drift (delta-scaled for frame-rate independence)
+        ff.mesh.position.x += ff.driftX * delta;
+        ff.mesh.position.z += ff.driftZ * delta;
 
         // Wrap within bounds
         if (ff.mesh.position.x > ff.wrapMax) ff.mesh.position.x = ff.wrapMin;
