@@ -674,6 +674,36 @@ function buildStartOverlay() {
 }
 
 // ---------------------------------------------------------------------------
+// Secret Portal Overlay — triggered by stepping on hidden tile (27, 27)
+// ---------------------------------------------------------------------------
+
+function buildSecretPortalOverlay() {
+    return {
+        title: '✨ You Found It',
+        html: `
+            <div class="contact-card">
+                <div class="overlay-section" style="text-align:center">
+                    <p style="font-size:clamp(7px,1.1vw,10px);line-height:2.5;color:#ccc">
+                        Most people never walk this far.<br><br>
+                        Joel built this whole world from scratch —<br>
+                        every tile, every sprite, every system.<br><br>
+                        <span style="color:#ffd700;font-size:clamp(8px,1.3vw,12px)">
+                            The real secret?
+                        </span><br><br>
+                        So can you.<br><br>
+                        Go build something.
+                    </p>
+                    <div class="contact-links" style="margin-top:24px">
+                        <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">
+                            → Start on GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>`,
+    };
+}
+
+// ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
 
@@ -685,8 +715,9 @@ const BUILDERS = {
     'music-overlay':      buildMusicOverlay,
     'books-overlay':      buildBooksOverlay,
     'contact-overlay':    buildContactOverlay,
-    'secret-npc-overlay': buildSecretNpcOverlay,
-    'home-overlay':       buildHomeOverlay,
+    'secret-npc-overlay':    buildSecretNpcOverlay,
+    'secret-portal-overlay': buildSecretPortalOverlay,
+    'home-overlay':          buildHomeOverlay,
     'now-overlay':        buildNowOverlay,
     'start-overlay':      buildStartOverlay,
 };

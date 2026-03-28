@@ -60,6 +60,7 @@ export class App {
         this._prevCharPos = new THREE.Vector3();
         this._waterPositions = [];
         this.starsMesh = null;
+        this._portalTriggered = false;
     }
 
     async init() {
@@ -276,6 +277,16 @@ export class App {
             const terrain = WORLD_MAP[row]?.[col] ?? 'G';
             playFootstep(terrain, this.clock.getElapsedTime());
             this._prevCharPos.copy(this.character.position);
+        }
+
+        // Hidden portal tile — secret area at (27, 27)
+        if (!this._portalTriggered && !overlayIsOpen) {
+            const { col, row } = worldToTile(this.character.position.x, this.character.position.z);
+            if (col === 27 && row === 27) {
+                this._portalTriggered = true;
+                playUI('open');
+                openOverlay('secret-portal-overlay').catch(err => console.error(err));
+            }
         }
 
         // Water proximity audio
