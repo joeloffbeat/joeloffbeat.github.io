@@ -8,7 +8,7 @@ import { createGround, updateWater } from '../entities/ground.js';
 import { createStars, updateStars } from '../entities/stars.js';
 import { InteractiveEntity } from '../entities/interactiveEntity.js';
 import { createDecoratives, updateDecoratives, createFireflies, updateFireflies } from '../entities/decorative.js';
-import { setupControls } from '../systems/controls.js';
+import { setupControls, cheatState } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
 import { initInteraction, updateInteraction, getActiveEntity } from '../systems/interaction.js';
 import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui/overlay.js';
@@ -22,7 +22,7 @@ import { createWeather, updateWeather } from '../systems/weather.js';
 import { createNPCs, updateNPCs } from '../entities/npc.js';
 
 import {
-    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
+    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE, CHARACTER
 } from '../config/constants.js';
 import { DEBUG } from '../config/debug.js';
 
@@ -241,7 +241,14 @@ export class App {
 
         // Pass overlay state to block input during overlay
         const blocked = overlayIsOpen || isIntroActive();
+
+        // Turbo cheat: force space key on while turbo is active
+        if (cheatState.turbo) this.controlsState.keys[' '] = true;
+
         updateCharacterPosition(this.character, this.controlsState, this.clock, delta, this.colliders, blocked, this.camera);
+
+        // FLY cheat: override character y-position to float above ground
+        if (cheatState.fly) this.character.position.y = CHARACTER.BOBBING.BASE_HEIGHT + 5;
 
         // Stars twinkle
         updateStars(delta);

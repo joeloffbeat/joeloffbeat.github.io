@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { CHARACTER, ASSETS, GROUND } from '../config/constants.js';
 import { WORLD_MAP, NON_WALKABLE } from '../config/worldMap.js';
+import { cheatState } from '../systems/controls.js';
 
 const textureLoader = new THREE.TextureLoader();
 
@@ -141,6 +142,7 @@ function isTerrainBlocked(x, z) {
 }
 
 function isBlocked(pos, colliders) {
+    if (cheatState.noclip) return false; // NOCLIP bypasses all collision
     // Tile-based terrain check
     if (isTerrainBlocked(pos.x, pos.z)) return true;
 
