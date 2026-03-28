@@ -70,11 +70,16 @@ export async function initAudio() {
     _waterGain.connect(_ctx.destination);
     waterSrc.start();
 
-    // Resume context when browser auto-suspends (e.g. tab focus)
-    _ctx.addEventListener('statechange', () => {
-        if (_enabled && _ctx.state === 'suspended') _ctx.resume();
-        _updateButton();
-    });
+    // Resume context on any user gesture — browser blocks resume() without one
+    function _ensureRunning() {
+        if (_enabled && _ctx && _ctx.state === 'suspended') _ctx.resume().then(_updateButton);
+    }
+    document.addEventListener('click',      _ensureRunning);
+    document.addEventListener('keydown',    _ensureRunning);
+    document.addEventListener('touchstart', _ensureRunning, { passive: true });
+
+    // Update button when context state changes for any reason
+    _ctx.addEventListener('statechange', _updateButton);
 
     // Apply saved preference (off by default)
     if (localStorage.getItem('audioEnabled') === 'true') {

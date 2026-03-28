@@ -186,7 +186,7 @@ export class App {
         initOverlay();
         const interactables = [
             ...this.entities,
-            ...this.npcs.filter(n => n.def.isSecret),
+            ...this.npcs.filter(n => n.overlayId),
         ];
         initInteraction(interactables, toastEl, (overlayId) => {
             playUI('open');

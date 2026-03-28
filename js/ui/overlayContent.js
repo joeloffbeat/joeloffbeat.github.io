@@ -566,17 +566,13 @@ function buildHomeOverlay() {
             <div class="contact-card">
                 <div class="contact-name">JOEL</div>
                 <div class="card-meta" style="text-align:center;margin-bottom:20px;color:#4a9eff;font-size:clamp(7px,1.1vw,10px)">
-                    Tech Lead &middot; Creator &middot; Data Nerd &middot; Maker
+                    Creator &middot; Data Nerd
                 </div>
                 <div class="overlay-section">
                     <p style="font-size:clamp(7px,1.1vw,10px);line-height:2.2;color:#ccc;text-align:center">
-                        Associate Software Tech Lead @ KLA Corporation, India.<br>
                         Building things at the intersection of data, code, and art.<br><br>
-                        Loves: coding &middot; data science &middot; IoT &middot; illustrations<br>
+                        coding &middot; data science &middot; illustrations<br>
                         caricatures &middot; video editing &middot; making stuff.
-                    </p>
-                    <p style="font-size:clamp(8px,1.3vw,11px);line-height:2;color:#ffd700;text-align:center;margin-top:16px">
-                        "Stop waiting. Build the thing."
                     </p>
                 </div>
                 <div class="overlay-section">
@@ -669,7 +665,7 @@ function buildStartOverlay() {
                 </div>
                 <div class="contact-links" style="margin-top:28px">
                     <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">
-                        → See what Joel builds on GitHub
+                        → Checkout my GitHub
                     </a>
                     <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">
                         → Follow the creative journey
@@ -710,6 +706,75 @@ function buildSecretPortalOverlay() {
 }
 
 // ---------------------------------------------------------------------------
+// Peter Parker Overlay — "just a photographer" (secretly Spider-Man)
+// ---------------------------------------------------------------------------
+
+function buildPeterParkerOverlay() {
+    return {
+        title: '📸 Peter Parker',
+        html: `
+            <div class="contact-card">
+                <div class="contact-name" style="font-size:clamp(10px,1.8vw,16px)">Hey! I'm Peter.</div>
+                <div class="card-meta" style="text-align:center;margin-bottom:20px;color:#e0342a;font-size:clamp(7px,1.1vw,10px)">
+                    Photographer &middot; Daily Bugle &middot; Totally Normal Guy
+                </div>
+                <div class="overlay-section">
+                    <p style="font-size:clamp(7px,1.1vw,10px);line-height:2.2;color:#ccc;text-align:center">
+                        Just a freelance photographer passing through.<br>
+                        I shoot photos of, uh... mostly Spider-Man, actually.<br><br>
+                        <span style="color:#e0342a;font-size:clamp(8px,1.3vw,11px)">
+                            Wait — you didn't hear that from me.
+                        </span><br><br>
+                        Anyway. Cool world you've got here. Very... web-like. Architecturally.<br>
+                        I mean — structurally. I don't know anything about webs.
+                    </p>
+                    <p style="font-size:clamp(8px,1.3vw,11px);line-height:2;color:#ffd700;text-align:center;margin-top:20px">
+                        "With great power comes great responsibility."
+                    </p>
+                    <p style="font-size:clamp(6px,0.95vw,9px);line-height:2;color:#666;text-align:center;margin-top:8px">
+                        — My uncle said that. Great guy. Miss him.
+                    </p>
+                </div>
+            </div>`,
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Luke Skywalker Overlay — Jedi wisdom
+// ---------------------------------------------------------------------------
+
+function buildLukeSkywalkerOverlay() {
+    return {
+        title: '⚔️ Luke Skywalker',
+        html: `
+            <div class="contact-card">
+                <div class="contact-name" style="font-size:clamp(10px,1.8vw,16px)">I am a Jedi.</div>
+                <div class="card-meta" style="text-align:center;margin-bottom:20px;color:#4a9eff;font-size:clamp(7px,1.1vw,10px)">
+                    Jedi Knight &middot; Son of Skywalker &middot; Last Hope of the Galaxy
+                </div>
+                <div class="overlay-section">
+                    <p style="font-size:clamp(7px,1.1vw,10px);line-height:2.4;color:#ccc;text-align:center">
+                        I once thought I had to face everything alone.<br>
+                        I was wrong.<br><br>
+                        <span style="color:#4a9eff;font-size:clamp(8px,1.3vw,11px)">
+                            You built this world yourself.
+                        </span><br><br>
+                        I sense a strong will in you — the will to create,<br>
+                        to connect, to leave something behind.<br><br>
+                        That is the Force working through you.
+                    </p>
+                    <p style="font-size:clamp(8px,1.3vw,11px);line-height:2;color:#ffd700;text-align:center;margin-top:20px">
+                        "The Force will be with you. Always."
+                    </p>
+                    <p style="font-size:clamp(6px,0.95vw,9px);line-height:2;color:#666;text-align:center;margin-top:8px">
+                        — Now go. There is much to build.
+                    </p>
+                </div>
+            </div>`,
+    };
+}
+
+// ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
 
@@ -724,8 +789,10 @@ const BUILDERS = {
     'secret-npc-overlay':    buildSecretNpcOverlay,
     'secret-portal-overlay': buildSecretPortalOverlay,
     'home-overlay':          buildHomeOverlay,
-    'now-overlay':        buildNowOverlay,
-    'start-overlay':      buildStartOverlay,
+    'now-overlay':           buildNowOverlay,
+    'start-overlay':         buildStartOverlay,
+    'peter-parker-overlay':  buildPeterParkerOverlay,
+    'luke-skywalker-overlay': buildLukeSkywalkerOverlay,
 };
 
 export async function resolveOverlayContent(id) {

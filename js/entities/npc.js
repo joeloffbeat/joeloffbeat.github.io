@@ -1,119 +1,208 @@
 // js/entities/npc.js
-// Three sprite NPCs wandering walkable tiles. One secret NPC triggers an overlay.
+// NPCs with waypoint pathing and animation mirrored from character.js.
+//
+// Sprite sheet layout (npc.png — same as character.png):
+//   8 cols = 8 directions (clockwise from North: N, NE, E, SE, S, SW, W, NW)
+//   3 rows = 3 animation states (walk-A, idle, walk-B)
+//
+// Future NPCs with different sheets only need to change spritePath /
+// sheetCols / sheetRows / animations in their def — everything else is generic.
 
 import * as THREE from 'three';
-import { SPRITE_ROTATION_X, CHARACTER, ASSETS } from '../config/constants.js';
-import { WORLD_MAP, NON_WALKABLE, tileToWorld } from '../config/worldMap.js';
+import { CHARACTER } from '../config/constants.js';
+import { tileToWorld } from '../config/worldMap.js';
 
-const FRAME_W = 1 / 8;  // 8 columns in character sprite sheet
-const FRAME_H = 1 / 3;  // 3 rows
-const NPC_W = 3.5;
-const NPC_H = 3.5;
 const NPC_SPEED = CHARACTER.SPEED * 0.45;
 
-// NPC definitions: frameCol = which column of the idle row to use
+// ---------------------------------------------------------------------------
+// Texture cache — one load per unique sheet path, cloned per NPC instance
+// ---------------------------------------------------------------------------
+const _texCache = {};
+
+async function _loadSheet(path) {
+    if (_texCache[path]) return _texCache[path];
+    const tex = await new Promise((res, rej) =>
+        new THREE.TextureLoader().load(path, res, undefined, rej)
+    );
+    tex.magFilter = THREE.NearestFilter;
+    tex.minFilter = THREE.NearestFilter;
+    _texCache[path] = tex;
+    return tex;
+}
+
+// ---------------------------------------------------------------------------
+// Direction — mirrors character.js getDirectionIndex exactly
+// ---------------------------------------------------------------------------
+function getDirectionIndex(dx, dz) {
+    if (dx === 0 && dz === 0) return 0;
+    const deg = (Math.atan2(dz, dx) * 180 / Math.PI + 360) % 360;
+    return (Math.round(deg / 45) % 8 + 2) % 8;
+}
+
+// ---------------------------------------------------------------------------
+// Animation — mirrors character.js setAnimation / updateAnimation exactly
+// ---------------------------------------------------------------------------
+function setAnimation(npc, name) {
+    if (npc.currentAnimation === name) return;
+    npc.currentAnimation = name;
+    npc.frame    = npc.def.animations[name].frameIndices[0];
+    npc.frameItr = 0;
+}
+
+function updateAnimation(npc) {
+    const { sheetCols, sheetRows, animations } = npc.def;
+    const frameW = 1 / sheetCols;
+    const frameH = 1 / sheetRows;
+    const anim   = animations[npc.currentAnimation];
+
+    npc.frameItr += 1;
+    if (npc.frameItr > anim.duration && anim.frames > 1) {
+        npc.frameItr = 0;
+        npc.frame    = anim.frameIndices[(npc.frame + 1) % anim.frames];
+    }
+
+    const tex = npc.mesh.material.map;
+    tex.offset.set(npc.directionIndex * frameW, npc.frame * frameH);
+    tex.needsUpdate = true;
+}
+
+// ---------------------------------------------------------------------------
+// Waypoints
+// ---------------------------------------------------------------------------
+function wp(tiles) {
+    return tiles.map(([col, row]) => tileToWorld(col, row));
+}
+
+const PETER_PATH = wp([
+    [6,7],[14,5],[22,5],[28,8],[28,20],[22,26],[12,26],[5,22],[5,12],
+]);
+const LUKE_PATH = wp([
+    [10,20],[16,20],[20,21],[20,23],[15,24],[10,24],[6,22],[6,19],[10,19],
+]);
+
+// ---------------------------------------------------------------------------
+// NPC definitions
+// ---------------------------------------------------------------------------
+// animations mirrors CHARACTER.ANIMATIONS — change per NPC when using a
+// custom sheet with a different number of states, frame order, or timing.
+
 const NPC_DEFS = [
-    { id: 'npc-0', frameCol: 2, tintHex: 0xffdddd, isSecret: false, label: 'Villager',  description: 'A wandering villager', icon: '🧑' },
-    { id: 'npc-1', frameCol: 4, tintHex: 0xddffdd, isSecret: false, label: 'Villager',  description: 'A wandering villager', icon: '🧑' },
-    { id: 'npc-2', frameCol: 6, tintHex: 0xccddff, isSecret: true,  label: '???',       description: 'A mysterious figure',  icon: '❓' },
+    {
+        id: 'peter-parker',
+        label: 'Peter Parker',
+        description: 'Just a friendly photographer',
+        icon: '📸',
+        overlayId: 'peter-parker-overlay',
+        triggerRadius: 6,
+        waypoints: PETER_PATH,
+
+        spritePath: '/assets/npc.png',
+        sheetCols:  8,
+        sheetRows:  3,
+        animations: {
+            idle: { frames: 1, duration: 8, frameIndices: [1] },
+            walk: { frames: 3, duration: 8, frameIndices: [0, 1, 2] },
+        },
+    },
+    {
+        id: 'luke-skywalker',
+        label: 'Luke Skywalker',
+        description: 'A wandering Jedi',
+        icon: '⚔️',
+        overlayId: 'luke-skywalker-overlay',
+        triggerRadius: 6,
+        waypoints: LUKE_PATH,
+
+        spritePath: '/assets/npc.png',
+        sheetCols:  8,
+        sheetRows:  3,
+        animations: {
+            idle: { frames: 1, duration: 8, frameIndices: [1] },
+            walk: { frames: 3, duration: 8, frameIndices: [0, 1, 2] },
+        },
+    },
 ];
 
-let _walkable = null;
-
-function _getWalkable() {
-    if (_walkable) return _walkable;
-    _walkable = [];
-    for (let row = 0; row < WORLD_MAP.length; row++) {
-        for (let col = 0; col < WORLD_MAP[row].length; col++) {
-            if (!NON_WALKABLE.has(WORLD_MAP[row][col])) {
-                const wp = tileToWorld(col, row);
-                _walkable.push({ x: wp.x, z: wp.z });
-            }
-        }
-    }
-    return _walkable;
-}
-
-function _randomPos() {
-    const w = _getWalkable();
-    return { ...w[Math.floor(Math.random() * w.length)] };
-}
-
+// ---------------------------------------------------------------------------
+// Factory
+// ---------------------------------------------------------------------------
 export async function createNPCs() {
-    const texture = await new Promise((resolve, reject) =>
-        new THREE.TextureLoader().load(ASSETS.CHARACTER_SPRITE, resolve, undefined, reject)
-    );
-    texture.magFilter = THREE.NearestFilter;
-    texture.minFilter = THREE.NearestFilter;
+    const paths = [...new Set(NPC_DEFS.map(d => d.spritePath))];
+    await Promise.all(paths.map(_loadSheet));
 
     return NPC_DEFS.map(def => {
-        const tex = texture.clone();
+        const frameW    = 1 / def.sheetCols;
+        const frameH    = 1 / def.sheetRows;
+        const idleFrame = def.animations.idle.frameIndices[0];
+
+        const tex = _texCache[def.spritePath].clone();
         tex.wrapS = THREE.RepeatWrapping;
         tex.wrapT = THREE.RepeatWrapping;
-        tex.repeat.set(FRAME_W, FRAME_H);
-        // Row 1 (middle row = idle), chosen column
-        tex.offset.set(def.frameCol * FRAME_W, FRAME_H);
+        tex.repeat.set(frameW, frameH);
+        tex.offset.set(0, idleFrame * frameH);
         tex.needsUpdate = true;
 
-        const geo = new THREE.PlaneGeometry(NPC_W, NPC_H);
-        geo.translate(0, NPC_H / 2, 0);
+        const mat    = new THREE.SpriteMaterial({ map: tex, transparent: true, alphaTest: 0.5 });
+        const sprite = new THREE.Sprite(mat);
+        sprite.scale.set(CHARACTER.SCALE.x, CHARACTER.SCALE.y, CHARACTER.SCALE.z);
 
-        const mat = new THREE.MeshBasicMaterial({
-            map: tex,
-            transparent: true,
-            alphaTest: 0.5,
-            side: THREE.DoubleSide,
-            color: new THREE.Color(def.tintHex),
-        });
+        const start = def.waypoints[0];
+        sprite.position.set(start.x, CHARACTER.BOBBING.BASE_HEIGHT, start.z);
 
-        const mesh = new THREE.Mesh(geo, mat);
-        mesh.rotation.x = SPRITE_ROTATION_X;
-
-        const startPos = _randomPos();
-        mesh.position.set(startPos.x, CHARACTER.BOBBING.BASE_HEIGHT, startPos.z);
-
-        const npc = {
-            mesh,
+        return {
+            mesh: sprite,
             def,
-            target: _randomPos(),
-            pauseTimer: 0,
-            pausing: false,
-            // interaction.js interface:
-            overlayId:     def.isSecret ? 'secret-npc-overlay' : null,
-            triggerRadius: def.isSecret ? 6 : 0,
+            // interaction.js interface
+            overlayId:     def.overlayId,
+            triggerRadius: def.triggerRadius,
             label:         def.label,
             description:   def.description,
             icon:          def.icon,
-            getDistanceTo: (pos) => mesh.position.distanceTo(pos),
+            getDistanceTo: (pos) => sprite.position.distanceTo(pos),
+            // pathing
+            waypointIdx:  0,
+            pausing:      false,
+            pauseTimer:   0,
+            // animation state — mirrors character.js userData fields
+            currentAnimation: 'idle',
+            directionIndex:   0,
+            frame:            idleFrame,
+            frameItr:         0,
         };
-
-        return npc;
     });
 }
 
+// ---------------------------------------------------------------------------
+// Update loop
+// ---------------------------------------------------------------------------
 export function updateNPCs(npcs, delta) {
     for (const npc of npcs) {
         if (npc.pausing) {
             npc.pauseTimer -= delta;
             if (npc.pauseTimer <= 0) {
-                npc.pausing = false;
-                npc.target = _randomPos();
+                npc.pausing     = false;
+                npc.waypointIdx = (npc.waypointIdx + 1) % npc.def.waypoints.length;
             }
-            continue;
+            setAnimation(npc, 'idle');
+        } else {
+            const target = npc.def.waypoints[npc.waypointIdx];
+            const dx     = target.x - npc.mesh.position.x;
+            const dz     = target.z - npc.mesh.position.z;
+            const dist   = Math.hypot(dx, dz);
+
+            if (dist < 0.4) {
+                npc.pausing    = true;
+                npc.pauseTimer = 0.6 + Math.random() * 1.5;
+                setAnimation(npc, 'idle');
+            } else {
+                const step = NPC_SPEED * delta;
+                npc.mesh.position.x  += (dx / dist) * step;
+                npc.mesh.position.z  += (dz / dist) * step;
+                npc.directionIndex    = getDirectionIndex(dx, dz);
+                setAnimation(npc, 'walk');
+            }
         }
 
-        const dx = npc.target.x - npc.mesh.position.x;
-        const dz = npc.target.z - npc.mesh.position.z;
-        const dist = Math.hypot(dx, dz);
-
-        if (dist < 0.5) {
-            npc.pausing = true;
-            npc.pauseTimer = 1 + Math.random() * 2.5;
-            continue;
-        }
-
-        const step = NPC_SPEED * delta;
-        npc.mesh.position.x += (dx / dist) * step;
-        npc.mesh.position.z += (dz / dist) * step;
+        updateAnimation(npc);
     }
 }
