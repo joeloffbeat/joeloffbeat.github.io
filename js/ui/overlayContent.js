@@ -504,6 +504,129 @@ function buildSecretNpcOverlay() {
 }
 
 // ---------------------------------------------------------------------------
+// Home Overlay — About Joel + explore links
+// ---------------------------------------------------------------------------
+
+function buildHomeOverlay() {
+    return {
+        title: '🏠 Joel\'s Mindscape',
+        html: `
+            <div class="contact-card">
+                <div class="contact-name">JOEL</div>
+                <div class="card-meta" style="text-align:center;margin-bottom:20px;color:#4a9eff;font-size:clamp(7px,1.1vw,10px)">
+                    Tech Lead &middot; Creator &middot; Data Nerd &middot; Maker
+                </div>
+                <div class="overlay-section">
+                    <p style="font-size:clamp(7px,1.1vw,10px);line-height:2.2;color:#ccc;text-align:center">
+                        Associate Software Tech Lead @ KLA Corporation, India.<br>
+                        Building things at the intersection of data, code, and art.<br><br>
+                        Loves: coding &middot; data science &middot; IoT &middot; illustrations<br>
+                        caricatures &middot; video editing &middot; making stuff.
+                    </p>
+                    <p style="font-size:clamp(8px,1.3vw,11px);line-height:2;color:#ffd700;text-align:center;margin-top:16px">
+                        "Stop waiting. Build the thing."
+                    </p>
+                </div>
+                <div class="overlay-section">
+                    <h3 style="text-align:center;margin-bottom:14px">EXPLORE THE MINDSCAPE</h3>
+                    <div class="contact-links">
+                        <a href="#" class="contact-link home-nav-link" data-overlay="blog-overlay">🖥️ Tech Blog</a>
+                        <a href="#" class="contact-link home-nav-link" data-overlay="projects-overlay">🔧 Projects</a>
+                        <a href="#" class="contact-link home-nav-link" data-overlay="art-overlay">🎨 Art Gallery</a>
+                        <a href="#" class="contact-link home-nav-link" data-overlay="music-overlay">🎵 Music &amp; Playlists</a>
+                        <a href="#" class="contact-link home-nav-link" data-overlay="books-overlay">📚 Books &amp; Movies</a>
+                        <a href="#" class="contact-link home-nav-link" data-overlay="travel-overlay">🚗 Travel Plans</a>
+                    </div>
+                </div>
+            </div>`,
+        onReady: (bodyEl) => {
+            bodyEl.addEventListener('click', (e) => {
+                const link = e.target.closest('.home-nav-link');
+                if (!link) return;
+                e.preventDefault();
+                // Lazy import avoids circular dep with overlay.js
+                import('./overlay.js').then(({ open }) => {
+                    open(link.dataset.overlay).catch(console.error);
+                });
+            });
+        },
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Now Overlay — bulletin board with what Joel is up to
+// ---------------------------------------------------------------------------
+
+async function buildNowOverlay() {
+    let data = null;
+    try {
+        const res = await fetch('/now.json');
+        if (res.ok) data = await res.json();
+    } catch (_) {}
+
+    if (!data) {
+        return {
+            title: '📌 Now',
+            html: '<div class="overlay-loading">Board is empty. Update public/now.json.</div>',
+        };
+    }
+
+    const items = [
+        { label: 'Building',       value: data.building,       icon: '🔨' },
+        { label: 'Reading',        value: data.reading,        icon: '📖' },
+        { label: 'Watching',       value: data.watching,       icon: '📺' },
+        { label: 'Listening to',   value: data.listening,      icon: '🎧' },
+        { label: 'Thinking about', value: data.thinking_about, icon: '💭' },
+    ].filter(i => i.value);
+
+    const rows = items.map(i => `
+        <div class="watched-card">
+            <div class="watched-info">
+                <div class="watched-title">${esc(i.icon)} ${esc(i.label)}</div>
+                <div class="watched-meta">${esc(i.value)}</div>
+            </div>
+        </div>`).join('');
+
+    return {
+        title: "📌 What Joel's Up To Now",
+        html: `<div class="watched-grid">${rows}</div>`,
+    };
+}
+
+// ---------------------------------------------------------------------------
+// Start Something Overlay — rotating motivational signpost
+// ---------------------------------------------------------------------------
+
+function buildStartOverlay() {
+    const PROMPTS = [
+        "You've been thinking about that project for months. Start today. Seriously.",
+        "Draw something. It doesn't have to be good. Just draw it.",
+        "The gap between your taste and your output closes only by making more things.",
+        "What would you build if you knew it would fail? Build that.",
+        "Joel started this website to inspire himself as much as anyone else. What's yours?",
+    ];
+    const prompt = PROMPTS[Math.floor(Math.random() * PROMPTS.length)];
+
+    return {
+        title: '🔥 Start Something',
+        html: `
+            <div class="contact-card">
+                <div class="contact-name" style="font-size:clamp(9px,1.6vw,14px);line-height:2.2;color:#ffd700;text-align:center">
+                    ${esc(prompt)}
+                </div>
+                <div class="contact-links" style="margin-top:28px">
+                    <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">
+                        → See what Joel builds on GitHub
+                    </a>
+                    <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">
+                        → Follow the creative journey
+                    </a>
+                </div>
+            </div>`,
+    };
+}
+
+// ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
 
@@ -516,6 +639,9 @@ const BUILDERS = {
     'books-overlay':      buildBooksOverlay,
     'contact-overlay':    buildContactOverlay,
     'secret-npc-overlay': buildSecretNpcOverlay,
+    'home-overlay':       buildHomeOverlay,
+    'now-overlay':        buildNowOverlay,
+    'start-overlay':      buildStartOverlay,
 };
 
 export async function resolveOverlayContent(id) {
