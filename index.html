@@ -442,6 +442,18 @@
             gap: 12px;
         }
 
+        /* --- Now List --- */
+        .now-list { display: flex; flex-direction: column; gap: 14px; }
+        .now-item {
+            display: flex; align-items: flex-start; gap: 16px;
+            background: #16213e; border: 2px solid #2a3a5e;
+            border-radius: 6px; padding: 16px 20px;
+        }
+        .now-icon { font-size: 1.6rem; line-height: 1; flex-shrink: 0; padding-top: 2px; }
+        .now-body { display: flex; flex-direction: column; gap: 6px; }
+        .now-label { font-size: clamp(7px, 1vw, 10px); color: #4a9eff; letter-spacing: 1px; }
+        .now-value { font-size: clamp(8px, 1.2vw, 12px); color: #e0e0e0; line-height: 1.6; }
+
         /* --- Pagination --- */
         .pagination {
             display: flex;

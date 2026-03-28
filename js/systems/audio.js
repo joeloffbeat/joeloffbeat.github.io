@@ -16,7 +16,13 @@ let _ctx = null;
 let _buffers = {};
 let _waterGain = null;
 let _lastStepTime = -Infinity;
+let _enabled = false;
 const STEP_COOLDOWN = 0.38; // seconds
+
+function _updateButton() {
+    const btn = document.getElementById('audio-toggle');
+    if (btn) btn.textContent = (_ctx?.state === 'running') ? '🔊' : '🔇';
+}
 
 async function _decode(url) {
     const res = await fetch(url);
@@ -64,6 +70,12 @@ export async function initAudio() {
     _waterGain.connect(_ctx.destination);
     waterSrc.start();
 
+    // Resume context when browser auto-suspends (e.g. tab focus)
+    _ctx.addEventListener('statechange', () => {
+        if (_enabled && _ctx.state === 'suspended') _ctx.resume();
+        _updateButton();
+    });
+
     // Apply saved preference (off by default)
     if (localStorage.getItem('audioEnabled') === 'true') {
         setAudioEnabled(true);
@@ -74,14 +86,14 @@ export async function initAudio() {
 
 export function setAudioEnabled(on) {
     if (!_ctx) return;
+    _enabled = on;
     localStorage.setItem('audioEnabled', on ? 'true' : 'false');
     if (on) { _ctx.resume(); } else { _ctx.suspend(); }
-    const btn = document.getElementById('audio-toggle');
-    if (btn) btn.textContent = on ? '🔊' : '🔇';
+    _updateButton();
 }
 
 export function isAudioEnabled() {
-    return _ctx?.state === 'running';
+    return _enabled;
 }
 
 /** Call each frame when character moves. terrain = WORLD_MAP char: 'G'|'B'|'R' */

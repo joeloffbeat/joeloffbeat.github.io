@@ -56,7 +56,13 @@ function buildArtOverlay() {
         title: '\u{1F3A8} Art Gallery',
         html: `<div class="tab-bar">${tabBtns}</div>${panels}`,
         onReady: (bodyEl) => {
-            const PER_PAGE = 9;
+            // Compute how many images fit in the visible overlay area
+            const gridEl = bodyEl.querySelector('.art-grid');
+            const availW = (gridEl?.offsetWidth || window.innerWidth * 0.8) - 8;
+            const availH = window.innerHeight * 0.68 - 60; // subtract tabs + pagination
+            const cols = Math.max(2, Math.floor(availW / 155));
+            const rows = Math.max(2, Math.floor(availH / 185));
+            const PER_PAGE = cols * rows;
             const pages = artCategories.map(() => 0);
             let activePanelIdx = 0;
 
@@ -462,9 +468,8 @@ function buildBooksOverlay() {
 // ---------------------------------------------------------------------------
 
 function buildContactOverlay() {
-    // Replace FILL_IN values with IDs from https://giscus.app
-    const REPO_ID     = 'FILL_IN_REPO_ID';
-    const CATEGORY_ID = 'FILL_IN_CATEGORY_ID';
+    const REPO_ID     = 'R_kgDOQxPGlQ';
+    const CATEGORY_ID = 'DIC_kwDOQxPGlc4C5eoV';
 
     return {
         title: '🐦 Contact Info',
@@ -627,16 +632,17 @@ async function buildNowOverlay() {
     ].filter(i => i.value);
 
     const rows = items.map(i => `
-        <div class="watched-card">
-            <div class="watched-info">
-                <div class="watched-title">${esc(i.icon)} ${esc(i.label)}</div>
-                <div class="watched-meta">${esc(i.value)}</div>
+        <div class="now-item">
+            <div class="now-icon">${esc(i.icon)}</div>
+            <div class="now-body">
+                <div class="now-label">${esc(i.label)}</div>
+                <div class="now-value">${esc(i.value)}</div>
             </div>
         </div>`).join('');
 
     return {
         title: "📌 What Joel's Up To Now",
-        html: `<div class="watched-grid">${rows}</div>`,
+        html: `<div class="now-list">${rows}</div>`,
     };
 }
 

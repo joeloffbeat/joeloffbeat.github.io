@@ -268,8 +268,6 @@ export class App {
         // Proximity / toast
         updateInteraction(this.character.position, blocked);
 
-        this.updateTrail(delta);
-
         // Footsteps
         const charMoved = this.character.position.distanceTo(this._prevCharPos);
         if (charMoved > 0.25) {
