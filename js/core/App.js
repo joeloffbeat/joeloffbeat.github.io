@@ -13,7 +13,9 @@ import { setupCameraController, updateCamera } from '../systems/cameraController
 import { initInteraction, updateInteraction, getActiveEntity } from '../systems/interaction.js';
 import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui/overlay.js';
 import { initMobileControls } from '../ui/mobileControls.js';
-import { ENTITY_PLACEMENTS, DECORATIVE_PLACEMENTS } from '../config/worldMap.js';
+import { ENTITY_PLACEMENTS, DECORATIVE_PLACEMENTS, WORLD_MAP, tileToWorld } from '../config/worldMap.js';
+import { initAudio, setAudioEnabled, isAudioEnabled, playFootstep, playUI, setWaterProximity } from '../systems/audio.js';
+import { worldToTile } from '../entities/character.js';
 
 import {
     LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
@@ -49,6 +51,9 @@ export class App {
             isMoving: false,
             targetPosition: new THREE.Vector3()
         };
+
+        this._prevCharPos = new THREE.Vector3();
+        this._waterPositions = [];
     }
 
     async init() {
@@ -142,6 +147,17 @@ export class App {
         for (const dec of this.decoratives) {
             this.scene.add(dec.mesh);
         }
+
+        // Precompute water tile world positions for proximity audio
+        for (let row = 0; row < WORLD_MAP.length; row++) {
+            for (let col = 0; col < WORLD_MAP[row].length; col++) {
+                if (WORLD_MAP[row][col] === 'W') {
+                    const wp = tileToWorld(col, row);
+                    this._waterPositions.push({ x: wp.x, z: wp.z });
+                }
+            }
+        }
+        this._prevCharPos.copy(this.character.position);
     }
 
     initInputControls() {
@@ -153,7 +169,11 @@ export class App {
         const toastEl = document.getElementById('entity-toast');
         initOverlay();
         initInteraction(this.entities, toastEl, (overlayId) => {
+            playUI('open');
             openOverlay(overlayId).catch(err => console.error('Overlay error:', err));
+        });
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.overlay-close')) playUI('close');
         });
         initMobileControls(
             this.controlsState,
@@ -161,6 +181,14 @@ export class App {
             () => overlayIsOpen, // live ES-module binding — reads current value of overlay.js's `isOpen` each call
             (id) => openOverlay(id).catch(err => console.error('Overlay error:', err))
         );
+
+        // Audio init (non-blocking — loads buffers in background)
+        initAudio().catch(err => console.warn('[audio] init failed:', err));
+
+        // Audio toggle button
+        document.getElementById('audio-toggle').addEventListener('click', () => {
+            setAudioEnabled(!isAudioEnabled());
+        });
     }
 
     applyLighting() {
@@ -207,6 +235,24 @@ export class App {
         updateInteraction(this.character.position, blocked);
 
         this.updateTrail(delta);
+
+        // Footsteps
+        const charMoved = this.character.position.distanceTo(this._prevCharPos);
+        if (charMoved > 0.25) {
+            const { col, row } = worldToTile(this.character.position.x, this.character.position.z);
+            const terrain = WORLD_MAP[row]?.[col] ?? 'G';
+            playFootstep(terrain, this.clock.getElapsedTime());
+            this._prevCharPos.copy(this.character.position);
+        }
+
+        // Water proximity audio
+        let minWaterDist = 999;
+        const cx = this.character.position.x, cz = this.character.position.z;
+        for (const wp of this._waterPositions) {
+            const d = Math.hypot(cx - wp.x, cz - wp.z);
+            if (d < minWaterDist) minWaterDist = d;
+        }
+        setWaterProximity(minWaterDist);
 
         this.renderer.render(this.scene, this.camera);
     }
