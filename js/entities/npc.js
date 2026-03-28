@@ -44,6 +44,7 @@ export async function createNPCs() {
         new THREE.TextureLoader().load(ASSETS.CHARACTER_SPRITE, resolve, undefined, reject)
     );
     texture.magFilter = THREE.NearestFilter;
+    texture.minFilter = THREE.NearestFilter;
 
     return NPC_DEFS.map(def => {
         const tex = texture.clone();
