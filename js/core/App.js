@@ -17,6 +17,7 @@ import { ENTITY_PLACEMENTS, DECORATIVE_PLACEMENTS, WORLD_MAP, tileToWorld } from
 import { initAudio, setAudioEnabled, isAudioEnabled, playFootstep, playUI, setWaterProximity } from '../systems/audio.js';
 import { worldToTile } from '../entities/character.js';
 import { playIntro, updateIntro, isIntroActive } from '../systems/intro.js';
+import { updateDayNight, getPhase } from '../systems/dayNight.js';
 
 import {
     LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
@@ -55,6 +56,7 @@ export class App {
 
         this._prevCharPos = new THREE.Vector3();
         this._waterPositions = [];
+        this.starsMesh = null;
     }
 
     async init() {
@@ -116,7 +118,8 @@ export class App {
 
     async createWorld() {
         // Stars (behind island)
-        this.scene.add(createStars());
+        this.starsMesh = createStars();
+        this.scene.add(this.starsMesh);
 
         // Ground + side walls
         const { groundMesh, walls } = await createGround();
@@ -196,7 +199,7 @@ export class App {
     applyLighting() {
         this.ambientLight.intensity = LIGHTING.AMBIENT_INTENSITY;
         this.directionalLight.intensity = LIGHTING.DIRECTIONAL_INTENSITY;
-        this.scene.background = new THREE.Color(SCENE.BACKGROUND_COLOR);
+        // background managed by dayNight
     }
 
     onResize() {
@@ -228,6 +231,7 @@ export class App {
 
         // Stars twinkle
         updateStars(delta);
+        updateDayNight(this.renderer, this.ambientLight, this.directionalLight, this.starsMesh);
 
         // Water animation
         updateWater(delta);

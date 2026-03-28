@@ -10,7 +10,7 @@ import {
  */
 export function setupScene() {
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(SCENE.BACKGROUND_COLOR);
+    // background managed by dayNight
 
     // Ambient Light
     const ambientLight = new THREE.AmbientLight(
