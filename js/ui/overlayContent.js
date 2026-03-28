@@ -458,23 +458,70 @@ function buildBooksOverlay() {
 }
 
 // ---------------------------------------------------------------------------
-// Contact Overlay — updated with all social links
+// Contact Overlay — tabs: contact info + guestbook (Giscus)
 // ---------------------------------------------------------------------------
 
 function buildContactOverlay() {
+    // Replace FILL_IN values with IDs from https://giscus.app
+    const REPO_ID     = 'FILL_IN_REPO_ID';
+    const CATEGORY_ID = 'FILL_IN_CATEGORY_ID';
+
     return {
-        title: '\u{1F426} Contact Info',
+        title: '🐦 Contact Info',
         html: `
-            <div class="contact-card">
-                <div class="contact-name">Joel</div>
-                <div class="contact-links">
-                    <a href="mailto:joeloffbeat@gmail.com" class="contact-link">\u{1F4E7} joeloffbeat@gmail.com</a>
-                    <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F419} GitHub </a>
-                    <a href="https://www.linkedin.com/in/joel-antony-xaviour-97394a140/" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F4BC} LinkedIn</a>
-                    <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1F4F7} Instagram </a>
-                    <a href="https://x.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">\u{1D54F} X </a>
+            <div class="tab-bar">
+                <button class="tab-btn active" data-tab="contact">📬 Contact</button>
+                <button class="tab-btn" data-tab="guestbook">📖 Guestbook</button>
+            </div>
+            <div class="tab-panel" data-panel="contact">
+                <div class="contact-card">
+                    <div class="contact-name">Joel</div>
+                    <div class="contact-links">
+                        <a href="mailto:joeloffbeat@gmail.com" class="contact-link">📧 joeloffbeat@gmail.com</a>
+                        <a href="https://github.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">🐙 GitHub</a>
+                        <a href="https://www.linkedin.com/in/joel-antony-xaviour-97394a140/" target="_blank" rel="noopener noreferrer" class="contact-link">💼 LinkedIn</a>
+                        <a href="https://instagram.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">📷 Instagram</a>
+                        <a href="https://x.com/joeloffbeat" target="_blank" rel="noopener noreferrer" class="contact-link">𝕏 X</a>
+                    </div>
                 </div>
+            </div>
+            <div class="tab-panel tab-panel-hidden" data-panel="guestbook">
+                <div class="giscus-container" style="padding:8px 0;min-height:200px"></div>
             </div>`,
+        onReady: (bodyEl) => {
+            let giscusLoaded = false;
+
+            bodyEl.addEventListener('click', (e) => {
+                const btn = e.target.closest('.tab-btn');
+                if (!btn) return;
+                const tab = btn.dataset.tab;
+                bodyEl.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                bodyEl.querySelectorAll('.tab-panel').forEach(p => p.classList.add('tab-panel-hidden'));
+                const panel = bodyEl.querySelector(`.tab-panel[data-panel="${CSS.escape(tab)}"]`);
+                panel.classList.remove('tab-panel-hidden');
+
+                if (tab === 'guestbook' && !giscusLoaded) {
+                    giscusLoaded = true;
+                    const s = document.createElement('script');
+                    s.src = 'https://giscus.app/client.js';
+                    s.setAttribute('data-repo',             'joeloffbeat/joeloffbeat.github.io');
+                    s.setAttribute('data-repo-id',          REPO_ID);
+                    s.setAttribute('data-category',         'Guestbook');
+                    s.setAttribute('data-category-id',      CATEGORY_ID);
+                    s.setAttribute('data-mapping',          'specific');
+                    s.setAttribute('data-term',             'guestbook');
+                    s.setAttribute('data-reactions-enabled','1');
+                    s.setAttribute('data-emit-metadata',    '0');
+                    s.setAttribute('data-input-position',   'top');
+                    s.setAttribute('data-theme',            'dark');
+                    s.setAttribute('data-lang',             'en');
+                    s.setAttribute('crossorigin',           'anonymous');
+                    s.async = true;
+                    bodyEl.querySelector('.giscus-container').appendChild(s);
+                }
+            });
+        },
     };
 }
 
