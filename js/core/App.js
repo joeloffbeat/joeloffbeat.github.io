@@ -7,7 +7,7 @@ import { createCharacter, updateCharacterPosition } from '../entities/character.
 import { createGround, updateWater } from '../entities/ground.js';
 import { createStars, updateStars } from '../entities/stars.js';
 import { InteractiveEntity } from '../entities/interactiveEntity.js';
-import { createDecoratives, updateDecoratives } from '../entities/decorative.js';
+import { createDecoratives, updateDecoratives, createFireflies, updateFireflies } from '../entities/decorative.js';
 import { setupControls } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
 import { initInteraction, updateInteraction, getActiveEntity } from '../systems/interaction.js';
@@ -171,6 +171,8 @@ export class App {
 
         this.npcs = await createNPCs();
         for (const npc of this.npcs) this.scene.add(npc.mesh);
+
+        createFireflies(this.scene);
     }
 
     initInputControls() {
@@ -250,6 +252,7 @@ export class App {
 
         // Decorative animations
         updateDecoratives(this.decoratives, this.clock.getElapsedTime());
+        updateFireflies(this.clock.getElapsedTime(), getPhase());
 
         updateWeather(delta);
         updateNPCs(this.npcs, delta);
