@@ -112,7 +112,7 @@ function updateAnimation(sprite) {
 // Inverse of isometric tileToWorld:
 //   worldX = (col-row)*2.475, worldZ = (col+row)*1.2375-38.3625
 //   Canvas→world scale factor: 158.4/2048
-function worldToTile(worldX, worldZ) {
+export function worldToTile(worldX, worldZ) {
     const sum = (worldZ + 38.3625) / 1.2375;  // col + row
     const diff = worldX / 2.475;               // col - row
     const eps = 1e-9;
