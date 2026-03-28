@@ -21,7 +21,6 @@ let _phase = 'day';
 let _brightness = 0.8;
 let _lastCacheMs = -1;
 let _cache = null;
-const _tmpColor = new THREE.Color();
 
 function _lerp(a, b, t) { return a + (b - a) * t; }
 
