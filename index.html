@@ -13,6 +13,68 @@
         body { margin: 0; overflow: hidden; }
         canvas { display: block; }
 
+        /* --- Audio Toggle --- */
+        #audio-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: #000;
+            color: #fff;
+            border: 2px solid #444;
+            border-radius: 4px;
+            width: 44px;
+            height: 44px;
+            font-size: 20px;
+            cursor: pointer;
+            z-index: 15;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #audio-toggle:hover { border-color: #888; }
+
+        /* --- Intro Screen --- */
+        #intro-screen {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            opacity: 1;
+            transition: opacity 0.7s ease;
+        }
+        #intro-title {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(16px, 3vw, 32px);
+            color: #fff;
+            text-shadow: 3px 3px 0 #333;
+            letter-spacing: 4px;
+            animation: introFlicker 1s ease-out forwards;
+        }
+        @keyframes introFlicker {
+            0%   { opacity: 0; }
+            30%  { opacity: 1; }
+            35%  { opacity: 0.2; }
+            45%  { opacity: 1; }
+            50%  { opacity: 0.6; }
+            60%  { opacity: 1; }
+            100% { opacity: 1; }
+        }
+        #intro-prompt {
+            font-family: 'Press Start 2P', monospace;
+            font-size: clamp(8px, 1.5vw, 13px);
+            color: #ffd700;
+            margin-top: 36px;
+            animation: blink 1s step-start infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50%       { opacity: 0; }
+        }
+
         /* --- Title --- */
         #title {
             position: absolute;
@@ -572,7 +634,12 @@
     </style>
 </head>
 <body>
+    <div id="intro-screen">
+        <div id="intro-title">JOEL'S MINDSCAPE</div>
+        <div id="intro-prompt">— PRESS ANY KEY TO EXPLORE —</div>
+    </div>
     <div id="title">Joel's Mindscape</div>
+    <button id="audio-toggle" title="Toggle audio">🔇</button>
 
     <div id="entity-toast">
         <span class="toast-icon"></span>

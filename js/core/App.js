@@ -7,16 +7,22 @@ import { createCharacter, updateCharacterPosition } from '../entities/character.
 import { createGround, updateWater } from '../entities/ground.js';
 import { createStars, updateStars } from '../entities/stars.js';
 import { InteractiveEntity } from '../entities/interactiveEntity.js';
-import { createDecoratives, updateDecoratives } from '../entities/decorative.js';
-import { setupControls } from '../systems/controls.js';
+import { createDecoratives, updateDecoratives, createFireflies, updateFireflies } from '../entities/decorative.js';
+import { setupControls, cheatState } from '../systems/controls.js';
 import { setupCameraController, updateCamera } from '../systems/cameraController.js';
 import { initInteraction, updateInteraction, getActiveEntity } from '../systems/interaction.js';
 import { initOverlay, open as openOverlay, isOpen as overlayIsOpen } from '../ui/overlay.js';
 import { initMobileControls } from '../ui/mobileControls.js';
-import { ENTITY_PLACEMENTS, DECORATIVE_PLACEMENTS } from '../config/worldMap.js';
+import { ENTITY_PLACEMENTS, DECORATIVE_PLACEMENTS, WORLD_MAP, tileToWorld } from '../config/worldMap.js';
+import { initAudio, setAudioEnabled, isAudioEnabled, playFootstep, playUI, setWaterProximity } from '../systems/audio.js';
+import { worldToTile } from '../entities/character.js';
+import { playIntro, updateIntro, isIntroActive } from '../systems/intro.js';
+import { updateDayNight, getPhase } from '../systems/dayNight.js';
+import { createWeather, updateWeather } from '../systems/weather.js';
+import { createNPCs, updateNPCs } from '../entities/npc.js';
 
 import {
-    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
+    LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE, CHARACTER
 } from '../config/constants.js';
 import { DEBUG } from '../config/debug.js';
 
@@ -31,6 +37,7 @@ export class App {
         this.character = null;
         this.ground = null;
         this.entities = [];
+        this.npcs = [];
         this.decoratives = [];
         this.colliders = [];
 
@@ -49,6 +56,11 @@ export class App {
             isMoving: false,
             targetPosition: new THREE.Vector3()
         };
+
+        this._prevCharPos = new THREE.Vector3();
+        this._waterPositions = [];
+        this.starsMesh = null;
+        this._portalTriggered = false;
     }
 
     async init() {
@@ -61,7 +73,8 @@ export class App {
         this.applyLighting();
         this.initUI();
         window.addEventListener('resize', () => this.onResize());
-        this.animate();
+        this.animate(); // start loop first so zoom can animate
+        playIntro(this.camera, () => {}); // unlock controls on keypress
     }
 
     initScene() {
@@ -109,7 +122,8 @@ export class App {
 
     async createWorld() {
         // Stars (behind island)
-        this.scene.add(createStars());
+        this.starsMesh = createStars();
+        this.scene.add(this.starsMesh);
 
         // Ground + side walls
         const { groundMesh, walls } = await createGround();
@@ -142,6 +156,24 @@ export class App {
         for (const dec of this.decoratives) {
             this.scene.add(dec.mesh);
         }
+
+        // Precompute water tile world positions for proximity audio
+        for (let row = 0; row < WORLD_MAP.length; row++) {
+            for (let col = 0; col < WORLD_MAP[row].length; col++) {
+                if (WORLD_MAP[row][col] === 'W') {
+                    const wp = tileToWorld(col, row);
+                    this._waterPositions.push({ x: wp.x, z: wp.z });
+                }
+            }
+        }
+        this._prevCharPos.copy(this.character.position);
+
+        createWeather(this.scene);
+
+        this.npcs = await createNPCs();
+        for (const npc of this.npcs) this.scene.add(npc.mesh);
+
+        createFireflies(this.scene);
     }
 
     initInputControls() {
@@ -152,8 +184,16 @@ export class App {
     initUI() {
         const toastEl = document.getElementById('entity-toast');
         initOverlay();
-        initInteraction(this.entities, toastEl, (overlayId) => {
+        const interactables = [
+            ...this.entities,
+            ...this.npcs.filter(n => n.def.isSecret),
+        ];
+        initInteraction(interactables, toastEl, (overlayId) => {
+            playUI('open');
             openOverlay(overlayId).catch(err => console.error('Overlay error:', err));
+        });
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.overlay-close')) playUI('close');
         });
         initMobileControls(
             this.controlsState,
@@ -161,12 +201,20 @@ export class App {
             () => overlayIsOpen, // live ES-module binding — reads current value of overlay.js's `isOpen` each call
             (id) => openOverlay(id).catch(err => console.error('Overlay error:', err))
         );
+
+        // Audio init (non-blocking — loads buffers in background)
+        initAudio().catch(err => console.warn('[audio] init failed:', err));
+
+        // Audio toggle button
+        document.getElementById('audio-toggle').addEventListener('click', () => {
+            setAudioEnabled(!isAudioEnabled());
+        });
     }
 
     applyLighting() {
         this.ambientLight.intensity = LIGHTING.AMBIENT_INTENSITY;
         this.directionalLight.intensity = LIGHTING.DIRECTIONAL_INTENSITY;
-        this.scene.background = new THREE.Color(SCENE.BACKGROUND_COLOR);
+        // background managed by dayNight
     }
 
     onResize() {
@@ -187,26 +235,68 @@ export class App {
 
         const delta = this.clock.getDelta();
 
+        updateIntro(delta); // camera zoom — no-op after zoom completes
+
         updateCamera(delta);          // lerp target first
         this.orbitControls.update();  // then apply damping against new target
 
         // Pass overlay state to block input during overlay
-        const blocked = overlayIsOpen;
+        const blocked = overlayIsOpen || isIntroActive();
+
+        // Turbo cheat: force space key on while turbo is active
+        if (cheatState.turbo) this.controlsState.keys[' '] = true;
+
         updateCharacterPosition(this.character, this.controlsState, this.clock, delta, this.colliders, blocked, this.camera);
+
+        // FLY cheat: override character y-position to float above ground
+        if (cheatState.fly) this.character.position.y = CHARACTER.BOBBING.BASE_HEIGHT + 5;
 
         // Stars twinkle
         updateStars(delta);
+        updateDayNight(this.renderer, this.ambientLight, this.directionalLight, this.starsMesh);
 
         // Water animation
         updateWater(delta);
 
         // Decorative animations
         updateDecoratives(this.decoratives, this.clock.getElapsedTime());
+        updateFireflies(this.clock.getElapsedTime(), getPhase(), delta);
+
+        updateWeather(delta);
+        updateNPCs(this.npcs, delta);
 
         // Proximity / toast
         updateInteraction(this.character.position, blocked);
 
         this.updateTrail(delta);
+
+        // Footsteps
+        const charMoved = this.character.position.distanceTo(this._prevCharPos);
+        if (charMoved > 0.25) {
+            const { col, row } = worldToTile(this.character.position.x, this.character.position.z);
+            const terrain = WORLD_MAP[row]?.[col] ?? 'G';
+            playFootstep(terrain, this.clock.getElapsedTime());
+            this._prevCharPos.copy(this.character.position);
+        }
+
+        // Hidden portal tile — secret area at (27, 27)
+        if (!this._portalTriggered && !overlayIsOpen) {
+            const { col, row } = worldToTile(this.character.position.x, this.character.position.z);
+            if (col === 27 && row === 27) {
+                this._portalTriggered = true;
+                playUI('open');
+                openOverlay('secret-portal-overlay').catch(err => console.error(err));
+            }
+        }
+
+        // Water proximity audio
+        let minWaterDist = 999;
+        const cx = this.character.position.x, cz = this.character.position.z;
+        for (const wp of this._waterPositions) {
+            const d = Math.hypot(cx - wp.x, cz - wp.z);
+            if (d < minWaterDist) minWaterDist = d;
+        }
+        setWaterProximity(minWaterDist);
 
         this.renderer.render(this.scene, this.camera);
     }
