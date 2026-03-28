@@ -479,17 +479,43 @@ function buildContactOverlay() {
 }
 
 // ---------------------------------------------------------------------------
+// Secret NPC Overlay
+// ---------------------------------------------------------------------------
+
+function buildSecretNpcOverlay() {
+    return {
+        title: '❓ ???',
+        html: `
+            <div class="contact-card">
+                <div class="contact-name" style="font-size:clamp(10px,1.8vw,16px)">Hey.</div>
+                <div class="overlay-section" style="text-align:center">
+                    <p style="font-size:clamp(7px,1.1vw,10px);line-height:2.2;color:#ccc">
+                        You found me.<br><br>
+                        Most people never explore this far.<br><br>
+                        Joel built this whole world from scratch —<br>
+                        every tile, every system, every sprite.<br><br>
+                        <span style="color:#ffd700">The real secret?</span><br><br>
+                        So can you.<br><br>
+                        Go build something.
+                    </p>
+                </div>
+            </div>`,
+    };
+}
+
+// ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
 
 const BUILDERS = {
-    'art-overlay':      buildArtOverlay,
-    'blog-overlay':     buildBlogOverlay,
-    'travel-overlay':   buildTravelOverlay,
-    'projects-overlay': buildProjectsOverlay,
-    'music-overlay':    buildMusicOverlay,
-    'books-overlay':    buildBooksOverlay,
-    'contact-overlay':  buildContactOverlay,
+    'art-overlay':        buildArtOverlay,
+    'blog-overlay':       buildBlogOverlay,
+    'travel-overlay':     buildTravelOverlay,
+    'projects-overlay':   buildProjectsOverlay,
+    'music-overlay':      buildMusicOverlay,
+    'books-overlay':      buildBooksOverlay,
+    'contact-overlay':    buildContactOverlay,
+    'secret-npc-overlay': buildSecretNpcOverlay,
 };
 
 export async function resolveOverlayContent(id) {

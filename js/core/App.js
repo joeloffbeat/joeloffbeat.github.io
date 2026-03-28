@@ -19,6 +19,7 @@ import { worldToTile } from '../entities/character.js';
 import { playIntro, updateIntro, isIntroActive } from '../systems/intro.js';
 import { updateDayNight, getPhase } from '../systems/dayNight.js';
 import { createWeather, updateWeather } from '../systems/weather.js';
+import { createNPCs, updateNPCs } from '../entities/npc.js';
 
 import {
     LIGHTING, CAMERA, SCENE, RENDERER, CONTROLS, TRAIL, GROUND, IS_TOUCH_DEVICE
@@ -36,6 +37,7 @@ export class App {
         this.character = null;
         this.ground = null;
         this.entities = [];
+        this.npcs = [];
         this.decoratives = [];
         this.colliders = [];
 
@@ -166,6 +168,9 @@ export class App {
         this._prevCharPos.copy(this.character.position);
 
         createWeather(this.scene);
+
+        this.npcs = await createNPCs();
+        for (const npc of this.npcs) this.scene.add(npc.mesh);
     }
 
     initInputControls() {
@@ -176,7 +181,11 @@ export class App {
     initUI() {
         const toastEl = document.getElementById('entity-toast');
         initOverlay();
-        initInteraction(this.entities, toastEl, (overlayId) => {
+        const interactables = [
+            ...this.entities,
+            ...this.npcs.filter(n => n.def.isSecret),
+        ];
+        initInteraction(interactables, toastEl, (overlayId) => {
             playUI('open');
             openOverlay(overlayId).catch(err => console.error('Overlay error:', err));
         });
@@ -243,6 +252,7 @@ export class App {
         updateDecoratives(this.decoratives, this.clock.getElapsedTime());
 
         updateWeather(delta);
+        updateNPCs(this.npcs, delta);
 
         // Proximity / toast
         updateInteraction(this.character.position, blocked);
