@@ -14,15 +14,12 @@ import { resolve } from 'path';
 const OUTPUT_PATH = resolve('public/spotify-data.json');
 
 const PLAYLIST_IDS = [
-    '1Cg9uI5aG5AyV8XucYeRVo',
     '0ZXXm4OFRZbVesTTQNJF94',
-    '4oMf1ISgUpNurkbtg4sgLa',
     '6rFuvz5YJ1ya4gTTu2l2jL',
     '1yLgaMBPN5jlIGHWSZs5I9',
     '70qw5Aq4QYMov18y50mt12',
     '1m9WACns4DKBpl4Ys73fT1',
-    '3qywj0squFlv6OwuICVCZ1',
-    '1RVhnHGLjhM8VAj2ePeBKA',
+    '3qywj0squFlv6OwuICVCZ1'
 ];
 
 async function fetchOEmbed(id) {
