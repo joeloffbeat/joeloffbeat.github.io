@@ -65,7 +65,7 @@ export async function initAudio() {
     waterSrc.start();
 
     // Apply saved preference (off by default)
-    if (localStorage.getItem('audio') === 'on') {
+    if (localStorage.getItem('audioEnabled') === 'true') {
         setAudioEnabled(true);
     } else {
         _ctx.suspend();
@@ -74,7 +74,7 @@ export async function initAudio() {
 
 export function setAudioEnabled(on) {
     if (!_ctx) return;
-    localStorage.setItem('audio', on ? 'on' : 'off');
+    localStorage.setItem('audioEnabled', on ? 'true' : 'false');
     if (on) { _ctx.resume(); } else { _ctx.suspend(); }
     const btn = document.getElementById('audio-toggle');
     if (btn) btn.textContent = on ? '🔊' : '🔇';
@@ -89,7 +89,7 @@ export function playFootstep(terrain, elapsedSeconds) {
     if (elapsedSeconds - _lastStepTime < STEP_COOLDOWN) return;
     _lastStepTime = elapsedSeconds;
     const key = `step_${terrain}`;
-    if (_buffers[key]) _oneShot(key, 0.5);
+    if (_buffers[key]) _oneShot(key, 0.6);
 }
 
 /** event: 'open' | 'close' | 'blip' */
@@ -101,5 +101,5 @@ export function playUI(event) {
 export function setWaterProximity(distanceWorldUnits) {
     if (!_waterGain || !_ctx) return;
     const vol = Math.max(0, 0.7 * (1 - distanceWorldUnits / 18));
-    _waterGain.gain.setTargetAtTime(vol, _ctx.currentTime, 0.5);
+    _waterGain.gain.value = vol;
 }
